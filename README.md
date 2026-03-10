@@ -1,124 +1,195 @@
-# HackRore TechToolkit v8.3
+# HackRore TechToolkit v10.0 - Master Edition
 
-Enterprise-grade hardware diagnostics for Windows systems.
+Enterprise-grade hardware diagnostics and system health platform for Windows technicians.
+
+## Overview
+
+HackRore TechToolkit is a comprehensive PowerShell-based diagnostic platform designed for computer technicians of all skill levels - from beginners to advanced professionals. It provides complete system analysis, automated repairs, beautiful HTML reports, and a web-based dashboard.
 
 ## Features
 
-- **System Diagnostics** - Full hardware analysis (CPU, RAM, Storage, GPU, Network)
-- **Bluetooth Detection** - Shows Bluetooth status (Detected/Not Found)
-- **Battery Health** - For laptops, shows battery health percentage
-- **HTML Report Generation** - Beautiful branded reports with colorful headline banner
-- **Quick Fixes** - Common troubleshooting tasks
-- **Web Dashboard** - Browser-based diagnostics access
-- **Linux Support** - Basic Linux diagnostics script
+### Hardware Diagnostics
+- **CPU** - Model, cores, threads, speed, usage, generation detection
+- **RAM** - Total, used, free, type, speed, slot configuration
+- **Storage** - Physical drives, partitions, SMART status, usage percentage
+- **GPU** - Graphics cards, VRAM, driver version
+- **Battery** - Health percentage, charge level, cycle count (laptops)
+- **Network** - Adapters, IP addresses, internet connectivity
+
+### System Health
+- **Health Score** - Weighted percentage (0-100%)
+- **Issues Detection** - Critical, Warning, Info severity levels
+- **Recommendations** - Actionable fix suggestions
+
+### Automation Tools
+- **Disk Cleanup** - Clear temp files, update cache, recycle bin
+- **Network Reset** - Flush DNS, reset TCP/IP, repair adapters
+- **Windows Repair** - SFC / DISM scans, system file repair
+
+### Output Options
+- **Console** - Detailed text output with color coding
+- **HTML Report** - Beautiful branded visual report
+- **Web Dashboard** - Real-time browser-based diagnostics
 
 ## Quick Start
 
 ### Run Diagnostics (Console)
 ```powershell
-.\HackRore_Diagnostics.ps1
+.\HackRore_Master.ps1 console
 ```
 
 ### Generate HTML Report
 ```powershell
-.\HackRore_Diagnostics.ps1 -ExportReport -OpenReport
+.\HackRore_Master.ps1 report
 ```
 
-### Run via Batch
-```cmd
-run_diag.bat
-```
-
-### Web Dashboard
+### Start Web Dashboard
 ```powershell
-.\HackRore_Diagnostics_Web.ps1
+.\HackRore_Master.ps1 web
 ```
-Then open http://localhost:8080
 
-### Quick Fixes Menu
+### Interactive Menu
 ```powershell
-.\HackRore_Toolkit\quick_fixes.ps1
+.\HackRore_Master.ps1
 ```
 
-## Parameters
-
-| Parameter | Description |
-|-----------|-------------|
-| `-ExportReport` | Generate HTML report |
-| `-OpenReport` | Auto-open report in browser |
-| `-NoOpen` | Don't auto-open report |
-| `-Silent` | Run without console output |
-| `-QuickScan` | Fast diagnostic scan |
-| `-FullScan` | Complete system scan |
-
-## Report Output - NEW v8.3!
-
-The HTML report now includes a **colorful headline banner** at the very top:
+## Directory Structure
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Acer Swift SF314-55G | i5-8265U (8th Gen) | 8GB DDR4...  │
-│  Windows 11 | Battery: 56% health                         │
-│  S/N: UNHBJ0012345678                                     │
-└─────────────────────────────────────────────────────────────┘
+HackRore/
+├── HackRore_Master.ps1      # Main entry point
+├── modules/                 # Diagnostic modules
+│   ├── cpu_diag.ps1        # CPU diagnostics
+│   ├── ram_diag.ps1        # RAM diagnostics
+│   ├── storage_diag.ps1    # Storage diagnostics
+│   ├── gpu_diag.ps1        # GPU diagnostics
+│   ├── battery_diag.ps1     # Battery health
+│   ├── battery_report.ps1   # Battery wear report
+│   ├── network_diag.ps1    # Network diagnostics
+│   ├── thermal_diag.ps1    # Temperature monitoring
+│   ├── driver_diag.ps1     # Driver & device health
+│   ├── usb_diag.ps1        # USB port diagnostics
+│   └── startup_diag.ps1    # Boot & startup analysis
+├── automation/              # Repair scripts
+│   ├── disk_cleanup.ps1
+│   ├── network_reset.ps1
+│   └── windows_repair.ps1
+├── reports/                 # Report generators
+│   └── html_report.ps1
+├── web/                    # Web dashboard
+│   └── diagnostics_api.ps1
+└── logs/                   # Log files
+    └── hackrore.log
 ```
 
-**Headline shows:**
-- Device Model (e.g., "Acer Swift 3")
-- CPU Generation (e.g., "i5-8265U (8th Gen)")
-- RAM Size & Type (e.g., "8GB DDR4")
-- Storage Size & Type (e.g., "512GB NVMe")
-- OS Version (e.g., "Windows 11")
-- Battery Health (for laptops)
-- Serial Number
+## Professional Diagnostics Included
 
-## Detected Devices
+This toolkit includes all professional-grade diagnostics:
 
-| Device | Status Shown |
-|--------|--------------|
-| System | Manufacturer, Model, Serial |
-| CPU | Name, Cores, Speed, Generation |
-| RAM | Total, Used, Type, Speed, Slots |
-| Storage | Model, Size, Type (SSD/HDD/NVMe) |
-| Battery | Charge Level, Health % |
-| Bluetooth | Detected/Not Found |
-| GPU | Name, VRAM |
-| Network | Adapter Name, IP Address |
-
-## Version History
-
-- **v8.3** - Colorful headline banner + Bluetooth detection + OS version in headline
-- **v8.2** - Enhanced HTML report with headline summary
-- **v8.1** - Fixed script syntax, improved stability
-- **v8.0** - Technician Edition with full diagnostics
-
-## Files
-
-```
-HackRore_TechToolkit/
-├── HackRore_Diagnostics.ps1      # Main diagnostics (v8.3)
-├── HackRore_Diagnostics_Web.ps1 # Web dashboard
-├── run_diag.bat                  # Quick launcher
-├── launch.vbs                   # VBS launcher
-├── README.md                    # This file
-├── TODO.md                      # Project tasks
-└── HackRore_Toolkit/
-    ├── quick_fixes.ps1          # Quick fixes menu
-    ├── linux_diag.sh            # Linux diagnostics
-    └── run_*.bat              # Various launchers
-```
+1. **CPU Diagnostics** - Model, cores, threads, speed, usage, generation
+2. **RAM Diagnostics** - Total, used, free, type, speed, slots
+3. **Storage Diagnostics** - SMART health, partitions, usage
+4. **GPU Diagnostics** - Graphics cards, VRAM, drivers
+5. **Battery Health** - Charge level, health %, cycle count
+6. **Battery Wear Report** - Detailed wear analysis using powercfg
+7. **Network Diagnostics** - Adapters, IP, connectivity, latency
+8. **Thermal Diagnostics** - CPU/GPU temperature monitoring
+9. **Driver & Device Health** - PnP devices, missing drivers
+10. **USB Diagnostics** - Ports, controllers, connected devices
+11. **Startup Analysis** - Boot time, startup programs, scheduled tasks
 
 ## Requirements
 
-- Windows 10/11
+- Windows 10/11 or Windows Server 2016+
 - PowerShell 5.1 or later
+- PowerShell 7+ recommended for best experience
 - Administrator recommended for full hardware access
+
+## Usage Examples
+
+### Basic System Scan
+```powershell
+.\HackRore_Master.ps1
+# Select option 1 from menu
+```
+
+### Generate Report to Custom Location
+```powershell
+.\HackRore_Master.ps1 report -OutputPath "C:\Reports"
+```
+
+### Quick Disk Cleanup
+```powershell
+.\HackRore_Master.ps1
+# Select D from menu, or run:
+& ".\automation\disk_cleanup.ps1"
+```
+
+### Full Network Reset
+```powershell
+.\HackRore_Master.ps1
+# Select N from menu, or run:
+& ".\automation\network_reset.ps1" -Full
+```
+
+## Command Line Options
+
+| Option | Description |
+|--------|-------------|
+| `console` | Run diagnostics, output to console |
+| `report` | Generate HTML report |
+| `web` | Start web dashboard |
+| `fix` | Open quick fixes menu |
+
+## Health Score System
+
+The system calculates a weighted health score based on all components:
+
+| Component | Weight |
+|-----------|--------|
+| CPU | 20% |
+| RAM | 20% |
+| Storage | 20% |
+| Battery | 15% |
+| GPU | 10% |
+| Network | 15% |
+
+**Score Interpretation:**
+- 80-100%: Healthy
+- 60-79%: Fair - Some attention needed
+- 40-59%: Warning - Action recommended
+- 0-39%: Critical - Immediate attention required
+
+## Version History
+
+- **v10.0** - Master Edition with modular architecture
+- **v9.0** - Ultimate Edition with kernel-level diagnostics
+- **v8.3** - Enhanced Edition with Bluetooth detection
+
+## Requirements Met
+
+This toolkit follows best practices for technician tools:
+
+1. **Modular Design** - Each diagnostic component is separate
+2. **JSON Output** - Structured data for integration
+3. **Health Scoring** - At-a-glance system status
+4. **Actionable Recommendations** - Clear fix suggestions
+5. **Multiple Output Formats** - Console, HTML, Web
+6. **Automation Ready** - Can run non-interactively
+7. **Error Handling** - Graceful degradation
+8. **Logging** - Track all operations
 
 ## Author
 
 **Developer:** Ravindra Ahire  
-**Brand:** HackRore Diagnostics & Optimizer
+**Brand:** HackRore Diagnostics & Optimizer  
+**Version:** 10.0 Master Edition
+
+## License
+
+This tool is provided as-is for diagnostic purposes.
 
 ---
 
-*For troubleshooting, run as Administrator.*
+*For best results, run as Administrator.*
+

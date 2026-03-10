@@ -1,10 +1,10 @@
 @echo off
 echo ================================================
 echo   HackRore TechToolkit v10.0
+echo   Generating HTML Report
 echo ================================================
 echo.
-echo Starting Diagnostics...
+powershell -ExecutionPolicy Bypass -File "%~dp0HackRore_Master.ps1" report
 echo.
-powershell -ExecutionPolicy Bypass -File "%~dp0HackRore_Master.ps1" console
 pause
 
