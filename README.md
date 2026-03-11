@@ -1,195 +1,178 @@
-# HackRore TechToolkit v10.0 - Master Edition
-
-Enterprise-grade hardware diagnostics and system health platform for Windows technicians.
-
-## Overview
-
-HackRore TechToolkit is a comprehensive PowerShell-based diagnostic platform designed for computer technicians of all skill levels - from beginners to advanced professionals. It provides complete system analysis, automated repairs, beautiful HTML reports, and a web-based dashboard.
-
-## Features
-
-### Hardware Diagnostics
-- **CPU** - Model, cores, threads, speed, usage, generation detection
-- **RAM** - Total, used, free, type, speed, slot configuration
-- **Storage** - Physical drives, partitions, SMART status, usage percentage
-- **GPU** - Graphics cards, VRAM, driver version
-- **Battery** - Health percentage, charge level, cycle count (laptops)
-- **Network** - Adapters, IP addresses, internet connectivity
-
-### System Health
-- **Health Score** - Weighted percentage (0-100%)
-- **Issues Detection** - Critical, Warning, Info severity levels
-- **Recommendations** - Actionable fix suggestions
-
-### Automation Tools
-- **Disk Cleanup** - Clear temp files, update cache, recycle bin
-- **Network Reset** - Flush DNS, reset TCP/IP, repair adapters
-- **Windows Repair** - SFC / DISM scans, system file repair
-
-### Output Options
-- **Console** - Detailed text output with color coding
-- **HTML Report** - Beautiful branded visual report
-- **Web Dashboard** - Real-time browser-based diagnostics
-
-## Quick Start
-
-### Run Diagnostics (Console)
-```powershell
-.\HackRore_Master.ps1 console
-```
-
-### Generate HTML Report
-```powershell
-.\HackRore_Master.ps1 report
-```
-
-### Start Web Dashboard
-```powershell
-.\HackRore_Master.ps1 web
-```
-
-### Interactive Menu
-```powershell
-.\HackRore_Master.ps1
-```
-
-## Directory Structure
-
-```
-HackRore/
-├── HackRore_Master.ps1      # Main entry point
-├── modules/                 # Diagnostic modules
-│   ├── cpu_diag.ps1        # CPU diagnostics
-│   ├── ram_diag.ps1        # RAM diagnostics
-│   ├── storage_diag.ps1    # Storage diagnostics
-│   ├── gpu_diag.ps1        # GPU diagnostics
-│   ├── battery_diag.ps1     # Battery health
-│   ├── battery_report.ps1   # Battery wear report
-│   ├── network_diag.ps1    # Network diagnostics
-│   ├── thermal_diag.ps1    # Temperature monitoring
-│   ├── driver_diag.ps1     # Driver & device health
-│   ├── usb_diag.ps1        # USB port diagnostics
-│   └── startup_diag.ps1    # Boot & startup analysis
-├── automation/              # Repair scripts
-│   ├── disk_cleanup.ps1
-│   ├── network_reset.ps1
-│   └── windows_repair.ps1
-├── reports/                 # Report generators
-│   └── html_report.ps1
-├── web/                    # Web dashboard
-│   └── diagnostics_api.ps1
-└── logs/                   # Log files
-    └── hackrore.log
-```
-
-## Professional Diagnostics Included
-
-This toolkit includes all professional-grade diagnostics:
-
-1. **CPU Diagnostics** - Model, cores, threads, speed, usage, generation
-2. **RAM Diagnostics** - Total, used, free, type, speed, slots
-3. **Storage Diagnostics** - SMART health, partitions, usage
-4. **GPU Diagnostics** - Graphics cards, VRAM, drivers
-5. **Battery Health** - Charge level, health %, cycle count
-6. **Battery Wear Report** - Detailed wear analysis using powercfg
-7. **Network Diagnostics** - Adapters, IP, connectivity, latency
-8. **Thermal Diagnostics** - CPU/GPU temperature monitoring
-9. **Driver & Device Health** - PnP devices, missing drivers
-10. **USB Diagnostics** - Ports, controllers, connected devices
-11. **Startup Analysis** - Boot time, startup programs, scheduled tasks
-
-## Requirements
-
-- Windows 10/11 or Windows Server 2016+
-- PowerShell 5.1 or later
-- PowerShell 7+ recommended for best experience
-- Administrator recommended for full hardware access
-
-## Usage Examples
-
-### Basic System Scan
-```powershell
-.\HackRore_Master.ps1
-# Select option 1 from menu
-```
-
-### Generate Report to Custom Location
-```powershell
-.\HackRore_Master.ps1 report -OutputPath "C:\Reports"
-```
-
-### Quick Disk Cleanup
-```powershell
-.\HackRore_Master.ps1
-# Select D from menu, or run:
-& ".\automation\disk_cleanup.ps1"
-```
-
-### Full Network Reset
-```powershell
-.\HackRore_Master.ps1
-# Select N from menu, or run:
-& ".\automation\network_reset.ps1" -Full
-```
-
-## Command Line Options
-
-| Option | Description |
-|--------|-------------|
-| `console` | Run diagnostics, output to console |
-| `report` | Generate HTML report |
-| `web` | Start web dashboard |
-| `fix` | Open quick fixes menu |
-
-## Health Score System
-
-The system calculates a weighted health score based on all components:
-
-| Component | Weight |
-|-----------|--------|
-| CPU | 20% |
-| RAM | 20% |
-| Storage | 20% |
-| Battery | 15% |
-| GPU | 10% |
-| Network | 15% |
-
-**Score Interpretation:**
-- 80-100%: Healthy
-- 60-79%: Fair - Some attention needed
-- 40-59%: Warning - Action recommended
-- 0-39%: Critical - Immediate attention required
-
-## Version History
-
-- **v10.0** - Master Edition with modular architecture
-- **v9.0** - Ultimate Edition with kernel-level diagnostics
-- **v8.3** - Enhanced Edition with Bluetooth detection
-
-## Requirements Met
-
-This toolkit follows best practices for technician tools:
-
-1. **Modular Design** - Each diagnostic component is separate
-2. **JSON Output** - Structured data for integration
-3. **Health Scoring** - At-a-glance system status
-4. **Actionable Recommendations** - Clear fix suggestions
-5. **Multiple Output Formats** - Console, HTML, Web
-6. **Automation Ready** - Can run non-interactively
-7. **Error Handling** - Graceful degradation
-8. **Logging** - Track all operations
-
-## Author
-
-**Developer:** Ravindra Ahire  
-**Brand:** HackRore Diagnostics & Optimizer  
-**Version:** 10.0 Master Edition
-
-## License
-
-This tool is provided as-is for diagnostic purposes.
+# ⬡ HackRore TechToolkit v2.4
+### AI-Powered Hardware Diagnostics for Technicians
+**By Ravindra | CyberTechX**
 
 ---
 
-*For best results, run as Administrator.*
+## What HackRore Actually Does
 
+```
+REAL ARCHITECTURE:
+
+ ┌─────────────────────────┐
+ │  HackRore_Master.ps1    │  ← Real scanner (PowerShell + WMI)
+ │  Reads actual hardware  │
+ └──────────┬──────────────┘
+            │ outputs
+            ▼
+ ┌─────────────────────────┐
+ │   Reports/             │
+ │   HackRore_YYYYMMDD.json│  ← Real system data
+ │   HackRore_YYYYMMDD.html│  ← Standalone report
+ └──────────┬──────────────┘
+            │ loaded by
+            ▼
+ ┌─────────────────────────┐
+ │  React Dashboard        │  ← Displays + AI analysis
+ │  (loads real JSON)      │
+ └─────────────────────────┘
+```
+
+---
+
+## Quick Start
+
+### Step 1 — Run the scanner (as Administrator)
+```powershell
+# Right-click PowerShell → Run as Administrator
+cd C:\HackRore
+.\Run_HackRore.ps1
+```
+
+### Step 2 — Full scan modes
+```powershell
+.\HackRore_Master.ps1                  # Full scan (default)
+.\HackRore_Master.ps1 -Mode refurb     # Refurbishment verification
+.\HackRore_Master.ps1 -Mode quick      # Quick health check only
+.\HackRore_Master.ps1 -NoHTML          # JSON only, no HTML report
+.\HackRore_Master.ps1 -Silent          # No console output
+```
+
+### Step 3 — Open the HTML report
+The scanner automatically saves reports to:
+```
+HackRore\Reports\HackRore_20240315_143022.json
+HackRore\Reports\HackRore_20240315_143022.html
+```
+Open the HTML file in any browser — no internet required.
+
+---
+
+## What Gets Scanned
+
+| Module | What It Reads | WMI / Source |
+|--------|--------------|--------------|
+| **System Identity** | Manufacturer, model, serial, BIOS, OS | Win32_ComputerSystem, Win32_BIOS |
+| **Activation** | Windows license status | SoftwareLicensingProduct |
+| **CPU** | Model, cores, speed, load, temperature | Win32_Processor, MSAcpi_ThermalZone |
+| **RAM** | Total, per-slot, type, speed, usage | Win32_PhysicalMemory |
+| **Storage** | Model, type (NVMe/SATA), size, SMART | Win32_DiskDrive, MSStorageDriver_FailurePredictStatus |
+| **Battery** | Wear%, charge cycles, status, wear | Win32_Battery, powercfg /batteryreport |
+| **GPU** | Name, VRAM, driver version/date | Win32_VideoController |
+| **Network** | Adapters, IP, Bluetooth status | Win32_NetworkAdapter, Get-PnpDevice |
+| **Device Manager** | Errors, warnings, disabled devices | Get-PnpDevice |
+| **Event Viewer** | Critical/Error/Warning events (7 days) | Get-WinEvent |
+| **Startup Programs** | All startup entries + count | Registry HKCU/HKLM Run keys |
+| **Windows Updates** | Pending update count | Microsoft.Update.Session COM |
+
+---
+
+## Scoring Engine
+
+The score (0–100%) is calculated automatically:
+
+| Issue | Score Impact |
+|-------|-------------|
+| CPU temp > 90°C | -20 |
+| CPU temp > 80°C | -10 |
+| SMART failure predicted | -30 |
+| Battery wear > 40% | -15 |
+| Battery wear > 25% | -7 |
+| Device Manager errors | -5 each |
+| Critical Event Log events | -5 each |
+| Windows not activated | -20 |
+| High startup count (>20) | -5 |
+| Many pending updates (>10) | -5 |
+
+**Verdicts:**
+- `PASS` → Score ≥ 70, no critical issues
+- `CONDITIONAL PASS` → Score ≥ 50, ≤ 1 critical issue
+- `FAIL` → Score < 50 or multiple critical issues
+
+---
+
+## For the React Dashboard
+
+Load the real JSON into the dashboard instead of SAMPLE_DATA:
+
+```javascript
+// In your React app:
+const [reportData, setReportData] = useState(null);
+
+// Load real JSON from file picker or API
+const loadReport = (file) => {
+  const reader = new FileReader();
+  reader.onload = (e) => setReportData(JSON.parse(e.target.result));
+  reader.readAsText(file);
+};
+```
+
+Then replace all `SAMPLE_DATA` references with `reportData`.
+
+---
+
+## Requirements
+
+- Windows 10 / 11
+- PowerShell 5.1 or later (built-in)
+- **Administrator rights recommended** for full SMART + thermal data
+- Internet connection only needed for AI analysis features
+
+---
+
+## File Structure
+
+```
+HackRore/
+├── Run_HackRore.ps1        ← Start here (handles admin elevation)
+├── HackRore_Master.ps1     ← Main scanning engine
+├── Reports/                ← Auto-created, scan reports saved here
+│   ├── HackRore_*.json
+│   └── HackRore_*.html
+└── README.md
+```
+
+---
+
+## Troubleshooting
+
+**"Execution policy" error:**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+```
+
+**SMART status shows "unavailable":**
+Run as Administrator. Some NVMe drives also require vendor-specific drivers.
+
+**Battery module missing:**
+Desktop systems have no battery — this is expected.
+
+**CPU temperature is null:**
+WMI thermal zones vary by manufacturer. For guaranteed temps, pipe `HWiNFO64 /sensors` output into HackRore.
+
+---
+
+## Roadmap
+
+- [ ] Module 11: Camera / Microphone test (browser-based)
+- [ ] Module 12: USB port speed test
+- [ ] Module 13: Display dead pixel checker
+- [ ] Module 14: Keyboard key test
+- [ ] AI-powered fix automation (driver updates, startup cleanup)
+- [ ] Portable USB mode (runs without install)
+- [ ] React dashboard loads JSON via file picker
+- [ ] HackRore Cloud: upload reports for remote technician review
+
+---
+
+*HackRore TechToolkit — built for real technicians, not toy diagnostics.*

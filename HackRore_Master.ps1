@@ -1,809 +1,648 @@
-# ==============================================================================
-# HACKRORE TECHTOOLKIT - MASTER EDITION v10.1
-# BRAND: HackRore Diagnostics & Optimizer
-# DEVELOPER: Ravindra Ahire
-# PURPOSE: Unified diagnostic platform for technicians
-# ==============================================================================
+# ============================================================
+#  HackRore TechToolkit - Master Scanning Engine
+#  Version: 2.4
+#  Author:  Ravindra | CyberTechX
+#  GitHub:  github.com/ravindra/HackRore
+# ============================================================
+#  Usage:
+#    .\HackRore_Master.ps1              → Full scan
+#    .\HackRore_Master.ps1 -Mode refurb → Refurbishment mode
+#    .\HackRore_Master.ps1 -Mode quick  → Quick health check
+# ============================================================
 
 param(
-    [Parameter(Position=0)]
-    [string]$Mode = "menu",
-    
-    [switch]$Console,
-    [switch]$Report,
-    [switch]$QuickFix,
-    [switch]$OpenReport,
-    [string]$OutputPath = "$env:USERPROFILE\Desktop",
-    [string]$ExportFormat = "html"
+    [string]$Mode = "full",
+    [string]$OutputDir = "$PSScriptRoot\Reports",
+    [switch]$NoHTML,
+    [switch]$Silent
 )
 
-$ErrorActionPreference = "Continue"
-$Script:Version = "10.1 Master"
-$Script:Author = "Ravindra Ahire"
-$Script:Brand = "HackRore Diagnostics & Optimizer"
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "SilentlyContinue"
 
-# Get script root
-$ScriptRoot = $PSScriptRoot
-if (-not $ScriptRoot) { $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path }
-$ModulePath = "$ScriptRoot\modules"
-$AutomationPath = "$ScriptRoot\automation"
-$LogPath = "$ScriptRoot\logs"
+# ── Colours ──────────────────────────────────────────────────
+function Write-OK    { param($m) if (!$Silent) { Write-Host "  [OK]  $m" -ForegroundColor Green  } }
+function Write-WARN  { param($m) if (!$Silent) { Write-Host "  [!!]  $m" -ForegroundColor Yellow } }
+function Write-CRIT  { param($m) if (!$Silent) { Write-Host "  [XX]  $m" -ForegroundColor Red    } }
+function Write-INFO  { param($m) if (!$Silent) { Write-Host "  [>>]  $m" -ForegroundColor Cyan   } }
+function Write-HEAD  { param($m) if (!$Silent) { Write-Host "`n  ===  $m  ===" -ForegroundColor White } }
 
-# ============================================
-# BOOTSTRAP
-# ============================================
+# ── Banner ────────────────────────────────────────────────────
+if (!$Silent) {
+    Clear-Host
+    Write-Host @"
 
-function Test-IsAdmin {
-    $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = New-Object Security.Principal.WindowsPrincipal($currentUser)
-    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+  ██╗  ██╗ █████╗  ██████╗██╗  ██╗██████╗  ██████╗ ██████╗ ███████╗
+  ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔═══██╗██╔══██╗██╔════╝
+  ███████║███████║██║     █████╔╝ ██████╔╝██║   ██║██████╔╝█████╗
+  ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══██╗██║   ██║██╔══██╗██╔══╝
+  ██║  ██║██║  ██║╚██████╗██║  ██╗██║  ██║╚██████╔╝██║  ██║███████╗
+  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+
+  TechToolkit v2.4  |  AI-Powered Diagnostics  |  Mode: $($Mode.ToUpper())
+  ─────────────────────────────────────────────────────────────────────
+"@ -ForegroundColor Cyan
 }
 
-function Initialize-Environment {
-    $dirs = @($ModulePath, $AutomationPath, "$ScriptRoot\reports", $LogPath)
-    foreach ($dir in $dirs) {
-        if (-not (Test-Path $dir)) {
-            New-Item -ItemType Directory -Path $dir -Force | Out-Null
-        }
+# ── Output folder ─────────────────────────────────────────────
+if (!(Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir | Out-Null }
+$timestamp  = Get-Date -Format "yyyyMMdd_HHmmss"
+$jsonPath   = "$OutputDir\HackRore_$timestamp.json"
+$htmlPath   = "$OutputDir\HackRore_$timestamp.html"
+
+# ============================================================
+#  MODULE 1 — SYSTEM IDENTITY
+# ============================================================
+Write-HEAD "MODULE 1: SYSTEM IDENTITY"
+
+$cs    = Get-CimInstance Win32_ComputerSystem
+$bios  = Get-CimInstance Win32_BIOS
+$os    = Get-CimInstance Win32_OperatingSystem
+$board = Get-CimInstance Win32_BaseBoard
+
+$systemInfo = [ordered]@{
+    manufacturer  = $cs.Manufacturer
+    model         = $cs.Model
+    serial        = $bios.SerialNumber
+    biosVersion   = $bios.SMBIOSBIOSVersion
+    biosDate      = ($bios.ReleaseDate).ToString("yyyy-MM-dd")
+    osName        = $os.Caption
+    osBuild       = $os.BuildNumber
+    osArch        = $os.OSArchitecture
+    lastBoot      = ($os.LastBootUpTime).ToString("yyyy-MM-dd HH:mm")
+    uptime        = [math]::Round(((Get-Date) - $os.LastBootUpTime).TotalHours, 1)
+    domainRole    = switch($cs.DomainRole){ 0{"Standalone"} 1{"Member"} 2{"DC"} default{"Unknown"} }
+    pcType        = switch($cs.PCSystemType){ 1{"Desktop"} 2{"Laptop"} 3{"Workstation"} default{"Unknown"} }
+    motherboard   = "$($board.Manufacturer) $($board.Product)"
+}
+
+Write-OK "Model: $($systemInfo.model)"
+Write-OK "Serial: $($systemInfo.serial)"
+Write-OK "OS: $($systemInfo.osName)"
+
+# ── Windows Activation ───────────────────────────────────────
+$licStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%' AND PartialProductKey IS NOT NULL").LicenseStatus
+$activationStatus = switch($licStatus) { 1{"Activated"} 0{"Unlicensed"} 5{"Notification"} default{"Unknown ($licStatus)"} }
+$systemInfo["activation"] = $activationStatus
+if ($licStatus -eq 1) { Write-OK "Activation: $activationStatus" } else { Write-CRIT "Activation: $activationStatus" }
+
+# ============================================================
+#  MODULE 2 — CPU
+# ============================================================
+Write-HEAD "MODULE 2: PROCESSOR"
+
+$proc = Get-CimInstance Win32_Processor | Select-Object -First 1
+
+# CPU Load (sample over 2 seconds)
+$cpuLoad = (Get-Counter '\Processor(_Total)\% Processor Time' -SampleInterval 1 -MaxSamples 2).CounterSamples.CookedValue | Measure-Object -Average | Select-Object -ExpandProperty Average
+
+$cpuInfo = [ordered]@{
+    name         = $proc.Name.Trim()
+    manufacturer = $proc.Manufacturer
+    socket       = $proc.SocketDesignation
+    cores        = $proc.NumberOfCores
+    threads      = $proc.NumberOfLogicalProcessors
+    maxSpeedMHz  = $proc.MaxClockSpeed
+    currentMHz   = $proc.CurrentClockSpeed
+    l2CacheKB    = [math]::Round($proc.L2CacheSize / 1, 0)
+    l3CacheKB    = [math]::Round($proc.L3CacheSize / 1, 0)
+    loadPercent  = [math]::Round($cpuLoad, 1)
+    architecture = $proc.Architecture
+}
+
+# CPU Temperature via WMI (requires hardware vendor support)
+try {
+    $cpuTempRaw = (Get-CimInstance -Namespace "root/wmi" -ClassName "MSAcpi_ThermalZoneTemperature" -ErrorAction Stop).CurrentTemperature
+    $cpuInfo["tempCelsius"] = [math]::Round(($cpuTempRaw / 10) - 273.15, 1)
+} catch {
+    $cpuInfo["tempCelsius"] = $null
+    $cpuInfo["tempNote"]    = "WMI thermal not available - use HWiNFO for temps"
+}
+
+Write-OK "CPU: $($cpuInfo.name)"
+Write-OK "Cores/Threads: $($cpuInfo.cores)C / $($cpuInfo.threads)T"
+Write-INFO "Current Load: $($cpuInfo.loadPercent)%"
+if ($cpuInfo.tempCelsius) {
+    if ($cpuInfo.tempCelsius -gt 90)  { Write-CRIT "Temp: $($cpuInfo.tempCelsius)°C — CRITICAL" }
+    elseif ($cpuInfo.tempCelsius -gt 80) { Write-WARN "Temp: $($cpuInfo.tempCelsius)°C — High" }
+    else { Write-OK "Temp: $($cpuInfo.tempCelsius)°C" }
+}
+
+# ============================================================
+#  MODULE 3 — MEMORY
+# ============================================================
+Write-HEAD "MODULE 3: MEMORY"
+
+$ramModules = Get-CimInstance Win32_PhysicalMemory
+$os2        = Get-CimInstance Win32_OperatingSystem
+
+$ramInfo = [ordered]@{
+    totalGB       = [math]::Round($cs.TotalPhysicalMemory / 1GB, 2)
+    availableGB   = [math]::Round($os2.FreePhysicalMemory / 1MB, 2)
+    usedPercent   = [math]::Round((($cs.TotalPhysicalMemory - ($os2.FreePhysicalMemory * 1KB)) / $cs.TotalPhysicalMemory) * 100, 1)
+    slots         = $ramModules.Count
+    modules       = @()
+}
+
+foreach ($mod in $ramModules) {
+    $ramInfo.modules += [ordered]@{
+        slot         = $mod.DeviceLocator
+        capacityGB   = [math]::Round($mod.Capacity / 1GB, 0)
+        speedMHz     = $mod.ConfiguredClockSpeed
+        type         = switch($mod.SMBIOSMemoryType){ 26{"DDR4"} 34{"DDR5"} 24{"DDR3"} default{"DDR ($($mod.SMBIOSMemoryType))"} }
+        manufacturer = $mod.Manufacturer
+        partNumber   = $mod.PartNumber.Trim()
     }
 }
 
-function Write-Log {
-    param([string]$Message, [string]$Level = "INFO")
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logEntry = "[$timestamp] [$Level] $Message"
-    $logFile = "$LogPath\hackrore.log"
-    Add-Content -Path $logFile -Value $logEntry -ErrorAction SilentlyContinue
-}
+Write-OK "Total RAM: $($ramInfo.totalGB) GB"
+Write-OK "Slots populated: $($ramInfo.slots)"
+Write-INFO "Usage: $($ramInfo.usedPercent)%"
+foreach ($m in $ramInfo.modules) { Write-OK "  Slot $($m.slot): $($m.capacityGB)GB $($m.type) @ $($m.speedMHz) MHz" }
 
-function Show-Banner {
-    param([string]$subtitle = "")
-    $isAdmin = Test-IsAdmin
-    $adminTag = if ($isAdmin) { "[ADMIN]" } else { "[USER]" }
-    
-    Write-Host ""
-    Write-Host "======================================================================" -ForegroundColor Cyan
-    Write-Host "  HACKRORE TECHTOOLKIT - MASTER EDITION v$Script:Version $adminTag" -ForegroundColor Cyan
-    Write-Host "  $Script:Brand" -ForegroundColor Cyan
-    Write-Host "  Developer: $Script:Author" -ForegroundColor Gray
-    Write-Host "======================================================================" -ForegroundColor Cyan
-    if ($subtitle) { Write-Host "  $subtitle" -ForegroundColor Gray }
-    Write-Host ""
-}
+# ============================================================
+#  MODULE 4 — STORAGE + SMART
+# ============================================================
+Write-HEAD "MODULE 4: STORAGE"
 
-# ============================================
-# PROGRESS INDICATOR
-# ============================================
+$disks      = Get-CimInstance Win32_DiskDrive
+$diskInfo   = @()
 
-function Write-ProgressBar {
-    param([int]$Percent, [string]$Status = "Scanning...")
-    Write-Host "`r[$('=' * [math]::Floor($Percent/5))$(' ' * (20 - [math]::Floor($Percent/5)))] $Percent% $Status" -NoNewline -ForegroundColor Cyan
-}
-
-# ============================================
-# COLOR HELPERS
-# ============================================
-
-function Get-StatusColor {
-    param([string]$Status)
-    switch ($Status.ToLower()) {
-        "ok" { return "Green" }
-        "warning" { return "Yellow" }
-        "critical" { return "Red" }
-        "error" { return "Red" }
-        default { return "White" }
+foreach ($disk in $disks) {
+    $entry = [ordered]@{
+        model        = $disk.Model
+        serialNumber = $disk.SerialNumber.Trim()
+        sizeGB       = [math]::Round($disk.Size / 1GB, 0)
+        interface    = $disk.InterfaceType
+        mediaType    = $disk.MediaType
+        status       = $disk.Status
+        partitions   = $disk.Partitions
     }
-}
 
-# ============================================
-# DIAGNOSTICS ENGINE - All Modules
-# ============================================
-
-function Get-CpuDiagnostics {
-    Write-ProgressBar -Percent 10 -Status "CPU..."
-    $result = @{
-        module = "cpu"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
+    # Determine interface type more precisely
+    if ($disk.Model -match "NVMe|NVME") {
+        $entry["storageType"] = "NVMe SSD"
+    } elseif ($disk.InterfaceType -eq "SCSI" -and $disk.Model -notmatch "USB") {
+        $entry["storageType"] = "SATA SSD/HDD"
+    } elseif ($disk.InterfaceType -eq "USB") {
+        $entry["storageType"] = "USB Storage"
+    } else {
+        $entry["storageType"] = $disk.InterfaceType
     }
-    
+
+    # SMART via MSStorageDriver
     try {
-        $cpu = Get-CimInstance Win32_Processor | Select-Object -First 1
-        if ($cpu) {
-            $cpuLoad = $cpu.LoadPercentage
-            $result.data = @{
-                name = $cpu.Name
-                cores = $cpu.NumberOfCores
-                threads = $cpu.NumberOfLogicalProcessors
-                speedGHz = [math]::Round($cpu.MaxClockSpeed / 1000, 2)
-                loadPercent = $cpuLoad
-            }
-            
-            if ($cpuLoad -gt 90) {
-                $result.status = "critical"
-                $result.issues += @{ severity = "critical"; message = "CPU usage is critically high at $cpuLoad%" }
-            }
-            elseif ($cpuLoad -gt 70) {
-                $result.status = "warning"
-                $result.issues += @{ severity = "warning"; message = "CPU usage is elevated at $cpuLoad%" }
-            }
-            else { $result.status = "ok" }
-        }
-        else {
-            $result.status = "error"
-            $result.issues += @{ severity = "error"; message = "Could not detect CPU" }
-        }
-    }
-    catch {
-        $result.status = "error"
-        $result.issues += @{ severity = "error"; message = "Error: $_" }
-    }
-    return $result
-}
-
-function Get-RamDiagnostics {
-    Write-ProgressBar -Percent 20 -Status "RAM..."
-    $result = @{
-        module = "ram"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
-    }
-    
-    try {
-        $cs = Get-CimInstance Win32_ComputerSystem
-        $os = Get-CimInstance Win32_OperatingSystem
-        
-        $totalGB = [math]::Round($cs.TotalPhysicalMemory / 1GB, 2)
-        $freeGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
-        $usedGB = [math]::Round($totalGB - $freeGB, 2)
-        $usedPercent = [math]::Round(($usedGB / $totalGB) * 100, 1)
-        
-        $result.data = @{ totalGB = $totalGB; usedGB = $usedGB; freeGB = $freeGB; usagePercent = $usedPercent }
-        
-        if ($usedPercent -gt 90) {
-            $result.status = "critical"
-            $result.issues += @{ severity = "critical"; message = "Memory usage critical: $usedPercent%" }
-            $result.recommendations += "Close applications or upgrade RAM immediately"
-        }
-        elseif ($usedPercent -gt 80) {
-            $result.status = "warning"
-            $result.issues += @{ severity = "warning"; message = "Memory usage high: $usedPercent%" }
-        }
-        else { $result.status = "ok" }
-    }
-    catch {
-        $result.status = "error"
-        $result.issues += @{ severity = "error"; message = "Error: $_" }
-    }
-    return $result
-}
-
-function Get-StorageDiagnostics {
-    Write-ProgressBar -Percent 30 -Status "Storage..."
-    $result = @{
-        module = "storage"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
-    }
-    
-    try {
-        $disks = @()
-        foreach ($disk in (Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3")) {
-            if ($disk.Size -gt 0) {
-                $totalGB = [math]::Round($disk.Size / 1GB, 2)
-                $freeGB = [math]::Round($disk.FreeSpace / 1GB, 2)
-                $usedPercent = [math]::Round((($disk.Size - $disk.FreeSpace) / $disk.Size) * 100, 1)
-                
-                $disks += @{ drive = $disk.DeviceID; totalGB = $totalGB; freeGB = $freeGB; usedPercent = $usedPercent }
-                
-                if ($usedPercent -gt 95) {
-                    $result.status = "critical"
-                    $result.issues += @{ severity = "critical"; message = "Drive $($disk.DeviceID) nearly full: $usedPercent%" }
-                }
-                elseif ($usedPercent -gt 85) {
-                    if ($result.status -ne "critical") { $result.status = "warning" }
-                    $result.issues += @{ severity = "warning"; message = "Drive $($disk.DeviceID) filling up: $usedPercent%" }
-                }
+        $smart = Get-CimInstance -Namespace root\wmi -ClassName MSStorageDriver_FailurePredictStatus -ErrorAction Stop
+        foreach ($s in $smart) {
+            if ($s.InstanceName -like "*$($disk.PNPDeviceID.Replace('\','_'))*" -or $smart.Count -eq 1) {
+                $entry["smartOK"]       = !$s.PredictFailure
+                $entry["smartStatus"]   = if (!$s.PredictFailure) { "Healthy" } else { "FAILURE PREDICTED" }
+                $entry["smartReason"]   = $s.Reason
+                break
             }
         }
-        $result.data = @{ drives = $disks }
-        if ($result.status -eq "unknown") { $result.status = "ok" }
+    } catch {
+        $entry["smartOK"]     = $null
+        $entry["smartStatus"] = "SMART unavailable"
     }
-    catch {
-        $result.status = "error"
-        $result.issues += @{ severity = "error"; message = "Error: $_" }
-    }
-    return $result
+
+    $diskInfo += $entry
+
+    $typeTag = $entry["storageType"]
+    if ($entry["smartOK"] -eq $false) { Write-CRIT "Disk: $($entry.model) — SMART FAILURE PREDICTED" }
+    elseif ($entry["smartOK"] -eq $true) { Write-OK "Disk: $($entry.model) [$typeTag] SMART OK" }
+    else { Write-WARN "Disk: $($entry.model) [$typeTag] SMART status unknown" }
 }
 
-function Get-GpuDiagnostics {
-    Write-ProgressBar -Percent 40 -Status "GPU..."
-    $result = @{
-        module = "gpu"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
+# Volume / partition usage
+$volumes = @()
+foreach ($vol in (Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Root })) {
+    $usedGB = [math]::Round(($vol.Used) / 1GB, 1)
+    $freeGB = [math]::Round(($vol.Free) / 1GB, 1)
+    $totalGB = $usedGB + $freeGB
+    if ($totalGB -gt 0) {
+        $pct = [math]::Round(($usedGB / $totalGB) * 100, 1)
+        $volumes += [ordered]@{ drive = $vol.Root; usedGB = $usedGB; freeGB = $freeGB; totalGB = $totalGB; usedPercent = $pct }
+        if ($pct -gt 90) { Write-CRIT "Volume $($vol.Root) at $pct% capacity" }
+        elseif ($pct -gt 75) { Write-WARN "Volume $($vol.Root) at $pct% capacity" }
+        else { Write-OK "Volume $($vol.Root): $usedGB GB used / $totalGB GB ($pct%)" }
     }
-    
-    try {
-        $gpus = @()
-        foreach ($gpu in (Get-CimInstance Win32_VideoController)) {
-            $vramMB = if ($gpu.AdapterRAM) { [math]::Round($gpu.AdapterRAM / 1MB, 0) } else { 0 }
-            $gpus += @{ name = $gpu.Name; vramMB = $vramMB; driver = $gpu.DriverVersion }
-        }
-        $result.data = @{ gpus = $gpus }
-        $result.status = if ($gpus.Count -gt 0) { "ok" } else { "warning" }
-    }
-    catch {
-        $result.status = "error"
-        $result.issues += @{ severity = "error"; message = "Error: $_" }
-    }
-    return $result
 }
 
-function Get-BatteryDiagnostics {
-    Write-ProgressBar -Percent 50 -Status "Battery..."
-    $result = @{
-        module = "battery"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
-    }
-    
-    try {
-        $bat = Get-CimInstance Win32_Battery -ErrorAction SilentlyContinue
-        if ($bat) {
-            $result.data = @{
-                present = $true
-                chargeLevel = $bat.EstimatedChargeRemaining
-                status = switch ($bat.BatteryStatus) { 1 { "Discharging" } 2 { "AC Power" } 3 { "Fully Charged" } 6 { "Charging" } default { "Unknown" } }
-            }
-            $result.status = "ok"
-        }
-        else {
-            $result.data = @{ present = $false }
-            $result.status = "ok"
-        }
-    }
-    catch {
-        $result.status = "error"
-    }
-    return $result
-}
+# ============================================================
+#  MODULE 5 — BATTERY
+# ============================================================
+Write-HEAD "MODULE 5: BATTERY"
 
-function Get-BatteryWearReport {
-    Write-ProgressBar -Percent 55 -Status "Battery Wear..."
-    $result = @{
-        module = "battery_wear"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
+$batWmi  = Get-CimInstance Win32_Battery | Select-Object -First 1
+$batInfo = $null
+
+if ($batWmi) {
+    $designCap  = $batWmi.DesignCapacity
+    $fullChgCap = $batWmi.FullChargeCapacity
+
+    $batInfo = [ordered]@{
+        name             = $batWmi.Name
+        deviceID         = $batWmi.DeviceID
+        status           = $batWmi.BatteryStatus
+        statusText       = switch($batWmi.BatteryStatus){ 1{"Discharging"} 2{"AC Connected"} 3{"Fully Charged"} 4{"Low"} 5{"Critical"} 6{"Charging"} 7{"Charging High"} 8{"Charging Low"} 9{"Charging Critical"} default{"Unknown"} }
+        chargePercent    = $batWmi.EstimatedChargeRemaining
+        runtimeMinutes   = $batWmi.EstimatedRunTime
+        designCap        = $designCap
+        fullChargeCap    = $fullChgCap
+        wearPercent      = if ($designCap -and $fullChgCap -and $designCap -gt 0) { [math]::Round((1 - ($fullChgCap / $designCap)) * 100, 1) } else { $null }
+        voltage          = [math]::Round($batWmi.DesignVoltage / 1000, 2)
     }
-    
+
+    # Battery report for cycle count (requires admin)
     try {
-        $reportPath = "$env:TEMP\battery-report.xml"
-        $null = powercfg /batteryreport /output $reportPath /xml 2>&1
-        
-        $wearPercent = 0
-        $cycleCount = 0
-        
+        $reportPath = "$env:TEMP\battery_report.xml"
+        powercfg /batteryreport /output $reportPath /xml 2>$null
         if (Test-Path $reportPath) {
-            try {
-                [xml]$xml = Get-Content $reportPath -ErrorAction SilentlyContinue
-                $battery = $xml.BatteryReport.Batteries.Battery | Select-Object -First 1
-                if ($battery) {
-                    $designCap = [int]$battery.DesignCapacity
-                    $fullCap = [int]$battery.FullChargeCapacity
-                    if ($designCap -gt 0 -and $fullCap -gt 0) {
-                        $wearPercent = [math]::Round((($designCap - $fullCap) / $designCap) * 100, 1)
-                    }
-                }
-                $cycleCount = [int]($xml.BatteryReport.Batteries.Battery.CycleCount)
-            }
-            catch {}
+            [xml]$batXml = Get-Content $reportPath
+            $batInfo["cycleCount"] = $batXml.BatteryReport.Batteries.Battery.CycleCount
+            Remove-Item $reportPath -Force
         }
-        Remove-Item $reportPath -ErrorAction SilentlyContinue
-        
-        $result.data = @{ wearPercent = $wearPercent; cycleCount = $cycleCount }
-        
-        if ($wearPercent -gt 40) {
-            $result.status = "critical"
-            $result.issues += @{ severity = "critical"; message = "Battery wear critical: $wearPercent%" }
-            $result.recommendations += "Replace battery"
-        }
-        elseif ($wearPercent -gt 20) {
-            $result.status = "warning"
-            $result.issues += @{ severity = "warning"; message = "Battery wear moderate: $wearPercent%" }
-        }
-        else { $result.status = "ok" }
+    } catch {}
+
+    Write-OK "Battery: $($batInfo.name)"
+    Write-OK "Status: $($batInfo.statusText) @ $($batInfo.chargePercent)%"
+    if ($batInfo.wearPercent) {
+        if ($batInfo.wearPercent -gt 40) { Write-CRIT "Wear Level: $($batInfo.wearPercent)% — Replace soon" }
+        elseif ($batInfo.wearPercent -gt 20) { Write-WARN "Wear Level: $($batInfo.wearPercent)%" }
+        else { Write-OK "Wear Level: $($batInfo.wearPercent)%" }
     }
-    catch {
-        $result.status = "error"
-    }
-    return $result
+} else {
+    Write-INFO "No battery detected (Desktop system)"
 }
 
-function Get-NetworkDiagnostics {
-    Write-ProgressBar -Percent 60 -Status "Network..."
-    $result = @{
-        module = "network"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
+# ============================================================
+#  MODULE 6 — GPU
+# ============================================================
+Write-HEAD "MODULE 6: DISPLAY & GPU"
+
+$gpus    = Get-CimInstance Win32_VideoController
+$gpuInfo = @()
+
+foreach ($gpu in $gpus) {
+    $entry = [ordered]@{
+        name            = $gpu.Name
+        driverVersion   = $gpu.DriverVersion
+        driverDate      = $gpu.DriverDate
+        vramMB          = [math]::Round($gpu.AdapterRAM / 1MB, 0)
+        resolution      = "$($gpu.CurrentHorizontalResolution)x$($gpu.CurrentVerticalResolution)"
+        refreshRate     = $gpu.CurrentRefreshRate
+        status          = $gpu.Status
+        driverStatus    = $gpu.ConfigManagerErrorCode
     }
-    
-    try {
-        $adapters = @()
-        foreach ($nic in (Get-CimInstance Win32_NetworkAdapter -Filter "PhysicalAdapter=True")) {
-            $adapters += @{ name = $nic.Name; mac = $nic.MACAddress; status = $nic.NetConnectionStatus }
-        }
-        $result.data = @{ adapters = $adapters }
-        
-        try {
-            $ping = Test-Connection -ComputerName 8.8.8.8 -Count 1 -Quiet -ErrorAction SilentlyContinue
-            $result.status = if ($ping) { "ok" } else { "warning" }
-            if (-not $ping) { $result.issues += @{ severity = "warning"; message = "No internet connectivity" } }
-        }
-        catch {
-            $result.status = "warning"
-        }
-    }
-    catch {
-        $result.status = "error"
-    }
-    return $result
+    $gpuInfo += $entry
+    Write-OK "GPU: $($entry.name)"
+    if ($entry.driverStatus -ne 0) { Write-WARN "GPU driver error code: $($entry.driverStatus)" }
 }
 
-function Get-ThermalDiagnostics {
-    Write-ProgressBar -Percent 70 -Status "Thermal..."
-    $result = @{
-        module = "thermal"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
-    }
-    
-    try {
-        $temp = Get-WmiObject MSAcpi_ThermalZoneTemperature -Namespace "root/wmi" -ErrorAction SilentlyContinue | Select-Object -First 1
-        if ($temp) {
-            $tempC = [math]::Round(($temp.CurrentTemperature - 2732) / 10, 0)
-            $result.data = @{ temperature = $tempC; unit = "C" }
-            
-            if ($tempC -gt 90) {
-                $result.status = "critical"
-                $result.issues += @{ severity = "critical"; message = "CPU temperature critical: ${tempC}C" }
-                $result.recommendations += "Clean fans and replace thermal paste"
-            }
-            elseif ($tempC -gt 80) {
-                $result.status = "warning"
-                $result.issues += @{ severity = "warning"; message = "CPU temperature high: ${tempC}C" }
-            }
-            else { $result.status = "ok" }
-        }
-        else {
-            $result.data = @{ note = "Temperature sensors not accessible" }
-            $result.status = "ok"
-        }
-    }
-    catch {
-        $result.status = "ok"
-        $result.data = @{ note = "Not available" }
-    }
-    return $result
+# ============================================================
+#  MODULE 7 — NETWORK & BLUETOOTH
+# ============================================================
+Write-HEAD "MODULE 7: NETWORK"
+
+$netAdapters = Get-CimInstance Win32_NetworkAdapter | Where-Object { $_.NetEnabled -ne $null }
+$netConfig   = Get-CimInstance Win32_NetworkAdapterConfiguration | Where-Object { $_.IPAddress -ne $null }
+
+$netInfo = [ordered]@{
+    adapters = @()
+    ipv4     = ($netConfig | Where-Object { $_.IPAddress -match '\d+\.\d+\.\d+\.\d+' } | Select-Object -First 1).IPAddress[0]
+    dns      = ($netConfig | Select-Object -First 1).DNSServerSearchOrder -join ", "
 }
 
-function Get-DriverDiagnostics {
-    Write-ProgressBar -Percent 80 -Status "Drivers..."
-    $result = @{
-        module = "drivers"
-        status = "unknown"
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        data = @{}
-        issues = @()
-        recommendations = @()
+foreach ($a in $netAdapters | Select-Object -First 6) {
+    $netInfo.adapters += [ordered]@{
+        name    = $a.Name
+        type    = $a.AdapterType
+        mac     = $a.MACAddress
+        speed   = if ($a.Speed) { "$([math]::Round($a.Speed/1MB,0)) Mbps" } else { "N/A" }
+        enabled = $a.NetEnabled
     }
-    
-    try {
-        $problemDevices = @(Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object { $_.Status -ne "OK" })
-        $result.data = @{ problemCount = $problemDevices.Count }
-    }
-    catch {
-        Write-Host "FAILED" -ForegroundColor Red
-    }
-    
-    # GPU
-    Write-Host "  [GPU] " -NoNewline -ForegroundColor Gray
-    try {
-        $gpuResult = Get-GpuDiagnostics
-        $results.diagnostics["gpu"] = $gpuResult
-        $totalScore += Get-HealthScore $gpuResult.status
-        $moduleCount++
-        Write-Host "OK" -ForegroundColor Green
-    }
-    catch {
-        Write-Host "FAILED" -ForegroundColor Red
-    }
-    
-    # Battery
-    Write-Host "  [Battery] " -NoNewline -ForegroundColor Gray
-    try {
-        $batteryResult = Get-BatteryDiagnostics
-        $results.diagnostics["battery"] = $batteryResult
-        $totalScore += Get-HealthScore $batteryResult.status
-        $moduleCount++
-        Write-Host "OK" -ForegroundColor Green
-    }
-    catch {
-        Write-Host "FAILED" -ForegroundColor Red
-    }
-    
-    # Network
-    Write-Host "  [Network] " -NoNewline -ForegroundColor Gray
-    try {
-        $networkResult = Get-NetworkDiagnostics
-        $results.diagnostics["network"] = $networkResult
-        $totalScore += Get-HealthScore $networkResult.status
-        $moduleCount++
-        Write-Host "OK" -ForegroundColor Green
-    }
-    catch {
-        Write-Host "FAILED" -ForegroundColor Red
-    }
-    
-    # Calculate overall health score
-    if ($moduleCount -gt 0) {
-        $results.healthScore = [math]::Round($totalScore / $moduleCount, 0)
-    }
-    
-    # Collect all issues and recommendations
-    foreach ($mod in $results.diagnostics.Values) {
-        if ($mod.issues) {
-            $mod.issues | ForEach-Object { $results.issues += $_ }
-        }
-        if ($mod.recommendations) {
-            $mod.recommendations | ForEach-Object { $results.recommendations += $_ }
-        }
-    }
-    
-    Write-Log "Diagnostics complete. Health score: $($results.healthScore)%"
-    
-    return $results
+    if ($a.NetEnabled) { Write-OK "Adapter: $($a.Name)" }
 }
 
-function Get-HealthScore {
-    param([string]$Status)
-    switch ($Status) {
-        "ok" { return 100 }
-        "warning" { return 70 }
-        "critical" { return 40 }
-        "error" { return 20 }
-        default { return 50 }
+# Bluetooth
+$btAdapter = Get-PnpDevice | Where-Object { $_.Class -eq "Bluetooth" -and $_.Status -eq "OK" } | Select-Object -First 1
+$netInfo["bluetooth"] = if ($btAdapter) { @{ found = $true; name = $btAdapter.FriendlyName; status = "OK" } }
+                        else { @{ found = $false; name = "Not found / Error" } }
+
+if ($btAdapter) { Write-OK "Bluetooth: $($btAdapter.FriendlyName)" }
+else { Write-WARN "Bluetooth: Not detected or driver error" }
+
+# ============================================================
+#  MODULE 8 — DEVICE MANAGER (PnP Errors)
+# ============================================================
+Write-HEAD "MODULE 8: DEVICE MANAGER"
+
+$allDevices = Get-PnpDevice
+$devInfo    = [ordered]@{
+    errors   = @()
+    warnings = @()
+    disabled = @()
+    ok       = @()
+}
+
+foreach ($dev in $allDevices) {
+    $entry = [ordered]@{
+        name     = $dev.FriendlyName
+        class    = $dev.Class
+        status   = $dev.Status
+        code     = $dev.ConfigManagerErrorCode
+        deviceID = $dev.InstanceId
+    }
+    switch ($dev.Status) {
+        "Error"    { $devInfo.errors   += $entry }
+        "Degraded" { $devInfo.warnings += $entry }
+        "Unknown"  { $devInfo.warnings += $entry }
+        "Disabled" { $devInfo.disabled += $entry }
+        "OK"       { $devInfo.ok       += $entry }
     }
 }
 
-# ============================================
-# CONSOLE OUTPUT
-# ============================================
+Write-OK "Total devices: $($allDevices.Count)"
+if ($devInfo.errors.Count -gt 0)   { Write-CRIT "Devices with errors: $($devInfo.errors.Count)" }
+if ($devInfo.warnings.Count -gt 0) { Write-WARN "Devices with warnings: $($devInfo.warnings.Count)" }
+if ($devInfo.disabled.Count -gt 0) { Write-WARN "Disabled devices: $($devInfo.disabled.Count)" }
+foreach ($e in $devInfo.errors) { Write-CRIT "  Error: $($e.name) [Code $($e.code)]" }
 
-function Show-ConsoleDiagnostics {
-    param([hashtable]$Results)
-    
-    Write-Host ""
-    Write-Host "======================================================================" -ForegroundColor Cyan
-    Write-Host "                    HACKRORE DIAGNOSTICS RESULTS" -ForegroundColor Cyan
-    Write-Host "======================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    
-    # System Info
-    $comp = $Results.computer
-    Write-Host " SYSTEM INFORMATION" -ForegroundColor White
-    Write-Host " ----------------------------------------------------------------------"
-    Write-Host " Manufacturer : " -NoNewline -ForegroundColor Gray
-    Write-Host $comp.manufacturer -ForegroundColor White
-    Write-Host " Model       : " -NoNewline -ForegroundColor Gray
-    Write-Host $comp.model -ForegroundColor White
-    Write-Host " Type        : " -NoNewline -ForegroundColor Gray
-    Write-Host $comp.formFactor -ForegroundColor White
-    Write-Host " Serial      : " -NoNewline -ForegroundColor Gray
-    Write-Host $comp.serial -ForegroundColor White
-    Write-Host " OS          : " -NoNewline -ForegroundColor Gray
-    Write-Host $comp.os -ForegroundColor White
-    Write-Host " Uptime      : " -NoNewline -ForegroundColor Gray
-    Write-Host $comp.uptime -ForegroundColor White
-    Write-Host ""
-    
-    # Hardware Summary
-    if ($Results.diagnostics.cpu) {
-        $cpu = $Results.diagnostics.cpu.data
-        Write-Host " CPU          : " -NoNewline -ForegroundColor Gray
-        Write-Host "$($cpu.name) ($($cpu.cores) cores)" -ForegroundColor White
-        Write-Host " CPU Usage    : " -NoNewline -ForegroundColor Gray
-        Write-Host "$($cpu.loadPercent)%" -ForegroundColor White
+# ============================================================
+#  MODULE 9 — EVENT VIEWER LOGS
+# ============================================================
+Write-HEAD "MODULE 9: EVENT VIEWER"
+
+$since      = (Get-Date).AddDays(-7)
+$evtInfo    = [ordered]@{ critical = @(); errors = @(); warnings = @() }
+
+try {
+    $critEvts = Get-WinEvent -FilterHashtable @{ LogName='System'; Level=1; StartTime=$since } -MaxEvents 10 -ErrorAction Stop
+    foreach ($e in $critEvts) {
+        $evtInfo.critical += [ordered]@{ time = $e.TimeCreated.ToString("yyyy-MM-dd HH:mm"); source = $e.ProviderName; message = $e.Message.Substring(0,[Math]::Min(150,$e.Message.Length)) }
     }
-    
-    if ($Results.diagnostics.ram) {
-        $ram = $Results.diagnostics.ram.data
-        Write-Host " RAM          : " -NoNewline -ForegroundColor Gray
-        Write-Host "$($ram.usedGB) GB / $($ram.totalGB) GB ($($ram.usagePercent)%)" -ForegroundColor White
+} catch {}
+
+try {
+    $errEvts = Get-WinEvent -FilterHashtable @{ LogName='System'; Level=2; StartTime=$since } -MaxEvents 15 -ErrorAction Stop
+    foreach ($e in $errEvts) {
+        $evtInfo.errors += [ordered]@{ time = $e.TimeCreated.ToString("yyyy-MM-dd HH:mm"); source = $e.ProviderName; message = $e.Message.Substring(0,[Math]::Min(150,$e.Message.Length)) }
     }
-    
-    if ($Results.diagnostics.storage) {
-        $storage = $Results.diagnostics.storage.data
-        if ($storage.drives) {
-            foreach ($d in $storage.drives) {
-                Write-Host " Disk $($d.drive)    : " -NoNewline -ForegroundColor Gray
-                Write-Host "$([math]::Round($d.freeGB,1)) GB free of $([math]::Round($d.totalGB,1)) GB" -ForegroundColor White
-            }
-        }
+} catch {}
+
+try {
+    $warnEvts = Get-WinEvent -FilterHashtable @{ LogName='System'; Level=3; StartTime=$since } -MaxEvents 10 -ErrorAction Stop
+    foreach ($e in $warnEvts) {
+        $evtInfo.warnings += [ordered]@{ time = $e.TimeCreated.ToString("yyyy-MM-dd HH:mm"); source = $e.ProviderName; message = $e.Message.Substring(0,[Math]::Min(150,$e.Message.Length)) }
     }
-    
-    if ($Results.diagnostics.battery -and $Results.diagnostics.battery.data.present) {
-        $bat = $Results.diagnostics.battery.data
-        Write-Host " Battery      : " -NoNewline -ForegroundColor Gray
-        Write-Host "$($bat.chargeLevel)% ($($bat.status))" -ForegroundColor White
+} catch {}
+
+Write-OK "Event log scanned (last 7 days)"
+if ($evtInfo.critical.Count -gt 0) { Write-CRIT "Critical events: $($evtInfo.critical.Count)" }
+if ($evtInfo.errors.Count -gt 0)   { Write-WARN "Error events: $($evtInfo.errors.Count)" }
+
+# ============================================================
+#  MODULE 10 — STARTUP & PERFORMANCE
+# ============================================================
+Write-HEAD "MODULE 10: STARTUP & PERFORMANCE"
+
+$startupItems = @()
+# HKCU Run
+$hkcuRun = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -ErrorAction SilentlyContinue
+if ($hkcuRun) {
+    foreach ($prop in $hkcuRun.PSObject.Properties | Where-Object { $_.Name -notlike "PS*" }) {
+        $startupItems += [ordered]@{ name = $prop.Name; location = "HKCU Run"; path = $prop.Value }
     }
-    
-    Write-Host ""
-    
-    # Health Score
-    $scoreColor = if ($Results.healthScore -gt 70) { "Green" } elseif ($Results.healthScore -gt 40) { "Yellow" } else { "Red" }
-    Write-Host " SYSTEM HEALTH SCORE" -ForegroundColor White
-    Write-Host " ----------------------------------------------------------------------"
-    Write-Host " Overall Score: " -NoNewline -ForegroundColor White
-    Write-Host "$($Results.healthScore)%" -ForegroundColor $scoreColor
-    Write-Host ""
-    
-    # Issues
-    if ($Results.issues.Count -gt 0) {
-        Write-Host " ISSUES DETECTED" -ForegroundColor White
-        Write-Host " ----------------------------------------------------------------------"
-        foreach ($issue in $Results.issues) {
-            $sevColor = switch ($issue.severity) { "critical" { "Red" } "warning" { "Yellow" } default { "Cyan" } }
-            Write-Host " [!] [$($issue.severity.ToUpper())] $($issue.message)" -ForegroundColor $sevColor
-        }
-        Write-Host ""
+}
+# HKLM Run
+$hklmRun = Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -ErrorAction SilentlyContinue
+if ($hklmRun) {
+    foreach ($prop in $hklmRun.PSObject.Properties | Where-Object { $_.Name -notlike "PS*" }) {
+        $startupItems += [ordered]@{ name = $prop.Name; location = "HKLM Run"; path = $prop.Value }
     }
-    
-    # Recommendations
-    if ($Results.recommendations.Count -gt 0) {
-        Write-Host " RECOMMENDATIONS" -ForegroundColor White
-        Write-Host " ----------------------------------------------------------------------"
-        $recCount = 1
-        foreach ($rec in $Results.recommendations | Select-Object -Unique | Select-Object -First 5) {
-            Write-Host " $recCount. $rec" -ForegroundColor Gray
-            $recCount++
-        }
-        Write-Host ""
-    }
-    
-    Write-Host "======================================================================" -ForegroundColor Green
-    Write-Host " Diagnostics Complete | Version $($Results.version)" -ForegroundColor Green
-    Write-Host "======================================================================" -ForegroundColor Green
+}
+# Startup folder
+$startupFolder = Get-ChildItem "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup" -ErrorAction SilentlyContinue
+foreach ($f in $startupFolder) {
+    $startupItems += [ordered]@{ name = $f.BaseName; location = "Startup Folder"; path = $f.FullName }
 }
 
-# ============================================
-# HTML REPORT
-# ============================================
+Write-INFO "Startup items: $($startupItems.Count)"
+if ($startupItems.Count -gt 15) { Write-WARN "High startup count ($($startupItems.Count)) — may slow boot" }
 
-function New-HTMLReport {
-    param([hashtable]$Results, [string]$Path)
-    
-    $comp = $Results.computer
-    
-    $html = @"
+# Windows Update Pending
+$wuService  = Get-Service -Name wuauserv -ErrorAction SilentlyContinue
+$updateInfo = [ordered]@{ serviceRunning = ($wuService.Status -eq "Running") }
+try {
+    $wuSession = New-Object -ComObject Microsoft.Update.Session
+    $searcher  = $wuSession.CreateUpdateSearcher()
+    $result    = $searcher.Search("IsInstalled=0 and Type='Software'")
+    $updateInfo["pendingCount"] = $result.Updates.Count
+    if ($result.Updates.Count -gt 0) { Write-WARN "Pending Windows Updates: $($result.Updates.Count)" }
+    else { Write-OK "Windows Updates: Up to date" }
+} catch {
+    $updateInfo["pendingCount"] = $null
+    $updateInfo["note"]         = "COM update search unavailable"
+}
+
+# ============================================================
+#  SCORING ENGINE
+# ============================================================
+Write-HEAD "CALCULATING SYSTEM HEALTH SCORE"
+
+$score       = 100
+$issues      = @()
+$critIssues  = @()
+
+# CPU temp
+if ($cpuInfo.tempCelsius -gt 90)  { $score -= 20; $critIssues += "CPU temperature critical ($($cpuInfo.tempCelsius)°C)" }
+elseif ($cpuInfo.tempCelsius -gt 80) { $score -= 10; $issues += "CPU temperature high ($($cpuInfo.tempCelsius)°C)" }
+
+# RAM usage
+if ($ramInfo.usedPercent -gt 90) { $score -= 10; $issues += "RAM usage critical ($($ramInfo.usedPercent)%)" }
+elseif ($ramInfo.usedPercent -gt 75) { $score -= 5; $issues += "RAM usage high ($($ramInfo.usedPercent)%)" }
+
+# Disk SMART
+foreach ($d in $diskInfo) {
+    if ($d.smartOK -eq $false) { $score -= 30; $critIssues += "SMART failure predicted: $($d.model)" }
+}
+
+# Battery wear
+if ($batInfo -and $batInfo.wearPercent) {
+    if ($batInfo.wearPercent -gt 40) { $score -= 15; $issues += "Battery wear high ($($batInfo.wearPercent)%)" }
+    elseif ($batInfo.wearPercent -gt 25) { $score -= 7; $issues += "Battery wear moderate ($($batInfo.wearPercent)%)" }
+}
+
+# Device errors
+$score -= ($devInfo.errors.Count * 5)
+foreach ($e in $devInfo.errors) { $issues += "Device error: $($e.name)" }
+
+# Event log
+$score -= ($evtInfo.critical.Count * 5)
+foreach ($e in $evtInfo.critical) { $critIssues += "Critical event: $($e.source)" }
+
+# Windows activation
+if ($activationStatus -ne "Activated") { $score -= 20; $critIssues += "Windows not activated" }
+
+# Startup overload
+if ($startupItems.Count -gt 20) { $score -= 5; $issues += "Too many startup items ($($startupItems.Count))" }
+
+# Updates
+if ($updateInfo.pendingCount -gt 10) { $score -= 5; $issues += "Many pending updates ($($updateInfo.pendingCount))" }
+
+$score = [math]::Max(0, [math]::Min(100, $score))
+$grade = if ($score -ge 85) { "GOOD" } elseif ($score -ge 65) { "FAIR" } elseif ($score -ge 45) { "POOR" } else { "CRITICAL" }
+$verdict = if ($critIssues.Count -eq 0 -and $score -ge 70) { "PASS" } elseif ($critIssues.Count -le 1 -and $score -ge 50) { "CONDITIONAL PASS" } else { "FAIL" }
+
+Write-Host "`n  SYSTEM SCORE: $score% ($grade)  →  VERDICT: $verdict`n" -ForegroundColor $(if($score -ge 70){"Green"} elseif($score -ge 50){"Yellow"} else{"Red"})
+
+# ============================================================
+#  ASSEMBLE JSON REPORT
+# ============================================================
+$report = [ordered]@{
+    meta = [ordered]@{
+        toolName      = "HackRore TechToolkit"
+        version       = "2.4"
+        scanTime      = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+        scanMode      = $Mode
+        scannerHost   = $env:COMPUTERNAME
+        scannerUser   = $env:USERNAME
+    }
+    score = [ordered]@{
+        value   = $score
+        grade   = $grade
+        verdict = $verdict
+    }
+    system      = $systemInfo
+    cpu         = $cpuInfo
+    ram         = $ramInfo
+    storage     = [ordered]@{ disks = $diskInfo; volumes = $volumes }
+    battery     = $batInfo
+    gpu         = $gpuInfo
+    network     = $netInfo
+    devices     = $devInfo
+    eventLog    = $evtInfo
+    startup     = [ordered]@{ items = $startupItems; count = $startupItems.Count }
+    updates     = $updateInfo
+    diagnosis   = [ordered]@{
+        criticalIssues  = $critIssues
+        warnings        = $issues
+        totalIssues     = $critIssues.Count + $issues.Count
+    }
+}
+
+# ── Write JSON ────────────────────────────────────────────────
+$report | ConvertTo-Json -Depth 8 | Out-File -FilePath $jsonPath -Encoding UTF8
+Write-OK "JSON report saved: $jsonPath"
+
+# ── Write HTML (inline viewer) ────────────────────────────────
+if (!$NoHTML) {
+    $jsonContent = Get-Content $jsonPath -Raw
+    $htmlContent = @"
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>HackRore Diagnostics Report</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial; background: linear-gradient(135deg, #1a1a2e, #16213e); color: #e2e8f0; padding: 20px; margin: 0; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #0f172a, #1e3a5f); padding: 30px; border-radius: 16px; margin-bottom: 20px; border: 2px solid #06b6d4; }
-        .header h1 { margin: 0 0 10px 0; color: #fff; font-size: 28px; }
-        .header p { margin: 0; color: #38bdf8; }
-        .score-box { background: linear-gradient(135deg, #06b6d4, #0891b2); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .score-value { font-size: 64px; font-weight: bold; color: #fff; }
-        .score-label { color: rgba(255,255,255,0.8); font-size: 14px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px; }
-        .card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .card h3 { margin: 0 0 16px 0; color: #94a3b8; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .label { color: #94a3b8; }
-        .value { font-weight: bold; }
-        .issue { padding: 10px; border-radius: 6px; margin: 8px 0; }
-        .issue.critical { background: rgba(239,68,68,0.2); border-left: 4px solid #ef4444; color: #fca5a5; }
-        .issue.warning { background: rgba(245,158,11,0.2); border-left: 4px solid #f59e0b; color: #fcd34d; }
-        .footer { text-align: center; color: #64748b; padding: 20px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HackRore Report — $($systemInfo.model)</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#080808;color:#ccc;font-family:'Courier New',monospace;font-size:13px}
+  .header{background:#050505;border-bottom:1px solid #1a1a1a;padding:20px 30px;display:flex;align-items:center;justify-content:space-between}
+  .logo{font-size:22px;font-weight:700;color:#fff;letter-spacing:4px}
+  .logo span{color:#00ff88}
+  .sub{font-size:9px;color:#333;letter-spacing:2px;margin-top:3px}
+  .score-big{font-size:36px;font-weight:700;font-family:monospace}
+  .body{padding:24px 30px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .card{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:4px;padding:16px}
+  .card-title{font-size:9px;letter-spacing:2px;color:#444;text-transform:uppercase;margin-bottom:12px;border-bottom:1px solid #111;padding-bottom:8px}
+  .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #0d0d0d;font-size:11px}
+  .row .k{color:#444}.row .v{color:#bbb;text-align:right}
+  .badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:2px;letter-spacing:1px}
+  .ok{color:#00ff88;border:1px solid #00ff88}.warn{color:#ffbb00;border:1px solid #ffbb00}.crit{color:#ff4444;border:1px solid #ff4444}
+  .issue-list{margin-top:10px}
+  .issue{padding:6px 0;border-bottom:1px solid #0d0d0d;font-size:11px;line-height:1.5}
+  .issue.c{color:#ff6644}.issue.w{color:#ffbb00}.issue.ok{color:#00aa66}
+  .bar-wrap{margin:6px 0}.bar-label{font-size:10px;color:#555;margin-bottom:3px}
+  .bar-bg{background:#1a1a1a;height:5px;border-radius:2px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:2px;transition:width 1s}
+  .bar-val{font-size:10px;margin-top:2px}
+  .verdict-box{grid-column:1/-1;text-align:center;padding:20px;border:1px solid #1a1a1a;border-radius:4px;background:#050505}
+  .verdict-text{font-size:24px;font-weight:700;letter-spacing:4px;margin-top:8px}
+  .full{grid-column:1/-1}
+  footer{text-align:center;padding:20px;color:#222;font-size:10px;letter-spacing:2px}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>HackRore Diagnostics Report</h1>
-            <p>$($comp.manufacturer) $($comp.model) | $($comp.formFactor)</p>
-            <p style="color:#94a3b8;font-size:12px;margin-top:10px;">Serial: $($comp.serial) | $($comp.os) (Build $($comp.osBuild))</p>
-        </div>
-        
-        <div class="score-box">
-            <div class="score-value">$($Results.healthScore)%</div>
-            <div class="score-label">SYSTEM HEALTH SCORE</div>
-        </div>
-        
-        <div class="grid">
-            <div class="card">
-                <h3>System</h3>
-                <div class="row"><span class="label">Manufacturer</span><span class="value">$($comp.manufacturer)</span></div>
-                <div class="row"><span class="label">Model</span><span class="value">$($comp.model)</span></div>
-                <div class="row"><span class="label">Type</span><span class="value">$($comp.formFactor)</span></div>
-                <div class="row"><span class="label">Uptime</span><span class="value">$($comp.uptime)</span></div>
-            </div>
-"@
-    
-    # Add CPU info
-    if ($Results.diagnostics.cpu) {
-        $cpu = $Results.diagnostics.cpu.data
-        $html += @"
-            <div class="card">
-                <h3>Processor</h3>
-                <div class="row"><span class="label">CPU</span><span class="value">$($cpu.name)</span></div>
-                <div class="row"><span class="label">Cores/Threads</span><span class="value">$($cpu.cores) / $($cpu.threads)</span></div>
-                <div class="row"><span class="label">Speed</span><span class="value">$($cpu.speedGHz) GHz</span></div>
-                <div class="row"><span class="label">Usage</span><span class="value">$($cpu.loadPercent)%</span></div>
-            </div>
-"@
-    }
-    
-    # Add RAM info
-    if ($Results.diagnostics.ram) {
-        $ram = $Results.diagnostics.ram.data
-        $html += @"
-            <div class="card">
-                <h3>Memory</h3>
-                <div class="row"><span class="label">Total</span><span class="value">$($ram.totalGB) GB</span></div>
-                <div class="row"><span class="label">Used</span><span class="value">$($ram.usedGB) GB</span></div>
-                <div class="row"><span class="label">Free</span><span class="value">$($ram.freeGB) GB</span></div>
-                <div class="row"><span class="label">Usage</span><span class="value">$($ram.usagePercent)%</span></div>
-            </div>
-"@
-    }
-    
-    # Add Storage info
-    if ($Results.diagnostics.storage -and $Results.diagnostics.storage.data.drives) {
-        $html += "<div class='card'><h3>Storage</h3>"
-        foreach ($d in $Results.diagnostics.storage.data.drives) {
-            $html += "<div class='row'><span class='label'>$($d.drive)</span><span class='value'>$($d.freeGB) GB free</span></div>"
-        }
-        $html += "</div>"
-    }
-    
-    # Add Battery info
-    if ($Results.diagnostics.battery -and $Results.diagnostics.battery.data.present) {
-        $bat = $Results.diagnostics.battery.data
-        $html += @"
-            <div class="card">
-                <h3>Battery</h3>
-                <div class="row"><span class="label">Charge</span><span class="value">$($bat.chargeLevel)%</span></div>
-                <div class="row"><span class="label">Status</span><span class="value">$($bat.status)</span></div>
-            </div>
-"@
-    }
-    
-    # Add issues
-    if ($Results.issues.Count -gt 0) {
-        $html += "<div class='card'><h3>Issues</h3>"
-        foreach ($issue in $Results.issues) {
-            $cssClass = if ($issue.severity -eq "critical") { "critical" } elseif ($issue.severity -eq "warning") { "warning" } else { "" }
-            $html += "<div class='issue $cssClass'>$($issue.message)</div>"
-        }
-        $html += "</div>"
-    }
-    
-    $html += @"
-        </div>
-        <div class="footer">
-            <p>HackRore Diagnostics v$($Results.version) | Generated $($Results.timestamp)</p>
-        </div>
-    </div>
+<script>
+const REPORT = $jsonContent;
+function scoreColor(s){return s>=85?'#00ff88':s>=65?'#ffbb00':'#ff4444'}
+function bar(val,label,color){
+  const c=val>80?'#ff4444':val>60?'#ffbb00':color||'#00ff88';
+  return '<div class="bar-wrap"><div class="bar-label">'+label+'</div><div class="bar-bg"><div class="bar-fill" style="width:'+Math.min(100,val)+'%;background:'+c+'"></div></div><div class="bar-val" style="color:'+c+'">'+val+'%</div></div>';
+}
+function row(k,v){return '<div class="row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'}
+function badge(t,cls){return '<span class="badge '+cls+'">'+t+'</span>'}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const R=REPORT, s=R.score;
+  document.title='HackRore — '+R.system.model;
+
+  document.getElementById('root').innerHTML = '<div class="header"><div><div class="logo">HACK<span>RORE</span></div><div class="sub">TECHTOOLKIT v2.4 · AI-POWERED DIAGNOSTICS · '+R.meta.scanTime+'</div></div><div><div style="font-size:10px;color:#444;text-align:right;letter-spacing:2px">SYSTEM SCORE</div><div class="score-big" style="color:'+scoreColor(s.value)+'">'+s.value+'% <span style="font-size:14px">'+s.grade+'</span></div></div></div>'
+  +
+  '<div class="body">'
+  // Verdict
+  +'<div class="verdict-box"><div style="font-size:9px;color:#444;letter-spacing:2px">REFURBISHMENT VERDICT</div><div class="verdict-text" style="color:'+scoreColor(s.value)+'">'+s.verdict+'</div><div style="font-size:10px;color:#444;margin-top:8px">'+R.system.manufacturer+' '+R.system.model+' | Serial: '+R.system.serial+'</div></div>'
+  // System
+  +'<div class="card"><div class="card-title">System Identity</div>'+row('Manufacturer',R.system.manufacturer)+row('Model',R.system.model)+row('Serial',R.system.serial)+row('BIOS',R.system.biosVersion)+row('OS',R.system.osName)+row('Activation',badge(R.system.activation,R.system.activation==='Activated'?'ok':'crit'))+'</div>'
+  // CPU
+  +'<div class="card"><div class="card-title">Processor</div>'+row('Model',R.cpu.name)+row('Cores/Threads',R.cpu.cores+'C / '+R.cpu.threads+'T')+row('Speed',R.cpu.maxSpeedMHz+' MHz')+(R.cpu.tempCelsius?bar(R.cpu.tempCelsius,'CPU Temp °C','#ff8800'):'')+bar(R.cpu.loadPercent,'CPU Load %')+'</div>'
+  // RAM
+  +'<div class="card"><div class="card-title">Memory</div>'+row('Total',R.ram.totalGB+' GB')+row('Slots',R.ram.slots)+bar(R.ram.usedPercent,'RAM Usage %')+(R.ram.modules||[]).map(m=>row(m.slot,m.capacityGB+'GB '+m.type+' '+m.speedMHz+'MHz')).join('')+'</div>'
+  // Storage
+  +(R.storage.disks||[]).map(d=>'<div class="card"><div class="card-title">Storage</div>'+row('Model',d.model)+row('Type',d.storageType)+row('Size',d.sizeGB+' GB')+row('SMART',badge(d.smartStatus,d.smartOK===false?'crit':d.smartOK===true?'ok':'warn'))+'</div>').join('')
+  // Battery
+  +(R.battery?'<div class="card"><div class="card-title">Battery</div>'+row('Name',R.battery.name)+row('Status',R.battery.statusText)+row('Charge',R.battery.chargePercent+'%')+(R.battery.wearPercent!==null?bar(R.battery.wearPercent,'Wear %','#00aaff'):'')+(R.battery.cycleCount?row('Cycles',R.battery.cycleCount):'')+'</div>':'')
+  // Devices
+  +'<div class="card full"><div class="card-title">Device Manager</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'
+  +'<div>'+(R.devices.errors||[]).slice(0,8).map(e=>'<div class="issue c">❌ '+e.name+' ['+e.code+']</div>').join('')+'</div>'
+  +'<div>'+(R.devices.warnings||[]).slice(0,8).map(w=>'<div class="issue w">⚠ '+w.name+'</div>').join('')+'</div>'
+  +'<div>'+(R.devices.ok||[]).slice(0,8).map(o=>'<div class="issue ok" style="color:#335533">✅ '+o.name+'</div>').join('')+'</div>'
+  +'</div></div>'
+  // Issues
+  +'<div class="card"><div class="card-title">Critical Issues ('+((R.diagnosis.criticalIssues||[]).length)+')</div>'+(R.diagnosis.criticalIssues||[]).map(i=>'<div class="issue c">❌ '+i+'</div>').join('')+((R.diagnosis.criticalIssues||[]).length===0?'<div style="color:#00aa66;font-size:11px;padding:6px 0">✅ No critical issues</div>':'')+'</div>'
+  +'<div class="card"><div class="card-title">Warnings ('+((R.diagnosis.warnings||[]).length)+')</div>'+(R.diagnosis.warnings||[]).map(w=>'<div class="issue w">⚠ '+w+'</div>').join('')+((R.diagnosis.warnings||[]).length===0?'<div style="color:#00aa66;font-size:11px;padding:6px 0">✅ No warnings</div>':'')+'</div>'
+  +'<div class="card"><div class="card-title">System Info</div>'+row('Boot Time',R.system.lastBoot)+row('Uptime',R.system.uptime+' hrs')+row('Startup Items',R.startup.count)+row('Pending Updates',R.updates.pendingCount!==null?R.updates.pendingCount:'Unknown')+'</div>'
+  +'</div>'
+  +'<footer>HACKRORE TECHTOOLKIT v2.4 · Generated '+R.meta.scanTime+' · Scanned by '+R.meta.scannerUser+'@'+R.meta.scannerHost+'</footer>';
+});
+</script>
+<div id="root"></div>
 </body>
 </html>
 "@
-    
-    $html | Out-File -FilePath $Path -Encoding UTF8
-    Write-Host "Report saved: $Path" -ForegroundColor Green
+    $htmlContent | Out-File -FilePath $htmlPath -Encoding UTF8
+    Write-OK "HTML report saved: $htmlPath"
 }
 
-# ============================================
-# MAIN MENU
-# ============================================
+# ── Summary ───────────────────────────────────────────────────
+Write-Host ""
+Write-Host "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host "  SCAN COMPLETE" -ForegroundColor White
+Write-Host "  Score  : $score% ($grade)" -ForegroundColor $(if($score -ge 70){"Green"} elseif($score -ge 50){"Yellow"} else{"Red"})
+Write-Host "  Verdict: $verdict" -ForegroundColor $(if($verdict -eq "PASS"){"Green"} elseif($verdict -eq "CONDITIONAL PASS"){"Yellow"} else{"Red"})
+Write-Host "  Issues : $($critIssues.Count) critical  |  $($issues.Count) warnings" -ForegroundColor White
+Write-Host "  JSON   : $jsonPath" -ForegroundColor DarkGray
+if (!$NoHTML) { Write-Host "  HTML   : $htmlPath" -ForegroundColor DarkGray }
+Write-Host "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host ""
 
-function Show-MainMenu {
-    Write-Host ""
-    Write-Host "======================================================================" -ForegroundColor Cyan
-    Write-Host "                    HACKRORE TECHTOOLKIT v10.0" -ForegroundColor Cyan
-    Write-Host "======================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "  [1] Run Full Diagnostics       - Complete system scan" -ForegroundColor White
-    Write-Host "  [2] Generate HTML Report       - Beautiful visual report" -ForegroundColor White
-    Write-Host "  [0] Exit                        - Quit application" -ForegroundColor Gray
-    Write-Host ""
+# Open HTML report automatically
+if (!$NoHTML -and !$Silent) {
+    $open = Read-Host "  Open HTML report now? (Y/N)"
+    if ($open -eq "Y" -or $open -eq "y") { Start-Process $htmlPath }
 }
 
-# ============================================
-# MAIN ENTRY POINT
-# ============================================
-
-Initialize-Environment
-Write-Log "HackRore TechToolkit v$Script:Version started"
-
-# Handle command line arguments
-$Mode = $Mode.ToLower()
-
-if ($Console -or $Mode -eq "console" -or $Mode -eq "detect") {
-    Show-Banner "Running Diagnostics..."
-    $results = Get-SystemDiagnostics
-    Show-ConsoleDiagnostics -Results $results
-}
-elseif ($Report -or $Mode -eq "report" -or $Mode -eq "html") {
-    Show-Banner "Generating Report..."
-    $results = Get-SystemDiagnostics
-    $reportPath = "$OutputPath\HackRore_Report_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
-    New-HTMLReport -Results $results -Path $reportPath
-    if ($OpenReport) {
-        Start-Process $reportPath
-    }
-}
-else {
-    # Interactive menu mode
-    $running = $true
-    while ($running) {
-        Show-Banner
-        Show-MainMenu
-        $choice = Read-Host "Select option (0-2)"
-        
-        switch ($choice) {
-            "1" {
-                $results = Get-SystemDiagnostics
-                Show-ConsoleDiagnostics -Results $results
-                Write-Host ""
-                Read-Host "Press Enter to continue"
-            }
-            "2" {
-                $results = Get-SystemDiagnostics
-                $reportPath = "$OutputPath\HackRore_Report_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
-                New-HTMLReport -Results $results -Path $reportPath
-                Write-Host ""
-                Write-Host "Report saved to: $reportPath" -ForegroundColor Green
-                Read-Host "Press Enter to open report"
-                Start-Process $reportPath
-            }
-            "0" {
-                Write-Host "Goodbye!" -ForegroundColor Cyan
-                Write-Log "HackRore TechToolkit closed"
-                $running = $false
-            }
-        }
-    }
-}
-
-Write-Log "HackRore TechToolkit ended"
-
+# Return report object for pipeline use
+return $report
