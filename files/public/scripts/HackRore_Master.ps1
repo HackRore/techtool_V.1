@@ -1,4 +1,4 @@
-Copy-Item HackRore_Master.ps1 files/public/scripts/HackRore_Master.ps1
+
 
 # ============================================================
 #  HackRore TechToolkit - Master Scanning Engine
