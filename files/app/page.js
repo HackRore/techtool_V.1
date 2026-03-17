@@ -17,7 +17,7 @@ const TOP_FIXES = [
   { title: 'Battery drains too fast',   cat: 'Battery',     color: '#EA580C', bg: '#FFF7ED' },
   { title: 'USB port not detecting',    cat: 'USB',         color: '#D97706', bg: '#FFFBEB' },
   { title: 'Laptop overheating',        cat: 'Overheating', color: '#DC2626', bg: '#FEF2F2' },
-  { title: "Windows won't boot",        cat: 'Boot',        color: '#DC2626', bg: '#FEF2F2' },
+  { title: "Windows will not boot",        cat: 'Boot',        color: '#DC2626', bg: '#FEF2F2' },
   { title: 'No sound from speakers',    cat: 'Audio',       color: '#D97706', bg: '#FFFBEB' },
 ]
 

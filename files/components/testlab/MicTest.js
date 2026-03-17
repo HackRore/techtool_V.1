@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 export default function MicTest({ onResult }) {
   const [status, setStatus]   = useState('idle')
@@ -54,23 +54,22 @@ export default function MicTest({ onResult }) {
     animRef.current = requestAnimationFrame(tick)
   }
 
-  const stop = useCallback(() => {
+  const stop = () => {
     cancelAnimationFrame(animRef.current)
     streamRef.current?.getTracks().forEach(t => t.stop())
     audioCtxRef.current?.close()
-    streamRef.current = null
-    audioCtxRef.current = null
-    analyserRef.current = null
-    setStatus('idle')
-    setLevel(0)
-    setPeak(0)
+    streamRef.current = null; audioCtxRef.current = null; analyserRef.current = null
+    setStatus('idle'); setLevel(0); setPeak(0)
     setHistory(Array(60).fill(0))
     onResult?.('idle')
-  }, [])
+  }
 
-  useEffect(() => () => {
-    stop()
-  }, [stop])
+useEffect(() => {
+    return () => {
+      stop()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const bars = Array(30).fill(0).map((_, i) => history[history.length - 30 + i] || 0)
 
@@ -111,7 +110,7 @@ export default function MicTest({ onResult }) {
       {/* Frequencies */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
         {['LOW','MID','HIGH'].map((band, i) => {
-          const bandLevel = i === 0 ? history.slice(-3).reduce((a,b) => a + b, 0)/3 : i === 1 ? level : Math.max(0, level - 20)
+          const bandLevel = i === 0 ? history.slice(-3).reduce((a,b)=>a+b,0)/3 : i === 1 ? level : Math.max(0, level - 20)
           return (
             <div key={band} style={{ flex: 1 }}>
               <div className="label-tag" style={{ marginBottom: 4 }}>{band}</div>
