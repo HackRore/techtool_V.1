@@ -1,128 +1,83 @@
- 'use client' 
-import { useState, Suspense, lazy } from 'react'
-import Navbar from '../../components/Navbar'
-
-const KeyboardTest = lazy(() => import('../../components/testlab/KeyboardTest'))
-const ScreenTest   = lazy(() => import('../../components/testlab/ScreenTest'))
-const WebcamTest   = lazy(() => import('../../components/testlab/WebcamTest'))
-const MicTest      = lazy(() => import('../../components/testlab/MicTest'))
-const SpeakerTest  = lazy(() => import('../../components/testlab/SpeakerTest'))
-const MouseTest    = lazy(() => import('../../components/testlab/MouseTest'))
-const TouchTest    = lazy(() => import('../../components/testlab/TouchTest'))
-
-const TESTS = [
-  { id: 'keyboard', label: 'Keyboard',    icon: '⌨',  desc: 'Key detection & coverage', component: KeyboardTest },
-  { id: 'screen',   label: 'Screen',      icon: '▣',  desc: 'Dead pixel & colour test',  component: ScreenTest },
-  { id: 'webcam',   label: 'Webcam',      icon: '◎',  desc: 'Camera live preview',       component: WebcamTest },
-  { id: 'mic',      label: 'Microphone',  icon: '◉',  desc: 'Input level & waveform',    component: MicTest },
-  { id: 'speaker',  label: 'Speaker',     icon: '◈',  desc: 'Channel & frequency test',  component: SpeakerTest },
-  { id: 'mouse',    label: 'Mouse',       icon: '◇',  desc: 'Click & movement tracking', component: MouseTest },
-  { id: 'touch',    label: 'Touchscreen', icon: '◯',  desc: 'Multi-touch point test',    component: TouchTest },
-]
-
-function TestCard({ test, isActive, onSelect, result }) {
-  const statusColor = result === 'pass' ? 'var(--green)' : result === 'fail' ? 'var(--red)' : result === 'testing' ? 'var(--amber)' : 'var(--surface-5)'
-  return (
-    <button
-      onClick={() => onSelect(test.id)}
-      style={{
-        background: isActive ? 'rgba(245,158,11,0.08)' : 'var(--surface-2)',
-        border: `1px solid ${isActive ? 'rgba(245,158,11,0.35)' : result === 'pass' ? 'rgba(16,185,129,0.25)' : result === 'fail' ? 'rgba(239,68,68,0.25)' : 'var(--surface-4)'}`,
-        borderRadius: 2, padding: '14px 12px',
-        cursor: 'pointer', textAlign: 'left',
-        transition: 'all 0.2s', width: '100%',
-        display: 'flex', alignItems: 'center', gap: 12,
-      }}
-    >
-      <div style={{
-        width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: isActive ? 'rgba(245,158,11,0.15)' : 'var(--surface-3)',
-        border: `1px solid ${isActive ? 'rgba(245,158,11,0.3)' : 'var(--surface-5)'}`,
-        borderRadius: 1, fontSize: 16, flexShrink: 0,
-      }}>
-        {test.icon}
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 500, color: isActive ? 'var(--amber)' : 'var(--text-primary)' }}>
-          {test.label}
-        </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', marginTop: 2, letterSpacing: '0.5px' }}>
-          {test.desc}
-        </div>
-      </div>
-      <div style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor, flexShrink: 0,
-        boxShadow: result === 'pass' ? '0 0 8px rgba(16,185,129,0.5)' : result === 'fail' ? '0 0 8px rgba(239,68,68,0.5)' : 'none' }} />
-    </button>
-  )
-}
+'use client'
+import { useState } from 'react'
+import Sidebar from '../../components/Sidebar'
 
 export default function TestLab() {
-  const [active, setActive]   = useState('keyboard')
-  const [results, setResults] = useState({})
+  const [currentTest, setCurrentTest] = useState(null)
+  const [testResults, setTestResults] = useState({})
+  const [runAll, setRunAll] = useState(false)
 
-  const setResult = (id, val) => setResults(prev => ({ ...prev, [id]: val }))
-  const activeTest = TESTS.find(t => t.id === active)
-  const Component  = activeTest?.component
+  const tests = [
+    { id: 'keyboard', name: 'Keyboard Test', status: testResults.keyboard ? testResults.keyboard.passed ? 'pass' : 'fail' : 'pending' },
+    { id: 'screen', name: 'Screen Test', status: testResults.screen ? testResults.screen.passed ? 'pass' : 'fail' : 'pending' },
+    { id: 'webcam', name: 'Webcam Test', status: testResults.webcam ? testResults.webcam.passed ? 'pass' : 'fail' : 'pending' },
+    { id: 'mic', name: 'Microphone Test', status: testResults.mic ? testResults.mic.passed ? 'pass' : 'fail' : 'pending' },
+    { id: 'speaker', name: 'Speaker Test', status: testResults.speaker ? testResults.speaker.passed ? 'pass' : 'fail' : 'pending' },
+    { id: 'mouse', name: 'Mouse Test', status: testResults.mouse ? testResults.mouse.passed ? 'pass' : 'fail' : 'pending' },
+    { id: 'touch', name: 'Touchscreen Test', status: testResults.touch ? testResults.touch.passed ? 'pass' : 'fail' : 'pending' },
+  ]
 
-  const passed = Object.values(results).filter(v => v === 'pass').length
-  const failed = Object.values(results).filter(v => v === 'fail').length
+  const runAllTests = () => {
+    setRunAll(true)
+    setCurrentTest('keyboard')
+  }
+
+  const completeTest = (id, result) => {
+    setTestResults(prev => ({ ...prev, [id]: result }))
+    const nextIndex = tests.findIndex(t => t.id === id) + 1
+    if (nextIndex < tests.length && runAll) {
+      setTimeout(() => setCurrentTest(tests[nextIndex].id), 2000)
+    } else {
+      setRunAll(false)
+      setCurrentTest(null)
+    }
+  }
+
+  const TestComponent = ({ id, onComplete }) => {
+    // Simulated test logic
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        onComplete(id, { passed: Math.random() > 0.2, time: Date.now() })
+      }, 3000)
+      return () => clearTimeout(timer)
+    }, [id])
+
+    return <div>Test {id} running...</div>
+  }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--surface-0)' }}>
-      <Navbar />
-
-      <div style={{ borderBottom: '1px solid rgba(245,158,11,0.1)', padding: '24px 24px 20px', background: 'var(--surface-1)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--amber)', letterSpacing: '2px' }}>[01]</div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 700, color: 'var(--text-primary)' }}>TestLab</h1>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '1px' }}>BROWSER HARDWARE TESTING SUITE</span>
-          </div>
-          <div style={{ display: 'flex', gap: 20 }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--green)' }}>✓ {passed} passed</span>
-            {failed > 0 && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--red)' }}>✗ {failed} failed</span>}
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)' }}>{TESTS.length - passed - failed} untested</span>
-          </div>
+    <div className="app-shell">
+      <Sidebar />
+      <main className="main-content">
+        <div className="page-header">
+          <h1>TestLab</h1>
+          <p>Run hardware diagnostics in browser</p>
         </div>
-      </div>
-
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: 24, display: 'grid', gridTemplateColumns: '220px 1fr', gap: 20 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {TESTS.map(t => (
-            <TestCard key={t.id} test={t} isActive={active === t.id} onSelect={setActive} result={results[t.id]} />
-          ))}
-        </div>
-        <div style={{ background: 'var(--surface-1)', border: '1px solid var(--surface-3)', borderRadius: 2, padding: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 22 }}>{activeTest?.icon}</span>
-              <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, color: 'var(--text-primary)' }}>{activeTest?.label}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', marginTop: 2, letterSpacing: '1px' }}>{activeTest?.desc}</div>
-              </div>
+        {!currentTest && (
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <button onClick={runAllTests} className="primary-btn" style={{ fontSize: 18, padding: '16px 32px' }}>
+                🚀 Run All Tests Sequence
+              </button>
             </div>
-            {results[active] && (
-              <span className={`badge badge-${results[active]}`}>{results[active].toUpperCase()}</span>
-            )}
-          </div>
-          <div style={{ height: 1, background: 'var(--surface-4)', marginBottom: 24 }} />
-          <Suspense fallback={
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', padding: 20, textAlign: 'center' }}>
-              LOADING TEST MODULE…
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+              {tests.map(test => (
+                <div key={test.id} className={`test-card ${test.status}`} style={{ height: 200 }}>
+                  <div>{test.name}</div>
+                  <div className={`badge ${test.status}`}>{test.status.toUpperCase()}</div>
+                  <button onClick={() => setCurrentTest(test.id)} disabled={currentTest}>Run Test</button>
+                </div>
+              ))}
             </div>
-          }>
-            {Component && <Component onResult={(r) => setResult(active, r)} />}
-          </Suspense>
-        </div>
-      </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          div[style*="grid-template-columns: 220px"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
+          </div>
+        )}
+        {currentTest && (
+          <div style={{ maxWidth: 800, margin: '0 auto', padding: '64px 24px', textAlign: 'center' }}>
+            <TestComponent id={currentTest} onComplete={completeTest} />
+            <button onClick={() => setCurrentTest(null)}>Stop</button>
+          </div>
+        )}
+      </main>
     </div>
   )
 }

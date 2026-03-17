@@ -638,11 +638,24 @@ if (!$NoHTML) { Write-Host "  HTML   : $htmlPath" -ForegroundColor DarkGray }
 Write-Host "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 Write-Host ""
 
-# Open HTML report automatically
-if (!$NoHTML -and !$Silent) {
-    $open = Read-Host "  Open HTML report now? (Y/N)"
-    if ($open -eq "Y" -or $open -eq "y") { Start-Process $htmlPath }
-}
+# --- END OF SCRIPT LOGIC ---
+Write-Host "`n[+] Diagnostics Complete!" -ForegroundColor Green
+$ReportPath = "$env:USERPROFILE\Desktop\HackRore_Report.json"
 
-# Return report object for pipeline use
-return $report
+# Copy report to Desktop
+Copy-Item $jsonPath $ReportPath -Force
+
+# Check if report exists
+if (Test-Path $ReportPath) {
+    Write-Host "[+] Opening ScanLab Dashboard..." -ForegroundColor Cyan
+    
+    # We use Base64 to ensure the JSON doesn't break the URL string
+    $Bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content $ReportPath -Raw))
+    $EncodedData = [Convert]::ToBase64String($Bytes)
+    
+    # Open the browser directly to your ScanLab with the data payload
+    $TargetURL = "https://hachtool.vercel.app/scanlab?import=$EncodedData"
+    Start-Process $TargetURL
+} else {
+    Write-Error "Report file not found. Please check permissions."
+}

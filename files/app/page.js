@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import Sidebar from '../components/Sidebar'
+import CommandCenter from '../components/ui/CommandCenter'
 
 const TESTS = [
   { icon: '⌨️', label: 'Keyboard',    href: '/testlab', desc: 'Press every key and track coverage percentage in real time.', badge: 'Ready' },
@@ -36,7 +37,7 @@ export default function Home() {
         </div>
 
         {/* Metric row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 36 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 24 }}>
           {[['7', 'Browser Tests'], ['50+', 'Fix Entries'], ['21+', 'Scan Modules'], ['0', 'Installs Needed']].map(([val, label]) => (
             <div key={label} className="metric-card">
               <div className="metric-label">{label}</div>
@@ -44,6 +45,10 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* Command Center */}
+        <CommandCenter />
+        <div style={{ height: 16 }} />
 
         {/* Quick hardware tests */}
         <div style={{ marginBottom: 36 }}>

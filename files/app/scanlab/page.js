@@ -635,8 +635,33 @@ function Dashboard({ report, onBack }) {
 }
 
 /* ── Page root ───────────────────────────────── */
+import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+
 export default function ScanLab() {
+  const searchParams = useSearchParams()
   const [report, setReport] = useState(null)
+
+  useEffect(() => {
+    const importData = searchParams.get('import')
+    if (importData) {
+      try {
+        const binaryString = atob(importData)
+        const bytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i)
+        }
+        const jsonString = new TextDecoder('utf-8').decode(bytes)
+        const data = JSON.parse(jsonString)
+        if (data?.meta && data?.score) {
+          setReport(data)
+        }
+      } catch (err) {
+        console.error('Failed to load imported report:', err)
+      }
+    }
+  }, [searchParams])
+
   return (
     <div className="app-shell">
       <Sidebar />

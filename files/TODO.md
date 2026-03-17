@@ -1,47 +1,47 @@
-# HackRore TechWorkbench - UI Migration & Fixes TODO
+# HackRore TechWorkbench - UI Migration & Two-Way Bridge TODO
 
-## Current Status
+## Current Status (UI Migration)
 ✅ UI Components created (Card, ErrorBlock, Badge, Sidebar)  
 ⚠️ Lint errors fixed in progress  
 ⏳ Tailwind migration ongoing  
 🔄 Build failed (fixlab/page.js syntax)  
 
-## Approved Plan Breakdown - Step-by-Step
+## Two-Way Bridge Plan (New - Industry Standard Auto-Dashboard)
+**Goal:** Tech runs 1 PS command → script generates report → browser auto-opens ScanLab with populated dashboard. Zero manual upload.
 
-**Step 1: Fix app/scanlab/page.js (Missing Dashboard component)**  
-- Define Dashboard component using helpers (ScoreArc, Row, MiniBar, ModCard).  
-- Display: Health score, CPU/RAM/Storage/Battery/GPU/Network/BT/Errors/Thermal.  
-- Progress: [ ] Complete  
+### Breakdown Steps:
+**Step 1: ✅ Create files/components/ui/CommandCenter.jsx**
+New React component (terminal-style PS one-liner with copy button for hosted script).
 
-**Step 2: Fix app/fixlab/page.js (Parsing error line 205 - unterminated template)**  
-- Complete truncated JSX in category filter badge span.  
-- Ensure EntryCard fully closes, all imports correct.  
-- Progress: [ ] Complete  
+**Step 2: ✅ Edit files/app/page.js**  
+Import/add <CommandCenter /> to home dashboard (spacing fixed).
 
-**Step 3: Fix react/no-unescaped-entities (app/page.js, app/not-found.js)**  
-- Replace apostrophes with &apos; in text strings.  
-- Progress: [ ] Complete  
+**Step 3: ✅ Edit files/app/scanlab/page.js**  
+Add useSearchParams + useEffect: detect ?import=base64JSON → auto-decode/parse → setReport → show Dashboard.
 
-**Step 4: Fix MicTest useEffect dependency (components/testlab/MicTest.js)**  
-- Wrap stop() in useCallback or add to deps.  
-- Progress: [ ] Complete  
+**Step 4: [ ] Update HackRore_Master.ps1 (local)**  
+Replace end summary: save JSON to Desktop, base64 encode, Start-Process scanlab URL.
 
-**Step 5: Verify & Test**  
-- `npm run lint` → 0 errors  
-- `npm run build` → Success  
-- `npm run dev` → Test all pages:  
-  - / (Home)  
-  - /testlab (hardware tests)  
-  - /scanlab (JSON upload + dashboard)  
-  - /fixlab (KB search)  
-- Lighthouse audit, responsive check.  
-- Progress: [ ] Complete  
+**Step 5: [ ] Sync files/public/scripts/HackRore_Master.ps1**  
+Copy updated logic to hosted version.
 
-**Step 6: Update Migration TODO**  
-- Migrate remaining pages to Tailwind/UI components.  
-- Mark original TODO steps complete.  
-- Git commit/push.  
-- Progress: [ ] Complete  
+**Step 6: ✅ Install deps**  
+lucide-react installed, audit fix running.  
+Next: npm run lint && npm run build && npm run dev  
+- Test UI copy  
+- Test PS script → auto-browser with data  
+- Manual URL test ?import=...
 
-*Updated after each step completion.*
+## Senior Developer UI/Flow Audit (New Phase)
+
+**Current Score:** 8/10 – Solid prototype, lacks polish for production.
+
+**Priority Fixes:**
+1. **Dashboard:** CommandCenter #1 position, "How it Works" → accordion.
+2. **TestLab:** "Run All Tests" sequence + progress badges.
+3. **ScanLab:** Health ribbon + decode animation.
+4. **FixLab:** Huge search bar, terminal copy blocks.
+5. **Global:** Sidebar tech profile + API status dot.
+
+**Plan:** Update existing files with refinements.
 
