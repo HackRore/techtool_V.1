@@ -34,13 +34,14 @@ export default function TestLab() {
   }
 
   const TestComponent = ({ id, onComplete }) => {
+    const onCompleteMemo = useCallback(onComplete, [onComplete])
     // Simulated test logic
     useEffect(() => {
       const timer = setTimeout(() => {
-        onComplete(id, { passed: Math.random() > 0.2, time: Date.now() })
+        onCompleteMemo(id, { passed: Math.random() > 0.2, time: Date.now() })
       }, 3000)
       return () => clearTimeout(timer)
-    }, [id])
+    }, [id, onCompleteMemo])
 
     return <div>Test {id} running...</div>
   }

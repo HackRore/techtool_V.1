@@ -1,6 +1,56 @@
 'use client'
-import { useState, useRef, Component } from 'react'
+import { Suspense } from 'react'
+import { useState, useRef, Component, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Sidebar from '../../components/Sidebar'
+
+function ScanLabContent() {
+  const searchParams = useSearchParams()
+  const [report, setReport] = useState(null)
+
+  useEffect(() => {
+    const importData = searchParams.get('import')
+    if (importData) {
+      try {
+        const binaryString = atob(importData)
+        const bytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i)
+        }
+        const jsonString = new TextDecoder('utf-8').decode(bytes)
+        const data = JSON.parse(jsonString)
+        if (data?.meta && data?.score) {
+          setReport(data)
+        }
+      } catch (err) {
+        console.error('Failed to load imported report:', err)
+      }
+    }
+  }, [searchParams])
+
+  return (
+    // existing ScanLab return content here
+    <div className="app-shell">
+      <Sidebar />
+      <main className="main-content">
+        <ReportErrorBoundary>
+          {report
+            ? <Dashboard report={report} onBack={() => setReport(null)} />
+            : <UploadScreen onLoad={setReport} />
+          }
+        </ReportErrorBoundary>
+      </main>
+    </div>
+  )
+}
+
+export default function ScanLab() {
+  return (
+    <Suspense fallback={<div>Loading ScanLab...</div>}>
+      <ScanLabContent />
+    </Suspense>
+  )
+}
 
 /* ── Error Boundary ─────────────────────────── */
 class ReportErrorBoundary extends Component {
@@ -661,6 +711,10 @@ export default function ScanLab() {
       }
     }
   }, [searchParams])
+
+  if (searchParams.has('import')) {
+    return <div>Loading report...</div>
+  }
 
   return (
     <div className="app-shell">
