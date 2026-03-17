@@ -7,7 +7,7 @@ export default function NotFound() {
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--amber)', letterSpacing: '2px', marginBottom: 20 }}>SIGNAL LOST</div>
       <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>Page not found</div>
       <div style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: 'var(--text-muted)', marginBottom: 36, maxWidth: 360, lineHeight: 1.7 }}>
-        The page you're looking for doesn't exist. Head back to the workbench.
+doesn&apos;t exist. Head back to the workbench.
       </div>
       <Link href="/" style={{ textDecoration: 'none' }}>
         <button className="btn-amber" style={{ padding: '10px 28px' }}>← RETURN TO HOME</button>

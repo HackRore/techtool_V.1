@@ -1,17 +1,10 @@
-import { JetBrains_Mono, Syne } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 
-const jetbrainsMono = JetBrains_Mono({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-mono',
-  display: 'swap',
-})
-
-const syne = Syne({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-display',
+  variable: '--font-sans',
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 })
 
@@ -24,7 +17,7 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://hackrore.vercel.app',
+    url: 'https://hachtool.vercel.app',
     siteName: 'HackRore TechWorkbench',
     title: 'HackRore TechWorkbench — Professional Technician Platform',
     description: 'TestLab · ScanLab · FixLab. Browser hardware tests, diagnostics dashboard, and fix knowledge base.',
@@ -45,10 +38,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${syne.variable}`}>
-      <body className="noise-overlay">
+    <html lang="en" className={inter.variable}>
+      <body>
         {children}
       </body>
     </html>
   )
 }
+

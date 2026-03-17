@@ -1,0 +1,213 @@
+{
+  "meta": {
+    "version": "2.9",
+    "scanTime": "2025-01-15 14:32:07",
+    "scanMode": "full",
+    "tool": "HackRore TechWorkbench"
+  },
+  "score": {
+    "value": 72,
+    "grade": "B",
+    "verdict": "PASS — Minor Issues"
+  },
+  "system": {
+    "manufacturer": "Lenovo",
+    "model": "ThinkPad E15 Gen 4",
+    "serial": "PF3XKAB2",
+    "motherboard": "20YG0041IN",
+    "osName": "Windows 11 Home",
+    "osBuild": "22H2 (22621.2283)",
+    "biosVersion": "R22ET50W",
+    "biosDate": "2023-04-12",
+    "lastBoot": "2025-01-15 09:14:22",
+    "uptime": 5,
+    "pcType": "Laptop",
+    "activation": "Activated"
+  },
+  "cpu": {
+    "name": "AMD Ryzen 5 5625U with Radeon Graphics",
+    "cores": 6,
+    "threads": 12,
+    "maxSpeedMHz": 4300,
+    "l2CacheKB": 3072,
+    "l3CacheKB": 16384,
+    "loadPercent": 18,
+    "tempCelsius": 52,
+    "tempMethod": "WMI"
+  },
+  "ram": {
+    "totalGB": 16,
+    "availableGB": 11,
+    "usedPercent": 31,
+    "slots": "2/2",
+    "modules": [
+      { "slot": "Slot 1", "capacityGB": 8, "type": "DDR4", "speedMHz": 3200, "partNumber": "M471A1K43EB1-CWE" },
+      { "slot": "Slot 2", "capacityGB": 8, "type": "DDR4", "speedMHz": 3200, "partNumber": "M471A1K43EB1-CWE" }
+    ]
+  },
+  "storage": {
+    "disks": [
+      {
+        "model": "Samsung MZAL4512HBLU-00BL2",
+        "storageType": "NVMe SSD",
+        "interface": "NVMe",
+        "sizeGB": 512,
+        "serialNumber": "S6ESNX0T123456",
+        "smartStatus": "OK",
+        "smartOK": true,
+        "busType": "NVMe",
+        "healthStatus": "Healthy",
+        "smartAttributes": {
+          "powerOnHours": 4312,
+          "powerCycles": 891,
+          "tempCelsius": 38,
+          "reallocatedSectors": 0,
+          "pendingSectors": 0,
+          "uncorrectableErrors": 0
+        }
+      }
+    ],
+    "volumes": [
+      { "drive": "C:", "totalGB": 476, "usedGB": 198, "usedPercent": 42 }
+    ]
+  },
+  "battery": {
+    "name": "L20M3PF0",
+    "statusText": "Discharging",
+    "chargePercent": 68,
+    "voltage": 12.1,
+    "cycleCount": 247,
+    "cycleSource": "247 cycles",
+    "wearPercent": 18
+  },
+  "gpu": [
+    {
+      "name": "AMD Radeon Graphics",
+      "vramMB": 512,
+      "resolution": "1920x1080",
+      "refreshRate": 60,
+      "driverVersion": "31.0.12029.10005",
+      "driverDate": "2023-09-14",
+      "errorCode": 0
+    }
+  ],
+  "thermal": {
+    "throttlingDetected": false,
+    "perfCounterFreqPct": 94,
+    "thermalZones": [
+      { "zone": "ACPI\\ThermalZone\\TZ00", "tempC": 52 },
+      { "zone": "ACPI\\ThermalZone\\TZ01", "tempC": 48 }
+    ]
+  },
+  "network": {
+    "ipv4": "192.168.1.105",
+    "dns": "8.8.8.8, 8.8.4.4",
+    "adapters": [
+      { "name": "Realtek PCIe GbE", "enabled": true, "speed": "1 Gbps" },
+      { "name": "Intel Wi-Fi 6 AX201", "enabled": true, "speed": "867 Mbps" }
+    ]
+  },
+  "bluetooth": {
+    "adapterFound": true,
+    "adapterName": "Intel Wireless Bluetooth",
+    "adapterStatus": "OK",
+    "driverVersion": "22.220.0.3",
+    "driverDate": "2023-06-01",
+    "pairedDevices": ["Logitech MX Keys", "Sony WH-1000XM4"],
+    "connectedDevices": ["Logitech MX Keys"]
+  },
+  "wifi": {
+    "currentConnection": {
+      "ssid": "HynetTech_5G",
+      "signalPercent": 78,
+      "channel": "149",
+      "radioType": "802.11ax",
+      "rxRateMbps": 540
+    }
+  },
+  "devices": {
+    "errors": [
+      {
+        "name": "Generic PnP Monitor",
+        "code": 43,
+        "suggestedFix": "Update display driver or reconnect external monitor"
+      }
+    ]
+  },
+  "eventLog": {
+    "critical": [
+      {
+        "time": "2025-01-14 22:18:03",
+        "eventId": 41,
+        "message": "The system has rebooted without cleanly shutting down first.",
+        "resolution": "Check for power issues, overheating, or RAM errors. Run MemTest86 if recurring."
+      }
+    ]
+  },
+  "startup": {
+    "count": 11,
+    "items": [
+      { "name": "Windows Security", "location": "HKLM" },
+      { "name": "Realtek HD Audio Manager", "location": "HKLM" },
+      { "name": "Lenovo Vantage Service", "location": "HKLM" },
+      { "name": "Microsoft Teams", "location": "HKCU" },
+      { "name": "Discord", "location": "HKCU" },
+      { "name": "Spotify", "location": "HKCU" },
+      { "name": "OneDrive", "location": "HKCU" },
+      { "name": "Steam", "location": "HKCU" }
+    ]
+  },
+  "updates": {
+    "pendingCount": 3,
+    "updates": [
+      { "title": "Cumulative Update for Windows 11 (KB5031354)", "kb": "KB5031354", "severity": "Important", "sizeMB": 312 },
+      { "title": "Security Update for .NET Framework (KB5032197)", "kb": "KB5032197", "severity": "Important", "sizeMB": 48 },
+      { "title": "AMD Display Driver Update", "kb": "KB5028166", "severity": "Recommended", "sizeMB": 156 }
+    ]
+  },
+  "camera": {
+    "count": 1,
+    "devices": [
+      { "type": "Integrated Webcam", "name": "Integrated Camera", "status": "OK" }
+    ]
+  },
+  "display": {
+    "monitors": [
+      {
+        "name": "LEN40BA",
+        "manufacturer": "Lenovo",
+        "connectionType": "Internal",
+        "resolution": "1920x1080",
+        "refreshHz": 60,
+        "weekMfr": 22,
+        "yearMfr": 2022
+      }
+    ]
+  },
+  "benchmarks": {
+    "diskSeqReadMBps": 3420,
+    "diskSeqWriteMBps": 2980,
+    "cpuBenchMs": 142,
+    "ramBenchGBps": 38.4
+  },
+  "usbPorts": {
+    "summary": {
+      "usb2Hubs": 2,
+      "usb3Hubs": 2,
+      "controllerCount": 3,
+      "connectedDevices": 4,
+      "thunderbolt": false
+    }
+  },
+  "diagnosis": {
+    "criticalIssues": [
+      "1 device error detected: Generic PnP Monitor (Code 43)",
+      "Unexpected shutdown recorded (Event ID 41) — check power supply"
+    ],
+    "warnings": [
+      "3 Windows updates pending — install soon",
+      "Battery wear at 18% — still healthy, monitor annually",
+      "8 startup programs — consider disabling unused ones for faster boot"
+    ]
+  }
+}

@@ -93,6 +93,92 @@ function ScoreArc({ score, grade, verdict }) {
   )
 }
 
+// Dashboard component
+function Dashboard({ report, onBack }) {
+  if (!report || !report.meta) {
+    return (
+      <div style={{ padding: '40px 24px', textAlign: 'center' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 36, color: 'var(--surface-5)', marginBottom: 16 }}>&#x26A0;</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--text-primary)', marginBottom: 8 }}>Report data not loaded</div>
+        <button onClick={onBack} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--amber)', letterSpacing: '1.5px', border: '1px solid var(--amber)', padding: '8px 20px', borderRadius: 1, cursor: 'pointer' }}>
+          TRY AGAIN
+        </button>
+      </div>
+    )
+  }
+
+  const score = report.score || 0
+  const grade = score >= 85 ? 'A' : score >= 70 ? 'B' : score >= 50 ? 'C' : 'F'
+  const verdict = score >= 85 ? 'REFURBISHMENT READY' : score >= 70 ? 'MINOR FIXES' : score >= 50 ? 'MAJOR REPAIRS' : 'REPLACE'
+  const modules = report.modules || []
+
+  return (
+    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24, cursor: 'pointer' }} onClick={onBack}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--text-muted)' }}>&larr;</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '1.5px', color: 'var(--amber)' }}>UPLOAD NEW REPORT</span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        {/* Score Header */}
+        <div style={{ background: 'var(--surface-1)', border: '1px solid var(--surface-3)', borderRadius: 2, padding: 24 }}>
+          <ScoreArc score={score} grade={grade} verdict={verdict} />
+        </div>
+
+        {/* System Info */}
+        <ModCard title="SYSTEM OVERVIEW" accent="#06b6d4">
+          <Row label="Model" value={report.meta.model || 'N/A'} />
+          <Row label="Serial" value={report.meta.serial || 'N/A'} />
+          <Row label="Windows Build" value={report.meta.windowsBuild || 'N/A'} />
+          <Row label="BIOS Version" value={report.meta.bios || 'N/A'} />
+        </ModCard>
+
+        {/* Key Modules */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+          <ModCard title="CPU" accent="#10b981">
+            <Row label="Model" value={report.cpu?.model || 'N/A'} />
+            <Row label="Cores/Threads" value={report.cpu?.cores || 'N/A'} />
+            <MiniBar value={report.cpu?.health || 85} />
+          </ModCard>
+
+          <ModCard title="RAM" accent="#3b82f6">
+            <Row label="Total" value={report.ram?.total || 'N/A'} />
+            <Row label="Speed" value={report.ram?.speed || 'N/A'} />
+            <MiniBar value={report.ram?.health || 92} />
+          </ModCard>
+
+          <ModCard title="STORAGE" accent="#f59e0b">
+            <Row label="Model" value={report.storage?.model || 'N/A'} />
+            <Row label="Health" value={report.storage?.smart || 'N/A'} />
+            <MiniBar value={report.storage?.health || 78} />
+          </ModCard>
+
+          <ModCard title="BATTERY" accent="#ef4444">
+            <Row label="Wear Level" value={report.battery?.wear || 'N/A'} />
+            <Row label="Cycles" value={report.battery?.cycles || 'N/A'} />
+            <MiniBar value={100 - (report.battery?.wear || 0)} color="#ef4444" />
+          </ModCard>
+        </div>
+
+        {/* Errors & Thermals */}
+        {report.errors && report.errors.length > 0 && (
+          <ModCard title="CRITICAL ERRORS" accent="#ef4444">
+            {report.errors.map((err, i) => (
+              <Row key={i} label={err.module} value={err.message} />
+            ))}
+          </ModCard>
+        )}
+
+        <ModCard title="THERMAL">
+          <Row label="Max CPU Temp" value={report.thermal?.cpuMax || 'N/A'} />
+          <Row label="Max GPU Temp" value={report.thermal?.gpuMax || 'N/A'} />
+          <MiniBar value={report.thermal?.average || 70} />
+        </ModCard>
+      </div>
+    </div>
+  )
+}
+
 // UploadScreen
 function UploadScreen({ onLoad }) {
   const [dragging, setDrag] = useState(false)
@@ -129,7 +215,7 @@ function UploadScreen({ onLoad }) {
 
       <div
         onDrop={(e) => { e.preventDefault(); setDrag(false); loadJSON(e.dataTransfer.files[0]) }}
-        onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
+        onDragOver={(e) => { e.preventPropagation(); e.preventDefault(); setDrag(true) }}
         onDragLeave={() => setDrag(false)}
         onClick={() => !loading && inputRef.current?.click()}
         style={{ border: `2px dashed ${dragging ? "var(--cyan)" : "var(--surface-5)"}`, borderRadius: 2, padding: '48px 24px', textAlign: 'center', cursor: loading ? 'wait' : 'pointer', transition: 'all 0.2s', background: dragging ? 'rgba(6,182,212,0.05)' : 'var(--surface-1)' }}
@@ -179,3 +265,4 @@ export default function ScanLab() {
     </div>
   )
 }
+
