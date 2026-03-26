@@ -1,5 +1,5 @@
-import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import { Analytics } from '@vercel/analytics/react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,17 +16,17 @@ const mono = JetBrains_Mono({
 })
 
 export const metadata = {
-  title: 'HackRore TechWorkbench — Hardware Diagnostic Platform',
-  description: 'Browser hardware testing, system diagnostics, and technician fix guide.',
-  authors: [{ name: 'Ravindra Pandit Ahire', url: 'https://github.com/HackRore' }],
-  icons: { icon: '/favicon.svg' },
-  manifest: '/site.webmanifest',
+  title: "HackRore TechWorkbench",
+  description: "AI-powered technician diagnostic platform",
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   )
 }
