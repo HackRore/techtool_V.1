@@ -1,0 +1,12 @@
+{
+  "id": "new-guide-slug",
+  "slug": "new-guide-slug",
+  "title": "Troubleshooting Steps Title",
+  "category": "Software Repair",
+  "tags": ["Tag1", "Tag2"],
+  "color": "#3B82F6",
+  "bg": "#EFF6FF",
+  "relatedTools": [],
+  "featured": false,
+  "popular": false
+}

@@ -1,0 +1,120 @@
+[
+  {
+    "id": "no-display",
+    "symptoms": ["no display", "black screen", "monitor not working", "no signal"],
+    "title": "No Display / Black Screen Diagnostic",
+    "steps": [
+      {
+        "id": "power-check",
+        "question": "Is the monitor power LED on?",
+        "options": [
+          { "label": "Yes", "next": "cable-check" },
+          { "label": "No", "next": "monitor-power-fix" }
+        ]
+      },
+      {
+        "id": "cable-check",
+        "question": "Are the display cables (HDMI/DP) firmly connected to both the PC and monitor?",
+        "options": [
+          { "label": "Yes", "next": "gpu-reseat" },
+          { "label": "No", "next": "cable-fix" }
+        ]
+      },
+      {
+        "id": "gpu-reseat",
+        "question": "Does the PC have a dedicated GPU? If so, try reseating it.",
+        "options": [
+          { "label": "Done / Still no display", "next": "ram-test-call" },
+          { "label": "Fixed", "next": "resolved" }
+        ],
+        "tool": "screen"
+      },
+      {
+        "id": "ram-test-call",
+        "question": "The issue might be memory-related. Run the RAM diagnostic.",
+        "tool": "keyboard",
+        "guide": "pc-wont-turn-on",
+        "options": [
+          { "label": "Resolved", "next": "resolved" },
+          { "label": "Still failing", "next": "escalate" }
+        ]
+      },
+      {
+        "id": "monitor-power-fix",
+        "question": "Check the power cable and wall outlet. Is it working now?",
+        "options": [
+          { "label": "Yes", "next": "resolved" },
+          { "label": "No", "next": "escalate" }
+        ]
+      },
+      {
+        "id": "resolved",
+        "message": "Diagnostic Complete: Issue Resolved.",
+        "isFinal": true
+      },
+      {
+        "id": "escalate",
+        "message": "Diagnostic Complete: Potential hardware failure detected. Professional repair recommended.",
+        "isFinal": true
+      }
+    ]
+  },
+  {
+    "id": "pc-beeping",
+    "symptoms": ["beeping", "beep codes", "post codes"],
+    "title": "POST Beep Code Diagnostic",
+    "steps": [
+      {
+        "id": "beep-count",
+        "question": "How many beeps do you hear?",
+        "options": [
+          { "label": "1 Long, 2 Short", "next": "gpu-error" },
+          { "label": "3 Short", "next": "ram-error" },
+          { "label": "Continuous", "next": "power-error" }
+        ]
+      },
+      {
+        "id": "ram-error",
+        "question": "3 Short beeps indicate a Memory error. Try reseating RAM or testing each stick individually.",
+        "tool": "keyboard",
+        "options": [
+          { "label": "Fixed", "next": "resolved" },
+          { "label": "Still beeping", "next": "escalate" }
+        ]
+      },
+      {
+        "id": "resolved",
+        "message": "POST Success: System Stable.",
+        "isFinal": true
+      }
+    ]
+  },
+  {
+    "id": "slow-performance",
+    "symptoms": ["slow", "lagging", "high cpu", "freezing"],
+    "title": "Slow System Performance Diagnostic",
+    "steps": [
+      {
+        "id": "task-mgr",
+        "question": "Open Task Manager (Ctrl+Shift+Esc). Is CPU or Disk usage at 100%?",
+        "options": [
+          { "label": "Yes", "next": "high-usage" },
+          { "label": "No", "next": "temp-check" }
+        ]
+      },
+      {
+        "id": "high-usage",
+        "question": "Identify the process causing high usage. Is it a known app?",
+        "options": [
+          { "label": "Yes - Browser/App", "next": "app-fix" },
+          { "label": "No - System/Unknown", "next": "malware-scan" }
+        ]
+      },
+      {
+        "id": "resolved",
+        "message": "Performance Restored.",
+        "isFinal": true
+      }
+    ]
+  }
+]

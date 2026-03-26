@@ -113,6 +113,9 @@ export default function FixLab() {
   const [severity, setSeverity] = useState("All")
   const [openId, setOpenId]     = useState(null)
 
+  const [page, setPage] = useState(1)
+  const pageSize = 15
+
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim()
     return KB
@@ -130,6 +133,13 @@ export default function FixLab() {
       })
       .sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9))
   }, [query, category, severity])
+
+  const paged = useMemo(() => {
+    const offset = 0; // "Load More" appends, so we slice from 0 to current page * pageSize
+    return filtered.slice(0, page * pageSize);
+  }, [filtered, page])
+
+  const hasMore = paged.length < filtered.length
 
   const toggle = (id) => setOpenId(prev => prev === id ? null : id)
 
@@ -235,21 +245,34 @@ font-mono text-[9px] px-[6px] py-px rounded-[8px] text-muted
 
         {/* Entries List */}
         <div className="space-y-3">
-          {filtered.length === 0 ? (
+          {paged.length === 0 ? (
             <div className="text-center py-20 text-muted">
               <div className="font-mono text-[36px] mb-4 opacity-20">📋</div>
               <div className="font-display text-lg mb-2">No entries found</div>
               <div className="font-mono text-sm">Try adjusting filters or search terms</div>
             </div>
           ) : (
-            filtered.map(entry => (
-              <EntryCard
-                key={entry.id}
-                entry={entry}
-                isOpen={openId === entry.id}
-                onToggle={() => toggle(entry.id)}
-              />
-            ))
+            <>
+              {paged.map(entry => (
+                <EntryCard
+                  key={entry.id}
+                  entry={entry}
+                  isOpen={openId === entry.id}
+                  onToggle={() => toggle(entry.id)}
+                />
+              ))}
+              
+              {hasMore && (
+                <div className="pt-8 pb-12 flex justify-center">
+                  <button 
+                    onClick={() => setPage(p => p + 1)}
+                    className="font-mono text-[10px] tracking-[2px] bg-surface-2 border border-surface-4 px-8 py-3 rounded-[2px] text-muted hover:text-signal-green hover:border-signal-green/40 transition-all uppercase"
+                  >
+                    Load More Entries
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

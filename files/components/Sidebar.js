@@ -3,11 +3,25 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { 
+  LayoutDashboard, 
+  Terminal, 
+  Search, 
+  BookOpen, 
+  Download, 
+  Settings,
+  ShieldCheck,
+  Zap,
+  Sparkles
+} from 'lucide-react'
+
 const NAV = [
-  { href: '/',        icon: '⊞', label: 'Dashboard' },
-  { href: '/testlab', icon: '⌨', label: 'TestLab' },
-  { href: '/scanlab', icon: '◈', label: 'ScanLab' },
-  { href: '/fixlab',  icon: '◎', label: 'FixLab' },
+  { href: '/',            icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/assistant',   icon: Sparkles,        label: 'AI Assistant' },
+  { href: '/tools',       icon: Zap,             label: 'TestLab' },
+  { href: '/diagnostics', icon: Terminal,        label: 'ScanLab' },
+  { href: '/fixlab',      icon: BookOpen,        label: 'FixLab' },
+  { href: '/resources',   icon: Download,        label: 'Resources' },
 ]
 
 export default function Sidebar() {
@@ -25,25 +39,26 @@ export default function Sidebar() {
         <span className="nav-brand-name">HackRore</span>
       </div>
 
-      <div className="nav-section-label">Navigation</div>
-      {NAV.map(item => (
-        <Link key={item.href} href={item.href}
-          className={`nav-item${active(item.href) ? ' active' : ''}`}
+      <div className="nav-section-label">Main Navigation</div>
+      {NAV.map(Item => (
+        <Link key={Item.href} href={Item.href}
+          className={`nav-item${active(Item.href) ? ' active' : ''}`}
           onClick={() => setOpen(false)}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 18px' }}
         >
-          <span className="nav-item-icon">{item.icon}</span>
-          {item.label}
+          <Item.icon size={18} strokeWidth={active(Item.href) ? 2.5 : 2} />
+          <span>{Item.label}</span>
         </Link>
       ))}
 
-      <div className="nav-section-label">Quick Actions</div>
-      <Link href="/testlab" className={`nav-item${pathname.startsWith('/testlab') ? ' active' : ''}`} onClick={() => setOpen(false)}>
-        <span className="nav-item-icon">▶</span>
-        Run Full Test
+      <div className="nav-section-label">System Tools</div>
+      <Link href="/tools" className={`nav-item${pathname.startsWith('/tools') ? ' active' : ''}`} onClick={() => setOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <Zap size={18} />
+        Hardware Testbench
       </Link>
-      <Link href="/scanlab" className={`nav-item${pathname.startsWith('/scanlab') ? ' active' : ''}`} onClick={() => setOpen(false)}>
-        <span className="nav-item-icon">⬆</span>
-        Upload Scan Report
+      <Link href="/diagnostics" className={`nav-item${pathname.startsWith('/diagnostics') ? ' active' : ''}`} onClick={() => setOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <ShieldCheck size={18} />
+        System ScanLab
       </Link>
 
       <div className="nav-cta-wrap">
@@ -51,8 +66,8 @@ export default function Sidebar() {
           Ravindra Pandit Ahire<br />
           Hynet Technologies, Pune
         </div>
-        <Link href="/testlab" className="nav-cta-btn" onClick={() => setOpen(false)}>
-          ▶ Start Testing
+        <Link href="/tools" className="nav-cta-btn" onClick={() => setOpen(false)}>
+          ▶ Launch Engine
         </Link>
       </div>
     </nav>
@@ -75,7 +90,7 @@ export default function Sidebar() {
         </button>
         <div className="nav-logo-sq">HR</div>
         <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)' }}>HackRore</span>
-        <Link href="/testlab" style={{ marginLeft: 'auto', background: 'var(--blue-600)', color: 'white', border: 'none', borderRadius: 7, padding: '7px 14px', fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
+        <Link href="/tools" style={{ marginLeft: 'auto', background: 'var(--blue-600)', color: 'white', border: 'none', borderRadius: 7, padding: '7px 14px', fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
           Run Test
         </Link>
       </div>
@@ -95,16 +110,17 @@ export default function Sidebar() {
                 className={`nav-item${active(item.href) ? ' active' : ''}`}
                 onClick={() => setOpen(false)}
               >
-                <span className="nav-item-icon">{item.icon}</span>
-                {item.label}
+                <item.icon size={18} />
+                <span style={{ marginLeft: 12 }}>{item.label}</span>
               </Link>
             ))}
             <div className="nav-section-label">Quick Actions</div>
-            <Link href="/testlab" className="nav-item" onClick={() => setOpen(false)}>
-              <span className="nav-item-icon">▶</span>Run Full Test
+            <Link href="/tools" className="nav-item" onClick={() => setOpen(false)}>
+              <Zap size={18} />
+              <span style={{ marginLeft: 12 }}>Launch Testbench</span>
             </Link>
             <div className="nav-cta-wrap">
-              <Link href="/testlab" className="nav-cta-btn" onClick={() => setOpen(false)}>▶ Start Testing</Link>
+              <Link href="/tools" className="nav-cta-btn" onClick={() => setOpen(false)}>▶ Run Full Test</Link>
             </div>
           </nav>
         </>

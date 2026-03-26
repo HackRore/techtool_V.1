@@ -1,0 +1,29 @@
+[
+  {
+    "id": "hwinfo-vs-aida64",
+    "slug": "hwinfo-vs-aida64",
+    "title": "HWiNFO64 vs AIDA64",
+    "type": "diagnostic",
+    "items": ["hwinfo64", "aida64"],
+    "features": [
+      { "name": "Real-time Monitoring", "hwinfo64": "✅ Advanced", "aida64": "✅ Advanced" },
+      { "name": "Benchmarking", "hwinfo64": "❌ Limited", "aida64": "✅ Comprehensive" },
+      { "name": "OS Support", "hwinfo64": "Windows/DOS", "aida64": "Windows/Android/iOS" },
+      { "name": "License", "hwinfo64": "Freeware (Non-comm)", "aida64": "Commercial/Trial" }
+    ],
+    "verdict": "Use HWiNFO64 for free, deep sensor monitoring. Use AIDA64 for professional benchmarking and auditing."
+  },
+  {
+    "id": "crystaldisk-vs-hdsentinel",
+    "slug": "crystaldisk-vs-hdsentinel",
+    "title": "CrystalDiskInfo vs Hard Disk Sentinel",
+    "type": "storage",
+    "items": ["crystaldiskinfo", "hard-disk-sentinel"],
+    "features": [
+      { "name": "SMART Monitoring", "crystaldiskinfo": "✅ Standard", "hard-disk-sentinel": "✅ Professional" },
+      { "name": "Failure Prediction", "crystaldiskinfo": "Basic", "hard-disk-sentinel": "Advanced AI" },
+      { "name": "Surface Testing", "crystaldiskinfo": "❌ No", "hard-disk-sentinel": "✅ Yes" }
+    ],
+    "verdict": "CrystalDiskInfo is a great free quick checker. Hard Disk Sentinel is the industry standard for data recovery professionals."
+  }
+]

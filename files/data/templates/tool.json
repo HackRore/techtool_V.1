@@ -1,0 +1,15 @@
+{
+  "id": "new-tool-id",
+  "slug": "new-tool-slug",
+  "name": "Tool Display Name",
+  "category": "Hardware Diagnostics",
+  "icon": "🔧",
+  "description": "Short 1-sentence description of the tool.",
+  "tags": ["Tag1", "Tag2"],
+  "difficulty": "Easy",
+  "relatedGuides": [],
+  "featured": false,
+  "popular": false,
+  "recommended": false,
+  "usageCount": 0
+}

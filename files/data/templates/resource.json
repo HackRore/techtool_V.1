@@ -1,0 +1,13 @@
+{
+  "id": "new-resource-id",
+  "slug": "new-resource-slug",
+  "title": "Resource Name",
+  "category": "Downloads",
+  "type": "Tool",
+  "description": "Full description of the resource.",
+  "link": "https://example.com/download",
+  "tags": ["Tag1"],
+  "featured": false,
+  "popular": false,
+  "recommended": false
+}

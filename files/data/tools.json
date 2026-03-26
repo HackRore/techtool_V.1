@@ -1,0 +1,84 @@
+[
+  {
+    "id": "keyboard",
+    "slug": "keyboard-test",
+    "name": "Keyboard Test",
+    "icon": "⌨️",
+    "category": "Input Devices",
+    "description": "Press every key and track coverage percentage in real time.",
+    "tags": ["Hardware", "Input", "Diagnostics"],
+    "difficulty": "Easy",
+    "relatedGuides": ["keyboard-not-working"],
+    "featured": true,
+    "popular": true
+  },
+  {
+    "id": "screen",
+    "slug": "screen-test",
+    "name": "Screen Test",
+    "icon": "🖥",
+    "category": "Display",
+    "description": "Full-screen dead pixel and colour uniformity test.",
+    "tags": ["Hardware", "Display", "Visual"],
+    "difficulty": "Easy",
+    "relatedGuides": ["screen-flickering"],
+    "featured": true,
+    "recommended": true
+  },
+  {
+    "id": "webcam",
+    "slug": "webcam-test",
+    "name": "Webcam Test",
+    "icon": "📷",
+    "category": "Media",
+    "description": "Live camera preview with resolution and FPS detection.",
+    "tags": ["Hardware", "Camera", "Video"],
+    "difficulty": "Easy",
+    "relatedGuides": ["webcam-not-detected"]
+  },
+  {
+    "id": "mic",
+    "slug": "microphone-test",
+    "name": "Microphone Test",
+    "icon": "🎤",
+    "category": "Audio",
+    "description": "Waveform visualiser, RMS level meter and playback test.",
+    "tags": ["Hardware", "Audio", "Recording"],
+    "difficulty": "Easy",
+    "relatedGuides": ["no-sound-from-mic"]
+  },
+  {
+    "id": "speaker",
+    "slug": "speaker-test",
+    "name": "Speaker Test",
+    "icon": "🔊",
+    "category": "Audio",
+    "description": "Left/right channel test, tones and frequency sweep.",
+    "tags": ["Hardware", "Audio", "Output"],
+    "difficulty": "Easy",
+    "relatedGuides": ["no-sound-from-speakers"],
+    "popular": true
+  },
+  {
+    "id": "mouse",
+    "slug": "mouse-test",
+    "name": "Mouse Test",
+    "icon": "🖱",
+    "category": "Input Devices",
+    "description": "Track pointer movement, clicks and scroll delta.",
+    "tags": ["Hardware", "Input", "Peripherals"],
+    "difficulty": "Easy",
+    "relatedGuides": ["mouse-not-responding"]
+  },
+  {
+    "id": "touch",
+    "slug": "touchscreen-test",
+    "name": "Touchscreen Test",
+    "icon": "👆",
+    "category": "Display",
+    "description": "Multi-touch point detection with visual feedback.",
+    "tags": ["Hardware", "Display", "Input"],
+    "difficulty": "Easy",
+    "relatedGuides": ["touchscreen-not-syncing"]
+  }
+]

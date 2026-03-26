@@ -1,0 +1,64 @@
+[
+  {
+    "id": "wifi-disconnecting",
+    "slug": "wifi-keeps-disconnecting",
+    "title": "WiFi keeps disconnecting",
+    "category": "Networking",
+    "tags": ["WiFi", "Wireless", "Network"],
+    "color": "#EA580C",
+    "bg": "#FFF7ED",
+    "relatedTools": ["network-diagnostic"],
+    "popular": true
+  },
+  {
+    "id": "battery-drain",
+    "slug": "battery-drains-too-fast",
+    "title": "Battery drains too fast",
+    "category": "Power",
+    "tags": ["Battery", "Power", "Charging"],
+    "color": "#EA580C",
+    "bg": "#FFF7ED",
+    "relatedTools": ["battery-health-test"]
+  },
+  {
+    "id": "usb-not-detected",
+    "slug": "usb-port-not-detecting",
+    "title": "USB port not detecting",
+    "category": "Interfacing",
+    "tags": ["USB", "Ports", "Hardware"],
+    "color": "#D97706",
+    "bg": "#FFFBEB",
+    "relatedTools": ["usb-device-checker"]
+  },
+  {
+    "id": "overheating",
+    "slug": "laptop-overheating",
+    "title": "Laptop overheating",
+    "category": "Thermal",
+    "tags": ["CPU", "Fan", "Temperature"],
+    "color": "#DC2626",
+    "bg": "#FEF2F2",
+    "relatedTools": ["cpu-temp-monitor"],
+    "featured": true
+  },
+  {
+    "id": "wont-boot",
+    "slug": "windows-will-not-boot",
+    "title": "Windows will not boot",
+    "category": "Operating System",
+    "tags": ["Boot", "Windows", "OS"],
+    "color": "#DC2626",
+    "bg": "#FEF2F2",
+    "relatedTools": ["disk-health-checker"]
+  },
+  {
+    "id": "no-sound",
+    "slug": "no-sound-from-speakers",
+    "title": "No sound from speakers",
+    "category": "Audio",
+    "tags": ["Audio", "Sound", "Output"],
+    "color": "#D97706",
+    "bg": "#FFFBEB",
+    "relatedTools": ["speaker-test"]
+  }
+]

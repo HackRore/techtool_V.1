@@ -1,0 +1,34 @@
+[
+  {
+    "id": "win10-iso",
+    "slug": "windows-10-iso-download",
+    "title": "Windows 10 ISO (Official)",
+    "category": "Operating Systems",
+    "type": "Download",
+    "description": "Download the latest Windows 10 Media Creation Tool or ISO file.",
+    "link": "https://www.microsoft.com/software-download/windows10",
+    "tags": ["Windows", "OS", "ISO"]
+  },
+  {
+    "id": "hwinfo64",
+    "slug": "hwinfo64-diagnostic-tool",
+    "title": "HWiNFO64 (Portable)",
+    "category": "Diagnostics",
+    "type": "Tool",
+    "description": "Professional hardware information and diagnostic tool.",
+    "link": "https://www.hwinfo.com/download/",
+    "tags": ["Hardware", "Monitoring", "Portable"],
+    "popular": true,
+    "recommended": true
+  },
+  {
+    "id": "crystaldiskinfo",
+    "slug": "crystaldiskinfo-smart-tool",
+    "title": "CrystalDiskInfo",
+    "category": "Storage",
+    "type": "Tool",
+    "description": "S.M.A.R.T. utility for HDD/SSD health monitoring.",
+    "link": "https://crystalmark.info/en/software/crystaldiskinfo/",
+    "tags": ["Storage", "SSD", "SMART"]
+  }
+]
