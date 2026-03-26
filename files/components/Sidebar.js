@@ -2,135 +2,106 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
 import { 
   LayoutDashboard, 
-  Terminal, 
-  Search, 
+  Sparkles, 
+  Zap, 
+  Activity, 
   BookOpen, 
-  Download, 
-  Settings,
-  ShieldCheck,
-  Zap,
-  Sparkles
+  Scale, 
+  Menu, 
+  X,
+  ChevronRight
 } from 'lucide-react'
 
-const NAV = [
-  { href: '/',            icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/assistant',   icon: Sparkles,        label: 'AI Assistant' },
-  { href: '/tools',       icon: Zap,             label: 'TestLab' },
-  { href: '/diagnostics', icon: Terminal,        label: 'ScanLab' },
-  { href: '/fixlab',      icon: BookOpen,        label: 'FixLab' },
-  { href: '/resources',   icon: Download,        label: 'Resources' },
-]
-
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
-  const active = (href) => href === '/' ? pathname === '/' : pathname.startsWith(href)
 
-  // close on route change
-  useEffect(() => { setOpen(false) }, [pathname])
+  const navItems = [
+    { name: 'Dashboard',   href: '/',           icon: LayoutDashboard },
+    { name: 'AI Assistant', href: '/assistant', icon: Sparkles },
+    { name: 'TestLab',      href: '/tools',      icon: Zap },
+    { name: 'ScanLab',      href: '/diagnostics', icon: Activity },
+    { name: 'FixLab',       href: '/fixlab',     icon: BookOpen },
+    { name: 'Comparisons',  href: '/compare',    icon: Scale },
+  ]
 
-  const SidebarContent = () => (
-    <nav className="sidebar" style={open ? {} : undefined}>
-      <div className="nav-brand">
-        <div className="nav-logo-sq">HR</div>
-        <span className="nav-brand-name">HackRore</span>
-      </div>
-
-      <div className="nav-section-label">Main Navigation</div>
-      {NAV.map(Item => (
-        <Link key={Item.href} href={Item.href}
-          className={`nav-item${active(Item.href) ? ' active' : ''}`}
-          onClick={() => setOpen(false)}
-          style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 18px' }}
-        >
-          <Item.icon size={18} strokeWidth={active(Item.href) ? 2.5 : 2} />
-          <span>{Item.label}</span>
-        </Link>
-      ))}
-
-      <div className="nav-section-label">System Tools</div>
-      <Link href="/tools" className={`nav-item${pathname.startsWith('/tools') ? ' active' : ''}`} onClick={() => setOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <Zap size={18} />
-        Hardware Testbench
-      </Link>
-      <Link href="/diagnostics" className={`nav-item${pathname.startsWith('/diagnostics') ? ' active' : ''}`} onClick={() => setOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <ShieldCheck size={18} />
-        System ScanLab
-      </Link>
-
-      <div className="nav-cta-wrap">
-        <div style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 8 }}>
-          Ravindra Pandit Ahire<br />
-          Hynet Technologies, Pune
-        </div>
-        <Link href="/tools" className="nav-cta-btn" onClick={() => setOpen(false)}>
-          ▶ Launch Engine
-        </Link>
-      </div>
-    </nav>
-  )
+  // Toggle sidebar on link click (mobile)
+  const handleLinkClick = () => {
+    if (onClose) onClose()
+  }
 
   return (
-    <>
-      {/* Desktop sidebar */}
-      <div className="sidebar-desktop" style={{ display: 'contents' }}>
-        <SidebarContent />
-      </div>
-
-      {/* Mobile topbar */}
-      <div className="topbar">
-        <button className="hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
-          {open
-            ? <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 1l16 16M17 1L1 17"/></svg>
-            : [0,1,2].map(i => <div key={i} className="ham-line" />)
-          }
-        </button>
-        <div className="nav-logo-sq">HR</div>
-        <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)' }}>HackRore</span>
-        <Link href="/tools" style={{ marginLeft: 'auto', background: 'var(--blue-600)', color: 'white', border: 'none', borderRadius: 7, padding: '7px 14px', fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
-          Run Test
-        </Link>
-      </div>
-
-      {/* Mobile drawer */}
-      {open && (
-        <>
-          <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.4)', zIndex: 199 }} />
-          <nav className="sidebar open" style={{ display: 'flex' }}>
-            <div className="nav-brand">
-              <div className="nav-logo-sq">HR</div>
-              <span className="nav-brand-name">HackRore</span>
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`} style={{
+      width: 'var(--sidebar-width)',
+      background: 'var(--surface)',
+      borderRight: '1px solid var(--border)',
+      height: '100vh',
+      position: 'sticky',
+      top: 0,
+      zIndex: 1200,
+      flexShrink: 0,
+      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+    }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Brand Section */}
+        <div style={{ padding: '32px 24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+            <div style={{ 
+              width: 32, height: 32, 
+              background: 'var(--blue-600)', 
+              borderRadius: 8, 
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
+            }}>
+              <span style={{ fontSize: 18, fontWeight: 900, color: 'white' }}>H</span>
             </div>
-            <div className="nav-section-label">Navigation</div>
-            {NAV.map(item => (
-              <Link key={item.href} href={item.href}
-                className={`nav-item${active(item.href) ? ' active' : ''}`}
-                onClick={() => setOpen(false)}
-              >
-                <item.icon size={18} />
-                <span style={{ marginLeft: 12 }}>{item.label}</span>
-              </Link>
-            ))}
-            <div className="nav-section-label">Quick Actions</div>
-            <Link href="/tools" className="nav-item" onClick={() => setOpen(false)}>
-              <Zap size={18} />
-              <span style={{ marginLeft: 12 }}>Launch Testbench</span>
-            </Link>
-            <div className="nav-cta-wrap">
-              <Link href="/tools" className="nav-cta-btn" onClick={() => setOpen(false)}>▶ Run Full Test</Link>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: -0.5, color: 'var(--text-1)' }}>HACKRORE</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: 0.5 }}>TechWorkbench</div>
             </div>
+          </div>
+
+          {/* Navigation Links */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {navItems.map((item) => {
+              const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href} 
+                  onClick={handleLinkClick}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    color: isActive ? 'var(--blue-600)' : 'var(--text-3)',
+                    background: isActive ? 'var(--blue-50)' : 'transparent',
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: 14,
+                    transition: 'all 0.2s',
+                  }} className={`nav-item ${isActive ? 'active' : ''}`}>
+                    <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                    {item.name}
+                  </div>
+                </Link>
+              )
+            })}
           </nav>
-        </>
-      )}
+        </div>
 
-      <style>{`
-        @media (min-width: 769px) {
-          .topbar { display: none !important; }
-        }
-      `}</style>
-    </>
+        {/* Footer Context */}
+        <div style={{ marginTop: 'auto', padding: '24px', borderTop: '1px solid var(--border)' }}>
+          <div style={{ background: 'var(--surface-2)', padding: '16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--blue-600)', marginBottom: 4 }}>OPERATOR MODE</div>
+             <div style={{ fontSize: 10, color: 'var(--text-4)' }}>v1.0.5 Release</div>
+          </div>
+        </div>
+      </div>
+    </aside>
   )
 }
