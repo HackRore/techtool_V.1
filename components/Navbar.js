@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Zap, Activity, BookOpen, Menu, X, Terminal } from 'lucide-react'
+import { Search, Zap, Activity, BookOpen, Menu, X, Terminal, ChevronRight } from 'lucide-react'
 import { searchAll } from '../lib/engine/searchEngine'
 
 const NAV_ITEMS = [

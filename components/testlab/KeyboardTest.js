@@ -113,42 +113,42 @@ export default function KeyboardTest({ onResult }) {
   const pct = Math.round((testedKeys.size / totalKeys) * 100)
 
   return (
-    <div style={{ padding: 8 }}>
+    <div style={{ padding: 0 }}>
       {/* HUD Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 32 }}>
-         <div className="card-elevated" style={{ padding: 16 }}>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>COVERAGE</div>
-            <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-display)' }}>{pct}%</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }}>
+         <div className="card-elevated" style={{ padding: 20 }}>
+            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>COVERAGE</div>
+            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
          </div>
-         <div className="card-elevated" style={{ padding: 16 }}>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>KEYS CHECKED</div>
-            <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-display)' }}>{testedKeys.size}<span style={{ color: 'var(--text-muted)', fontSize: 12 }}>/{totalKeys}</span></div>
+         <div className="card-elevated" style={{ padding: 20 }}>
+            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>KEYS CHECKED</div>
+            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)' }}>{testedKeys.size}<span style={{ color: 'var(--text-muted)', fontSize: 14 }}>/{totalKeys}</span></div>
          </div>
-         <div className="card-elevated" style={{ padding: 16 }}>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>SIGNAL STATE</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: status === 'pass' ? 'var(--accent)' : 'var(--amber)', marginTop: 4 }}>
-               {status.toUpperCase()}
+         <div className="card-elevated" style={{ padding: 20 }}>
+            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>SIGNAL STATE</div>
+            <div style={{ fontSize: 12, fontWeight: 800, color: status === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>
+               {status === 'pass' ? 'System Valid' : status.toUpperCase()}
             </div>
          </div>
-         <div className="card-elevated" style={{ padding: 16 }}>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>ANOMALIES</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: stuckKeys.size > 0 ? 'var(--red)' : 'var(--text-primary)' }}>{stuckKeys.size}</div>
+         <div className="card-elevated" style={{ padding: 20 }}>
+            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>ANOMALIES</div>
+            <div style={{ fontSize: 24, fontWeight: 800, color: stuckKeys.size > 0 ? 'var(--status-fail)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stuckKeys.size}</div>
          </div>
       </div>
 
       {/* Progress Bar */}
-      <div style={{ width: '100%', height: 2, background: 'var(--border)', marginBottom: 32, borderRadius: 1, overflow: 'hidden' }}>
-         <div style={{ height: '100%', width: `${pct}%`, background: 'var(--accent)', transition: 'width 0.2s' }}></div>
+      <div style={{ width: '100%', height: 4, background: 'var(--border)', marginBottom: 40, borderRadius: 2, overflow: 'hidden' }}>
+         <div style={{ height: '100%', width: `${pct}%`, background: 'var(--accent)', transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}></div>
       </div>
 
       {/* Keyboard Grid */}
       <div style={{ 
-        display: 'flex', flexDirection: 'column', gap: 6, 
-        padding: 24, background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: 12,
+        display: 'flex', flexDirection: 'column', gap: 8, 
+        padding: 32, background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 12,
         overflowX: 'auto', position: 'relative'
       }}>
         {KEY_LAYOUT.map((row, ri) => (
-          <div key={ri} style={{ display: 'flex', gap: 6 }}>
+          <div key={ri} style={{ display: 'flex', gap: 8 }}>
             {row.map(key => {
               const isPressed = pressedKeys.has(key)
               const isTested  = testedKeys.has(key)
@@ -160,19 +160,12 @@ export default function KeyboardTest({ onResult }) {
                   role="button"
                   aria-pressed={isPressed}
                   aria-label={key}
+                  className={`key ${isPressed ? 'active' : ''} ${isTested ? 'tested' : ''}`}
                   style={{
                     width: getWidth(key),
-                    height: 38,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    borderRadius: 4,
-                    fontSize: 9, fontWeight: 700,
-                    fontFamily: 'var(--font-display)',
-                    border: '1px solid',
-                    transition: 'all 0.1s',
-                    background: isStuck ? 'var(--red)' : isPressed ? 'var(--accent)' : isTested ? 'var(--accent-glow)' : 'var(--bg-elevated)',
-                    borderColor: isStuck ? 'var(--red)' : isPressed ? 'var(--accent)' : isTested ? 'var(--accent)' : 'var(--border)',
-                    color: isPressed ? 'var(--bg-primary)' : isTested ? 'var(--accent)' : 'var(--text-muted)',
-                    boxShadow: isPressed ? '0 0 15px var(--accent-glow)' : 'none'
+                    borderColor: isStuck ? 'var(--status-fail)' : undefined,
+                    background: isStuck ? 'var(--status-fail)' : undefined,
+                    color: isStuck ? 'var(--bg-primary)' : undefined,
                   }}
                 >
                   {KEY_LABELS[key] || key.toUpperCase()}

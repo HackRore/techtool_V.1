@@ -1,5 +1,5 @@
 import tools from '../../../data/tools.json'
-import LinkEngine from '../../../lib/engine/linkEngine'
+import * as LinkEngine from '../../../lib/engine/linkEngine'
 import ToolClient from './ToolClient'
 import AppLayout from '../../../components/layout/AppLayout'
 import { ChevronRight } from 'lucide-react'
@@ -29,15 +29,15 @@ export default function ToolPage({ params }) {
 
   return (
     <AppLayout>
-      <div className="page-header" style={{ marginBottom: 32 }}>
-        <div className="breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          System <ChevronRight size={12} /> TestLab <ChevronRight size={12} /> {tool.name}
+      <div className="page-header animate-in">
+        <div className="breadcrumb">
+          System / TestLab / {tool.name}
         </div>
-        <h1 style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-          <span style={{ fontSize: 40 }}>{tool.icon}</span>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 12, letterSpacing: -1.5 }}>
+          <span style={{ fontSize: 44 }}>{tool.icon}</span>
           {tool.name}
         </h1>
-        <p style={{ color: 'var(--text-3)', mt: 8 }}>{tool.description}</p>
+        <p style={{ color: 'var(--text-secondary)', marginTop: 8, fontSize: 16 }}>{tool.description}</p>
       </div>
       <ToolClient tool={tool} relatedGuides={relatedGuides} />
     </AppLayout>

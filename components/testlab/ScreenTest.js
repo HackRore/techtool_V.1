@@ -47,24 +47,27 @@ export default function ScreenTest({ onResult }) {
         onClick={exit}
       >
         <div style={{
-          position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
-          display: 'flex', gap: 8,
+          position: 'absolute', bottom: 40, left: '50%', transform: 'translateX(-50%)',
+          display: 'flex', gap: 16,
         }}>
           <button
             onClick={e => { e.stopPropagation(); markPass() }}
-            style={{ background: 'rgba(16,185,129,0.2)', border: '1px solid rgba(16,185,129,0.5)', color: '#10b981', padding: '8px 20px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1px', cursor: 'pointer', borderRadius: 1 }}
-          >PASS ✓</button>
+            className="btn-accent"
+            style={{ padding: '12px 24px', fontSize: 11, letterSpacing: 1, borderColor: 'var(--status-pass)', color: 'var(--status-pass)', background: 'rgba(0,0,0,0.8)' }}
+          >VALIDATE PASS ✓</button>
           <button
             onClick={e => { e.stopPropagation(); onResult?.('fail'); exit() }}
-            style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.5)', color: '#ef4444', padding: '8px 20px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1px', cursor: 'pointer', borderRadius: 1 }}
-          >FAIL ✗</button>
+            className="btn-accent"
+            style={{ padding: '12px 24px', fontSize: 11, letterSpacing: 1, borderColor: 'var(--status-fail)', color: 'var(--status-fail)', background: 'rgba(0,0,0,0.8)' }}
+          >SIGNAL FAIL ✗</button>
           <button
             onClick={e => { e.stopPropagation(); exit() }}
-            style={{ background: 'rgba(107,107,107,0.2)', border: '1px solid rgba(107,107,107,0.4)', color: '#6b6b6b', padding: '8px 20px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1px', cursor: 'pointer', borderRadius: 1 }}
-          >EXIT</button>
+            className="btn-secondary"
+            style={{ padding: '12px 24px', fontSize: 11, letterSpacing: 1, background: 'rgba(0,0,0,0.8)' }}
+          >ABORT TEST</button>
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: activeMode.text, letterSpacing: '2px', opacity: 0.4 }}>
-          {activeMode.label.toUpperCase()} — INSPECT FOR ANOMALIES — CLICK TO EXIT
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: activeMode.text, letterSpacing: 2, opacity: 0.6, fontWeight: 800 }}>
+          {activeMode.label.toUpperCase()} — INSPECTION IN PROGRESS — CLICK TO ABORT
         </div>
       </div>
     )
@@ -72,43 +75,39 @@ export default function ScreenTest({ onResult }) {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
         Select a test mode. The screen will go fullscreen — inspect for dead pixels, stuck pixels, or colour anomalies. Click PASS/FAIL when done.
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
         {MODES.map(mode => (
           <button
             key={mode.id}
             onClick={() => enterMode(mode)}
+            className="card"
             style={{
-              background: mode.bg === 'grid' || mode.bg === 'gradient'
-                ? 'var(--surface-3)'
-                : mode.bg,
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 2,
-              padding: '16px 12px',
+              background: mode.bg === 'grid' || mode.bg === 'gradient' ? 'var(--bg-secondary)' : mode.bg,
+              padding: '24px 16px',
               cursor: 'pointer',
               textAlign: 'left',
               transition: 'all 0.2s',
               position: 'relative',
               overflow: 'hidden',
+              borderColor: 'var(--border)'
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)' }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: mode.bg === 'grid' || mode.bg === 'gradient' ? '#aaa' : 'rgba(0,0,0,0.7)', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: mode.bg === 'grid' || mode.bg === 'gradient' ? 'var(--text-primary)' : 'rgba(0,0,0,0.8)', letterSpacing: 0.5, textTransform: 'uppercase' }}>
               {mode.label}
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: mode.bg === 'grid' || mode.bg === 'gradient' ? '#555' : 'rgba(0,0,0,0.4)', marginTop: 4, letterSpacing: '1px' }}>
-              CLICK TO TEST →
+            <div style={{ fontSize: 10, color: mode.bg === 'grid' || mode.bg === 'gradient' ? 'var(--accent)' : 'rgba(0,0,0,0.5)', marginTop: 8, letterSpacing: 1, fontWeight: 700 }}>
+              AUTO LAUNCH →
             </div>
           </button>
         ))}
       </div>
 
-      <div style={{ marginTop: 16, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-dim)', lineHeight: 1.7 }}>
-        TIP: On black screen, look for bright spots. On white, look for dark spots. On colour screens, look for wrong-colour pixels.
+      <div style={{ marginTop: 24, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6, fontStyle: 'italic' }}>
+        * Technical Reference: Black screen (bright spots = stuck ON), White screen (dark spots = dead), Color screens (sub-pixel verification).
       </div>
     </div>
   )

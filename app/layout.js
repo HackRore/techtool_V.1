@@ -24,7 +24,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`}>
-      <body className={inter.className}>
+      <body style={{ fontFamily: 'var(--font-heading), var(--font-ui)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
         {children}
         <Analytics />
       </body>

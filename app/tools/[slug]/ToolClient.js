@@ -59,45 +59,45 @@ export default function ToolClient({ tool, relatedGuides }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 32 }}>
       {/* Main Test Area */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div className="card">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="card-elevated" style={{ padding: 0, overflow: 'hidden' }}>
           {TestComponent ? (
             <TestComponent onResult={handleResult} />
           ) : (
-            <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-4)' }}>
-              <p>Diagnostic engine for "{tool.name}" is being initialized...</p>
+            <div style={{ padding: 64, textAlign: 'center' }}>
+              <div className="badge badge-running" style={{ marginBottom: 16 }}>Initializing Engine</div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Preparing precision diagnostic environment for &quot;{tool.name}&quot;...</p>
             </div>
           )}
         </div>
 
         {lastResult && (
-          <div className="card-flat" style={{ background: 'var(--surface-2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-elevated)', borderColor: lastResult === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <History size={16} className="text-blue-600" />
-              <div style={{ fontSize: 13 }}>
-                Last validation: <span style={{ fontWeight: 700, color: lastResult === 'pass' ? 'var(--green)' : 'var(--yellow)' }}>{lastResult.toUpperCase()}</span>
+              <History size={16} style={{ color: lastResult === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)' }} />
+              <div style={{ fontSize: 13, fontWeight: 600 }}>
+                Validated Telemetry: <span style={{ color: lastResult === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)', textTransform: 'uppercase', letterSpacing: 0.5 }}>{lastResult}</span>
               </div>
             </div>
-            <button onClick={exportResult} className="btn-secondary" style={{ padding: '6px 12px', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Download size={14} />
-              Export Result
+            <button onClick={exportResult} className="btn-secondary" style={{ padding: '8px 16px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Download size={14} /> Export Protocol
             </button>
           </div>
         )}
       </div>
 
       {/* Sidebar Info */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div className="card-flat">
-          <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-4)', marginBottom: 16 }}>Tool Info</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="card">
+          <h3 style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.5, color: 'var(--text-muted)', marginBottom: 24, fontWeight: 800 }}>Component Metadata</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--text-4)' }}>Difficulty</div>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>{tool.difficulty}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Complexity</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{tool.difficulty}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--text-4)' }}>Tags</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Capability Tags</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {tool.tags.map(tag => (
                   <span key={tag} className="tag">{tag}</span>
                 ))}
@@ -107,16 +107,16 @@ export default function ToolClient({ tool, relatedGuides }) {
         </div>
 
         {allGuides.length > 0 && (
-          <div className="card-flat">
-            <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-4)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Sparkles size={14} className="text-blue-600" />
-              Related Guides
+          <div className="card">
+            <h3 style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.5, color: 'var(--text-muted)', marginBottom: 24, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Sparkles size={14} style={{ color: 'var(--accent)' }} />
+              FixLab Intelligence
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {allGuides.map(guide => (
-                <Link key={guide.id} href={`/guides/${guide.slug}`} style={{ fontSize: 13, color: 'var(--blue-600)', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Link key={guide.id} href={`/guides/${guide.slug}`} style={{ fontSize: 13, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: 'var(--bg-primary)', borderRadius: 6, border: '1px solid var(--border)' }}>
                   {guide.title}
-                  <ArrowRight size={12} style={{ opacity: 0.5 }} />
+                  <ArrowRight size={12} style={{ opacity: 0.6 }} />
                 </Link>
               ))}
             </div>

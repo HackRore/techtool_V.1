@@ -1,13 +1,13 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import { useState, useMemo } from 'react'
-import Sidebar from '../../components/Sidebar'
+import { useState, useMemo, Suspense } from 'react'
+import AppLayout from '../../components/layout/AppLayout'
 import { searchAll } from '../../lib/engine/searchEngine'
 import { paginate } from '../../lib/utils/pagination'
 import Link from 'next/link'
 import { Search, Zap, BookOpen, Download, ChevronRight } from 'lucide-react'
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
   
@@ -38,35 +38,34 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="app-shell">
-      <Sidebar />
-      <main className="main-content">
-        <div className="page-header">
-          <div className="breadcrumb">Search / Results</div>
-          <h1><Search size={32} style={{ verticalAlign: 'middle', marginRight: 12, opacity: 0.5 }} /> Results for "{query}"</h1>
-          <p style={{ color: 'var(--text-4)', marginTop: 8 }}>Found {allResults.length} matching entries across the ecosystem.</p>
+    <AppLayout>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <div className="page-header" style={{ marginBottom: 40 }}>
+           <div className="breadcrumb" style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>System / Search Intelligence</div>
+           <h1 style={{ fontSize: 32, marginBottom: 8 }}>Search <span style={{ color: 'var(--accent)' }}>Results</span></h1>
+           <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>Found {allResults.length} matching entries for &quot;{query}&quot;.</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
           {paged.items.map((item, idx) => (
             <Link key={`${item.type}-${item.id}`} href={getHref(item)} style={{ textDecoration: 'none' }}>
-              <div className="card-flat hover-scale" style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: 20 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, textTransform: 'uppercase', color: 'var(--text-4)', letterSpacing: 1 }}>
+              <div className="card-elevated hover-glow" style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: 24, background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: 1, fontWeight: 800 }}>
                     {getIcon(item.type)}
                     {item.type}
                   </div>
-                  <span className="badge badge-ready" style={{ fontSize: 9 }}>{item.category}</span>
+                  <span className="tag" style={{ fontSize: 9, background: 'var(--bg-primary)', border: '1px solid var(--border)' }}>{item.category}</span>
                 </div>
-                <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-1)', marginBottom: 6 }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-primary)', marginBottom: 8 }}>
                   {item.name || item.title}
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--text-3)', flex: 1, lineHeight: 1.5 }}>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)', flex: 1, lineHeight: 1.5 }}>
                   {item.description}
                 </p>
-                <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                <div style={{ marginTop: 20, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {item.tags?.slice(0, 3).map(tag => (
-                    <span key={tag} className="tag" style={{ fontSize: 10 }}>{tag}</span>
+                    <span key={tag} className="tag" style={{ fontSize: 10, background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--accent)' }}>{tag}</span>
                   ))}
                 </div>
               </div>
@@ -74,29 +73,42 @@ export default function SearchPage() {
           ))}
         </div>
 
-        {allResults.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '80px 0', opacity: 0.5 }}>
-            <Search size={48} style={{ marginBottom: 16 }} />
-            <h3>No results found</h3>
-            <p>Try searching for hardware components (CPU, RAM) or specific problems.</p>
-          </div>
-        )}
+          {allResults.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '80px 0', opacity: 0.5, color: 'var(--text-muted)' }}>
+              <Search size={48} style={{ marginBottom: 16 }} />
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>No results found</h3>
+              <p style={{ fontSize: 14 }}>Try searching for hardware components (CPU, RAM) or specific symptoms.</p>
+            </div>
+          )}
 
-        {paged.totalPages > 1 && (
-          <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center', gap: 8 }}>
-            {[...Array(paged.totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={`tag ${page === i + 1 ? 'active' : ''}`}
-                style={{ padding: '8px 16px', cursor: 'pointer', background: page === i + 1 ? 'var(--blue-600)' : 'var(--bg-2)', color: page === i + 1 ? 'white' : 'inherit' }}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
-  )
-}
+          {paged.totalPages > 1 && (
+            <div style={{ marginTop: 40, display: 'flex', justifyContent: 'center', gap: 8, paddingBottom: 40 }}>
+              {[...Array(paged.totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  style={{ 
+                    padding: '8px 16px', cursor: 'pointer', borderRadius: 6, 
+                    background: page === i + 1 ? 'var(--accent)' : 'var(--bg-secondary)', 
+                    color: page === i + 1 ? 'var(--bg-primary)' : 'var(--text-primary)',
+                    border: '1px solid var(--border)', fontWeight: 700, fontSize: 12,
+                    transition: 'var(--transition)'
+                  }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </AppLayout>
+    )
+  }
+
+  export default function SearchPage() {
+    return (
+      <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Searching Intelligence...</div>}>
+        <SearchContent />
+      </Suspense>
+    )
+  }

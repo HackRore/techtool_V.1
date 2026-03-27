@@ -5,13 +5,15 @@ import AppLayout from '../components/layout/AppLayout'
 import { 
   Zap, Activity, Shield, Sparkles, 
   ChevronRight, ArrowRight, Search, 
-  Clock, CheckCircle2, AlertCircle 
+  Clock, CheckCircle2, AlertCircle,
+  Terminal, BookOpen
 } from 'lucide-react'
 
 export default function Dashboard() {
-  const [sessionTime, setSessionTime] = useState('00:00:00')
+  const [sessionTime, setSessionTime] = useState(null) // Prevent hydration mismatch
 
   useEffect(() => {
+    setSessionTime('00:00:00')
     const start = Date.now()
     const timer = setInterval(() => {
       const diff = Date.now() - start
@@ -27,7 +29,7 @@ export default function Dashboard() {
     { label: 'Verified Tests', value: 7, icon: Zap },
     { label: 'Fix Library', value: 50, icon: Shield },
     { label: 'Scan Modules', value: 21, icon: Activity },
-    { label: 'Session Active', value: sessionTime, icon: Clock, accent: true },
+    { label: 'Session Active', value: sessionTime || '--:--:--', icon: Clock, accent: true },
   ]
 
   const tests = [
@@ -40,39 +42,71 @@ export default function Dashboard() {
     { id: 'touch', name: 'Touch', desc: 'Multi-point validation', status: 'ready', icon: '👆' },
   ]
 
+  const resourceMatrix = [
+    { label: 'Software Diagnostics', desc: 'OS & Driver Telemetry', icon: Terminal, href: '/diagnostics', color: 'var(--accent)' },
+    { label: 'Troubleshooting', desc: 'Symptom-based pathing', icon: BookOpen, href: '/fixlab', color: '#3b82f6' },
+    { label: 'Solution Engine', desc: 'AI-validated fix paths', icon: Sparkles, href: '/search', color: '#8b5cf6' },
+    { label: 'Benchmarking', desc: 'Performance analytics', icon: Activity, href: '/tools', color: '#f59e0b' },
+  ]
+
   return (
     <AppLayout>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 48 }}>
+      <div className="dashboard-layout">
         
         {/* Left: Main Dashboard */}
         <div>
           {/* Hero Zone */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 32, marginBottom: 64 }}>
-             <div style={{ position: 'relative', width: 80, height: 80 }}>
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                  <circle cx="40" cy="40" r="38" fill="none" stroke="var(--border)" strokeWidth="2" />
-                  <circle cx="40" cy="40" r="38" fill="none" stroke="var(--accent)" strokeWidth="2" 
-                    strokeDasharray="238" strokeDashoffset="60" 
-                    style={{ animation: 'rotate 4s linear infinite' }} />
+          <div className="hero-zone" style={{ marginBottom: 56 }}>
+             <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="1" />
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="2" 
+                    strokeDasharray="301" strokeDashoffset="100" 
+                    style={{ animation: 'spin-slow 12s linear infinite', opacity: 0.6 }} />
                 </svg>
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <Activity size={32} className="text-accent" style={{ animation: 'pulse 2s infinite' }} />
+                   <Activity size={40} style={{ color: 'var(--accent)', opacity: 0.8 }} />
                 </div>
              </div>
              <div>
-                <h1 style={{ fontSize: 32, fontWeight: 700 }}>Diagnostics <span style={{ color: 'var(--accent)' }}>Ready</span></h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginTop: 4 }}>System core initialized. TechWorkbench v1.0 active.</p>
+                <h1 style={{ fontSize: 44, fontWeight: 900, letterSpacing: '-2px', marginBottom: 8 }}>
+                  Tech<span style={{ color: 'var(--accent)' }}>Workbench</span>
+                </h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                   <span className="badge badge-ready" style={{ padding: '4px 10px' }}>SYSTEM ONLINE</span>
+                   <span style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600 }}>Command kernel v.1.0-stable</span>
+                </div>
              </div>
           </div>
 
+          {/* New Resource Matrix */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 64 }}>
+             {resourceMatrix.map(r => (
+               <Link key={r.label} href={r.href} style={{ textDecoration: 'none' }}>
+                 <div className="card-elevated" style={{ 
+                   display: 'flex', gap: 20, padding: 24, transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                   borderLeft: `4px solid ${r.color}`
+                 }}>
+                    <div style={{ width: 44, height: 44, background: 'var(--bg-primary)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
+                       <r.icon size={20} style={{ color: r.color }} />
+                    </div>
+                    <div>
+                       <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>{r.label}</div>
+                       <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>{r.desc}</div>
+                    </div>
+                 </div>
+               </Link>
+             ))}
+          </div>
+
           {/* Stats Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 48 }}>
+          <div className="stats-grid">
             {stats.map(s => (
-              <div key={s.label} className="card-elevated" style={{ padding: '20px 24px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-muted)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
-                   <s.icon size={12} strokeWidth={3} /> {s.label}
+              <div key={s.label} className="card-elevated" style={{ padding: '24px' }}>
+                <div className="metric-label" style={{ color: s.accent ? 'var(--accent)' : 'var(--text-muted)' }}>
+                   <s.icon size={12} strokeWidth={3} style={{ marginRight: 8 }} /> {s.label}
                 </div>
-                <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--font-display)', color: s.accent ? 'var(--accent)' : 'var(--text-primary)' }}>
+                <div className="metric-value">
                    {s.value}
                 </div>
               </div>
@@ -80,22 +114,22 @@ export default function Dashboard() {
           </div>
 
           {/* Diagnostic Grid */}
-          <div style={{ marginBottom: 32 }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <h2 style={{ fontSize: 18, fontWeight: 700 }}>Available <span style={{ color: 'var(--text-secondary)' }}>Automated Tests</span></h2>
-                <Link href="/tools" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>View All (7)</Link>
+          <div style={{ marginBottom: 48 }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 800 }}>Primary <span style={{ color: 'var(--accent)' }}>Diagnostics</span></h2>
+                <Link href="/tools" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>Full Suite (7)</Link>
              </div>
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+             <div className="diagnostic-layout">
                 {tests.map(t => (
                   <Link key={t.id} href={`/tools/${t.id}`} style={{ textDecoration: 'none' }}>
-                    <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 24 }}>{t.icon}</span>
-                        <span className="badge" style={{ background: 'var(--accent-glow)', color: 'var(--accent)', border: '1px solid var(--accent-glow)' }}>READY</span>
+                    <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: 28 }}>{t.icon}</span>
+                        <span className="badge badge-ready">READY</span>
                       </div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{t.name}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{t.desc}</div>
+                        <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>{t.name}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4, lineHeight: 1.4 }}>{t.desc}</div>
                       </div>
                     </div>
                   </Link>
@@ -105,68 +139,42 @@ export default function Dashboard() {
         </div>
 
         {/* Right: Sidebar Panel */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+        <div className="sidebar-panel">
            {/* ScanLab Shortcut */}
-           <div style={{ borderLeft: '2px solid var(--accent)', paddingLeft: 24 }}>
-              <div className="breadcrumb" style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>System Telemetry</div>
-              <h3 style={{ fontSize: 18, marginBottom: 12 }}>ScanLab Engine</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 24 }}>Run deep hardware scans using our PowerShell diagnostic kernel.</p>
+           <div style={{ borderLeft: '2px solid var(--accent)', paddingLeft: 32 }}>
+              <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>System Telemetry</div>
+              <h3 style={{ fontSize: 20, marginBottom: 12 }}>ScanLab Engine</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 32, lineHeight: 1.6 }}>Run deep hardware scans using our precision diagnostic kernel.</p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <Link href="/diagnostics" className="btn-accent" style={{ textDecoration: 'none', justifyContent: 'center' }}>
-                  Open Master Scan
+                <Link href="/diagnostics" className="btn-accent" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  Execute Master Scan
                 </Link>
-                <Link href="/diagnostics?demo=true" style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600 }}>
-                   Try Live Web Demo 
+                <Link href="/diagnostics?demo=true" style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
+                   Simulation Mode
                 </Link>
-              </div>
-           </div>
-
-           {/* FixLab Shortcut */}
-           <div>
-              <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-muted)', marginBottom: 20 }}>Recent Fix Entries</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                 {[
-                   'Laptop Thermal Throttling',
-                   'No Boot: NVMe Detection Failure',
-                   'Flickering Display: Ribbon Cable'
-                 ].map(f => (
-                   <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
-                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border-bright)' }}></div>
-                      <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{f}</span>
-                   </div>
-                 ))}
-                 <Link href="/fixlab" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600, marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
-                   Browse FixLab <ArrowRight size={14} />
-                 </Link>
               </div>
            </div>
 
            {/* Timeline Preview */}
-           <div className="card-elevated" style={{ padding: 24 }}>
-              <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-muted)', marginBottom: 24 }}>Audit Trail</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 24, position: 'relative' }}>
+           <div className="card-elevated" style={{ padding: 28 }}>
+              <h3 style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 32, fontWeight: 800 }}>System Logbook</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 28, position: 'relative' }}>
                  <div style={{ position: 'absolute', left: 4, top: 4, bottom: 4, width: 1, background: 'var(--border)' }}></div>
                  {[
-                   { t: '11:42', e: 'System Environment Scan' },
-                   { t: '10:15', e: 'Keyboard Cluster Validation' }
+                   { t: '11:42', e: 'Environment Scan complete' },
+                   { t: '10:15', e: 'HID Cluster validated' }
                  ].map(a => (
-                   <div key={a.t} style={{ position: 'relative', paddingLeft: 24 }}>
-                      <div style={{ position: 'absolute', left: 1, top: 6, width: 7, height: 7, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 8px var(--accent)' }}></div>
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700 }}>{a.t}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{a.e}</div>
+                   <div key={a.t} style={{ position: 'relative', paddingLeft: 28 }}>
+                      <div style={{ position: 'absolute', left: 1, top: 6, width: 7, height: 7, borderRadius: '50%', background: 'var(--accent)' }}></div>
+                      <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>{a.t}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>{a.e}</div>
                    </div>
                  ))}
               </div>
            </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes rotate { from { stroke-dashoffset: 238; } to { stroke-dashoffset: 0; } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        .text-accent { color: var(--accent); }
-      `}</style>
     </AppLayout>
   )
 }

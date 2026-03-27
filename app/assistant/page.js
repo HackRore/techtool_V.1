@@ -1,9 +1,9 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import Sidebar from '../../components/Sidebar'
+import AppLayout from '../../components/layout/AppLayout'
 import { resolveSymptom } from '../../lib/engine/symptomEngine'
 import { getStep, getStepContext, nextStep } from '../../lib/engine/diagnosticEngine'
-import { Sparkles, Send, RefreshCw, AlertCircle, CheckCircle2, ArrowRight, Zap, BookOpen } from 'lucide-react'
+import { Sparkles, Send, RefreshCw, AlertCircle, CheckCircle2, ArrowRight, Zap, BookOpen, Download } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AIAssistant() {
@@ -94,27 +94,24 @@ export default function AIAssistant() {
   }
 
   return (
-    <div className="app-shell">
-      <Sidebar />
-      <main className="main-content" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 80px)' }}>
-        <div className="page-header" style={{ marginBottom: 20 }}>
-          <div className="breadcrumb">Intelligence / Copilot</div>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Sparkles size={32} className="text-blue-600" />
-            AI Technician Assistant
-          </h1>
+    <AppLayout>
+      <div style={{ maxWidth: 1000, margin: '0 auto', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)' }}>
+        <div className="page-header" style={{ marginBottom: 24 }}>
+          <div className="breadcrumb" style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Intelligence / Copilot</div>
+          <h1 style={{ fontSize: 32, marginBottom: 8 }}>AI Technician <span style={{ color: 'var(--accent)' }}>Assistant</span></h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>Describe hardware symptoms for guided diagnostic reasoning.</p>
         </div>
 
-        <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden', background: 'var(--surface)' }}>
+        <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
           {/* Chat Header */}
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg)' }}>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-primary)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', boxShadow: '0 0 8px var(--green)' }} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-2)' }}>System Online</span>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 8px var(--accent)' }} />
+              <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Kernel Online</span>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={exportSession} className="btn-secondary" style={{ padding: '6px 12px', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6, borderColor: 'var(--blue-600)', color: 'var(--blue-600)' }}>
-                <Download size={12} /> Export Report
+              <button onClick={exportSession} className="btn-secondary" style={{ padding: '6px 12px', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6, borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--bg-elevated)', borderRadius: 6, cursor: 'pointer' }}>
+                <Download size={14} /> Export Report
               </button>
               <button onClick={resetDiagnostic} className="btn-secondary" style={{ padding: '6px 12px', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <RefreshCw size={12} /> Reset
@@ -135,12 +132,12 @@ export default function AIAssistant() {
                   <button 
                     key={item.label}
                     onClick={() => handleSearch(null, item.query)}
-                    className="card-flat hover-grow"
-                    style={{ padding: '16px', textAlign: 'left', cursor: 'pointer', background: 'var(--bg)', border: '1px solid var(--border)' }}
+                    className="card-elevated hover-grow"
+                    style={{ padding: '16px', textAlign: 'left', cursor: 'pointer', background: 'var(--bg-primary)', border: '1px solid var(--border)' }}
                   >
                     <div style={{ fontSize: 24, marginBottom: 8 }}>{item.icon}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)' }}>{item.label}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-4)' }}>Diagnostic Tree</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{item.label}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Diagnostic Tree</div>
                   </button>
                 ))}
               </div>
@@ -153,13 +150,14 @@ export default function AIAssistant() {
               <div key={i} style={{ alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
                 <div style={{ 
                   position: 'relative',
-                  background: msg.role === 'user' ? 'var(--blue-600)' : 'var(--surface-2)',
-                  color: msg.role === 'user' ? 'white' : 'var(--text-1)',
+                  background: msg.role === 'user' ? 'var(--accent)' : 'var(--bg-primary)',
+                  color: msg.role === 'user' ? 'var(--bg-primary)' : 'var(--text-primary)',
                   padding: '12px 18px',
                   borderRadius: msg.role === 'user' ? '18px 18px 2px 18px' : '18px 18px 18px 2px',
                   fontSize: 14,
                   lineHeight: 1.5,
-                  boxShadow: msg.role === 'user' ? '0 4px 15px rgba(14, 165, 233, 0.2)' : 'none'
+                  boxShadow: msg.role === 'user' ? '0 4px 15px var(--accent-glow)' : 'none',
+                  border: msg.role === 'user' ? 'none' : '1px solid var(--border)'
                 }}>
                   {msg.text}
                   
@@ -255,28 +253,29 @@ export default function AIAssistant() {
           </div>
 
           {/* Chat Input */}
-          <form onSubmit={handleSearch} style={{ padding: 24, borderTop: '1px solid var(--border)', display: 'flex', gap: 12, background: 'var(--bg)' }}>
+          <form onSubmit={handleSearch} style={{ padding: 24, borderTop: '1px solid var(--border)', display: 'flex', gap: 12, background: 'var(--bg-primary)' }}>
             <input 
               type="text" 
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Describe your PC problem (e.g. 'No display after cleaning' or '3 beeps on startup')..." 
+              placeholder="Describe problem (e.g. '3 beeps on startup')..." 
               style={{ 
                 flex: 1, 
-                background: 'var(--surface-2)', 
+                background: 'var(--bg-elevated)', 
                 border: '1px solid var(--border)', 
-                borderRadius: 12, 
+                borderRadius: 8, 
                 padding: '12px 20px', 
-                color: 'var(--text-1)',
-                outline: 'none'
+                color: 'white',
+                outline: 'none',
+                fontSize: 14
               }}
             />
-            <button type="submit" className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 24px' }}>
+            <button type="submit" className="btn-accent" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 24px', borderRadius: 8 }}>
               <Send size={18} /> Send
             </button>
           </form>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

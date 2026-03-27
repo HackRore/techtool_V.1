@@ -60,33 +60,22 @@ export default function AppLayout({ children }) {
 
   return (
     <div className="app-shell">
-      <a href="#main" className="skip-nav">Skip to content</a>
+      <a href="#main" className="skip-nav">Skip to main content</a>
 
-      {/* Fixed Top Navigation */}
+      {/* Hardened Top Navigation */}
       <nav className="top-nav">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {/* HR Logo Mark */}
-          <div style={{ 
-            width: 28, height: 28, 
-            background: 'var(--accent)', 
-            borderRadius: 4, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            color: 'var(--bg-primary)',
-            fontWeight: 900,
-            fontSize: 16
-          }}>H</div>
+          <div className="nav-logo-sq">H</div>
           
-          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontWeight: 700, fontSize: 16, letterSpacing: -0.5 }}>HackRore</span>
+          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: -0.5 }}>HackRore</span>
             <span style={{ width: 1, height: 16, background: 'var(--border)' }}></span>
-            <span style={{ color: 'var(--text-muted)', fontSize: 12, fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase' }}>TechWorkbench</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase' }}>Workbench</span>
           </div>
         </div>
 
         {/* Center: Desktop Nav */}
-        <div className="desktop-only" style={{ display: 'flex', gap: 4 }}>
+        <div className="desktop-only" style={{ display: 'flex', gap: 8 }}>
           {navItems.map(item => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
             return (
@@ -102,29 +91,30 @@ export default function AppLayout({ children }) {
         </div>
 
         {/* Right: Status & User */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <button 
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: 4 }}
+            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: 4, transition: 'color 0.2s' }}
+            className="hover:text-accent"
           >
              {isLightMode ? <Monitor size={18} /> : <Sparkles size={18} />}
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600 }}>
-             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></div>
-             <span className="desktop-only">ONLINE</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)', fontSize: 10, fontWeight: 800, letterSpacing: 1 }}>
+             <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)' }}></div>
+             <span className="desktop-only">SYNC_LIVE</span>
           </div>
           
-          <div className="desktop-only" style={{ padding: '4px 12px', border: '1px solid var(--border)', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-secondary)' }}>
-             <User size={14} style={{ color: 'var(--text-muted)' }} />
-             <span style={{ fontSize: 12, fontWeight: 600 }}>Operator_01</span>
+          <div className="desktop-only" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', fontSize: 11, fontWeight: 700 }}>
+             <User size={14} style={{ color: 'var(--accent)' }} />
+             <span>Operator_01</span>
           </div>
 
           <button 
             className="mobile-only"
             onClick={() => setIsMobileMenuOpen(true)}
-            style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', padding: 4 }}
+            style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', padding: 6, borderRadius: 6, border: '1px solid var(--border)' }}
           >
             <Menu size={20} />
           </button>
@@ -132,28 +122,29 @@ export default function AppLayout({ children }) {
       </nav>
 
       {/* Main Content Area */}
-      <main id="main" className="main-content animate-in">
+      <main id="main" className="main-content">
         {children}
       </main>
 
-      {/* Mobile Drawer (Right-side) */}
+      {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <>
-          <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1500, backdropFilter: 'blur(4px)' }} />
+          <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)} />
           <div style={{ 
             position: 'fixed', right: 0, top: 0, bottom: 0, 
-            width: 280, background: 'var(--bg-primary)', 
+            width: 300, background: 'var(--bg-primary)', 
             borderLeft: '1px solid var(--border)', zIndex: 1600,
-            padding: 32, display: 'flex', flexDirection: 'column'
-          }}>
+            padding: 40, display: 'flex', flexDirection: 'column',
+            boxShadow: '-20px 0 60px rgba(0,0,0,0.5)'
+          }} className="animate-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
-              <span style={{ fontWeight: 700, fontSize: 18 }}>Menu</span>
-              <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)' }}>
+              <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: -0.5 }}>Navigation</span>
+              <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={24} />
               </button>
             </div>
             
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {navItems.map(item => {
                 const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
                 return (
@@ -162,10 +153,12 @@ export default function AppLayout({ children }) {
                     href={item.href} 
                     onClick={() => setIsMobileMenuOpen(false)}
                     style={{ 
-                      padding: '12px 16px', borderRadius: 8, 
+                      padding: '14px 20px', borderRadius: 8, 
                       textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text-primary)',
-                      background: isActive ? 'var(--accent-glow)' : 'transparent',
-                      fontWeight: 600, display: 'flex', alignItems: 'center', gap: 12
+                      background: isActive ? 'var(--accent-glow)' : 'var(--bg-secondary)',
+                      border: `1px solid ${isActive ? 'var(--accent)' : 'transparent'}`,
+                      fontWeight: 700, display: 'flex', alignItems: 'center', gap: 14,
+                      fontSize: 15, transition: 'all 0.2s'
                     }}
                   >
                     <item.icon size={18} />
@@ -175,13 +168,13 @@ export default function AppLayout({ children }) {
               })}
             </nav>
 
-            <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: 24 }}>
-               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>RESOURCES</div>
-               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 8 }}><Settings size={14} /> Settings</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 8 }}><BookOpen size={14} /> Documentation</div>
+            <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: 32 }}>
+               <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20 }}>RESOURCES</div>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><Settings size={16} /> System Settings</div>
+                  <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><BookOpen size={16} /> Documentation</div>
                </div>
-               <div style={{ marginTop: 24, fontSize: 10, color: 'var(--text-muted)' }}>TechWorkbench v1.0</div>
+               <div style={{ marginTop: 40, fontSize: 11, color: 'var(--text-muted)', fontWeight: 500 }}>HackRore Workbench v1.2</div>
             </div>
           </div>
         </>
