@@ -11,7 +11,7 @@ const MODES = [
   { id: 'gradient',label: 'Gradient',             bg: 'gradient',text: '#aaa' },
 ]
 
-export default function ScreenTest({ onResult }) {
+export default function ScreenTest({ onResult, inline = false }) {
   const [activeMode, setActiveMode] = useState(null)
   const [fullscreen, setFullscreen] = useState(false)
 
@@ -76,7 +76,7 @@ export default function ScreenTest({ onResult }) {
   return (
     <div>
       <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
-        Select a test mode. The screen will go fullscreen — inspect for dead pixels, stuck pixels, or colour anomalies. Click PASS/FAIL when done.
+        {inline ? "Select a mode. Screen will go immersive for inspection." : "Select a test mode. The screen will go fullscreen — inspect for dead pixels, stuck pixels, or colour anomalies. Click PASS/FAIL when done."}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>

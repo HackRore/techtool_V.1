@@ -31,7 +31,7 @@ function getWidth(k) {
   return wide[k] || 38
 }
 
-export default function KeyboardTest({ onResult }) {
+export default function KeyboardTest({ onResult, inline = false }) {
   const [pressedKeys, setPressedKeys] = useState(new Set())
   const [testedKeys, setTestedKeys]   = useState(new Set())
   const [stuckKeys, setStuckKeys]     = useState(new Set())
@@ -39,7 +39,7 @@ export default function KeyboardTest({ onResult }) {
   
   const pressTimers = useRef({})
   const allKeys = KEY_LAYOUT.flat()
-  const totalKeys = 104 // Standard full layout count
+  const totalKeys = 104 
 
   // Persistence
   useEffect(() => {
@@ -71,7 +71,6 @@ export default function KeyboardTest({ onResult }) {
       return next
     })
 
-    // Stuck Key Detection: 2s
     if (!pressTimers.current[id]) {
       pressTimers.current[id] = setTimeout(() => {
         setStuckKeys(prev => new Set([...prev, id]))
@@ -115,26 +114,44 @@ export default function KeyboardTest({ onResult }) {
   return (
     <div style={{ padding: 0 }}>
       {/* HUD Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }}>
-         <div className="card-elevated" style={{ padding: 20 }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>COVERAGE</div>
-            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
-         </div>
-         <div className="card-elevated" style={{ padding: 20 }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>KEYS CHECKED</div>
-            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)' }}>{testedKeys.size}<span style={{ color: 'var(--text-muted)', fontSize: 14 }}>/{totalKeys}</span></div>
-         </div>
-         <div className="card-elevated" style={{ padding: 20 }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>SIGNAL STATE</div>
-            <div style={{ fontSize: 12, fontWeight: 800, color: status === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>
-               {status === 'pass' ? 'System Valid' : status.toUpperCase()}
-            </div>
-         </div>
-         <div className="card-elevated" style={{ padding: 20 }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>ANOMALIES</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: stuckKeys.size > 0 ? 'var(--status-fail)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stuckKeys.size}</div>
-         </div>
-      </div>
+      {!inline ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }}>
+          <div className="card-elevated" style={{ padding: 20 }}>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>COVERAGE</div>
+              <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
+          </div>
+          <div className="card-elevated" style={{ padding: 20 }}>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>KEYS CHECKED</div>
+              <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)' }}>{testedKeys.size}<span style={{ color: 'var(--text-muted)', fontSize: 14 }}>/{totalKeys}</span></div>
+          </div>
+          <div className="card-elevated" style={{ padding: 20 }}>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>SIGNAL STATE</div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: status === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>
+                {status === 'pass' ? 'System Valid' : status.toUpperCase()}
+              </div>
+          </div>
+          <div className="card-elevated" style={{ padding: 20 }}>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>ANOMALIES</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: stuckKeys.size > 0 ? 'var(--status-fail)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stuckKeys.size}</div>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 8px' }}>
+           <div style={{ display: 'flex', gap: 24 }}>
+              <div>
+                 <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>COVERAGE</div>
+                 <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
+              </div>
+              <div>
+                 <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>ANOMALIES</div>
+                 <div style={{ fontSize: 18, fontWeight: 800, color: stuckKeys.size > 0 ? 'var(--status-fail)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stuckKeys.size}</div>
+              </div>
+           </div>
+           <div className={`badge ${status === 'pass' ? 'badge-pass' : 'badge-ready'}`}>
+              {status === 'pass' ? 'VALIDATED' : 'TESTING...'}
+           </div>
+        </div>
+      )}
 
       {/* Progress Bar */}
       <div style={{ width: '100%', height: 4, background: 'var(--border)', marginBottom: 40, borderRadius: 2, overflow: 'hidden' }}>

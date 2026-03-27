@@ -25,9 +25,10 @@ export default function AppLayout({ children }) {
         document.querySelector('input')?.focus()
       }
       if (e.key === '1') router.push('/')
-      if (e.key === '2') router.push('/tools')
-      if (e.key === '3') router.push('/diagnostics')
+      if (e.key === '2') router.push('/#quick-tests')
+      if (e.key === '3') router.push('/tools')
       if (e.key === '4') router.push('/fixlab')
+      if (e.key === '5') router.push('/resources')
       if (e.key === 'Escape') setIsMobileMenuOpen(false)
     }
     
@@ -44,9 +45,10 @@ export default function AppLayout({ children }) {
 
   const navItems = [
     { name: 'Dashboard', href: '/', icon: Monitor },
-    { name: 'TestLab', href: '/tools', icon: Cpu },
-    { name: 'ScanLab', href: '/diagnostics', icon: Activity },
+    { name: 'Quick Tests', href: '/#quick-tests', icon: Cpu },
+    { name: 'Labs Hub', href: '/tools', icon: Activity },
     { name: 'FixLab', href: '/fixlab', icon: BookOpen },
+    { name: 'Resources', href: '/resources', icon: Sparkles },
   ]
 
   // Cleanup body scroll when mobile menu is open

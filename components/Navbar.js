@@ -7,9 +7,10 @@ import { searchAll } from '../lib/engine/searchEngine'
 
 const NAV_ITEMS = [
   { href: '/',            label: 'Dashboard',   icon: Zap },
-  { href: '/tools',       label: 'TestLab',     icon: Terminal },
-  { href: '/diagnostics', label: 'ScanLab',     icon: Activity },
+  { href: '/#quick-tests', label: 'Quick Tests', icon: Terminal },
+  { href: '/tools',       label: 'Labs Hub',    icon: Activity },
   { href: '/fixlab',      label: 'FixLab',      icon: BookOpen },
+  { href: '/resources',   label: 'Resources',   icon: Search },
 ]
 
 export default function Navbar() {

@@ -9,8 +9,11 @@ import {
   Terminal, BookOpen
 } from 'lucide-react'
 
+import QuickTestModal from '../components/testlab/QuickTestModal'
+
 export default function Dashboard() {
   const [sessionTime, setSessionTime] = useState(null) // Prevent hydration mismatch
+  const [activeQuickTest, setActiveQuickTest] = useState(null)
 
   useEffect(() => {
     setSessionTime('00:00:00')
@@ -33,30 +36,56 @@ export default function Dashboard() {
   ]
 
   const tests = [
-    { id: 'keyboard', name: 'Keyboard', desc: '104-key cluster validation', status: 'ready', icon: '⌨️' },
-    { id: 'display', name: 'Display', desc: 'Pixel & frequency analysis', status: 'ready', icon: '🖥️' },
-    { id: 'audio', name: 'Audio', desc: 'Stereo frequency sweep', status: 'ready', icon: '🔊' },
-    { id: 'media', name: 'Webcam', desc: 'Sensor & FPS detection', status: 'ready', icon: '📹' },
-    { id: 'mic', name: 'Microphone', desc: 'Dynamic waveform check', status: 'ready', icon: '🎙️' },
-    { id: 'mouse', name: 'Mouse', desc: 'Pointer precision test', status: 'ready', icon: '🖱️' },
-    { id: 'touch', name: 'Touch', desc: 'Multi-point validation', status: 'ready', icon: '👆' },
+    { id: 'keyboard', name: 'Keyboard', desc: '104-key cluster', status: 'ready', icon: '⌨️' },
+    { id: 'display', name: 'Display', desc: 'Pixel/Frequency', status: 'ready', icon: '🖥️' },
+    { id: 'audio', name: 'Audio', desc: 'Stereo Sweep', status: 'ready', icon: '🔊' },
+    { id: 'media', name: 'Camera', desc: 'Sensor/FPS', status: 'ready', icon: '📹' },
+    { id: 'mic', name: 'Mic', desc: 'Waveform', status: 'ready', icon: '🎙️' },
+    { id: 'mouse', name: 'Mouse', desc: 'Precision', status: 'ready', icon: '🖱️' },
+    { id: 'touch', name: 'Touch', desc: 'Multi-point', status: 'ready', icon: '👆' },
+    { id: 'gpu', name: 'GPU', desc: 'Stress/VRAM', status: 'ready', icon: '💎' },
   ]
 
   const resourceMatrix = [
     { label: 'Software Diagnostics', desc: 'OS & Driver Telemetry', icon: Terminal, href: '/diagnostics', color: 'var(--accent)' },
-    { label: 'Troubleshooting', desc: 'Symptom-based pathing', icon: BookOpen, href: '/fixlab', color: '#3b82f6' },
+    { label: 'Troubleshooting Hub', desc: 'Symptom-based pathing', icon: BookOpen, href: '/fixlab', color: '#3b82f6' },
     { label: 'Solution Engine', desc: 'AI-validated fix paths', icon: Sparkles, href: '/search', color: '#8b5cf6' },
-    { label: 'Benchmarking', desc: 'Performance analytics', icon: Activity, href: '/tools', color: '#f59e0b' },
+    { label: 'Lab Resources', desc: 'Hardware benchmarks', icon: Activity, href: '/tools', color: '#f59e0b' },
   ]
 
   return (
     <AppLayout>
-      <div className="dashboard-layout">
+      <div className="dashboard-layout animate-in">
         
         {/* Left: Main Dashboard */}
-        <div>
-          {/* Hero Zone */}
-          <div className="hero-zone" style={{ marginBottom: 56 }}>
+        <div style={{ minWidth: 0 }}>
+          
+          {/* Quick Tests Row (Technician Priority) */}
+          <div id="quick-tests" style={{ marginBottom: 48 }}>
+             <h3 style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 20, letterSpacing: 1.5, fontWeight: 800 }}>QUICK HARDWARE TESTS</h3>
+             <div className="quick-tests-scroll" style={{ 
+               display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 16,
+               scrollbarWidth: 'none', msOverflowStyle: 'none'
+             }}>
+                {tests.map(t => (
+                  <div 
+                    key={t.id} 
+                    onClick={() => setActiveQuickTest(t)}
+                    className="card"
+                    style={{ 
+                      flexShrink: 0, width: 140, padding: '20px 16px', textAlign: 'center', 
+                      cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}
+                  >
+                     <div style={{ fontSize: 32, marginBottom: 12 }}>{t.icon}</div>
+                     <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-primary)' }}>{t.name}</div>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          {/* Command Center (Main Hero) */}
+          <div className="hero-zone" style={{ marginBottom: 56, background: 'var(--bg-secondary)', padding: '40px 48px', borderRadius: 16, border: '1px solid var(--border)' }}>
              <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
                 <svg width="100" height="100" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="1" />
@@ -79,7 +108,21 @@ export default function Dashboard() {
              </div>
           </div>
 
-          {/* New Resource Matrix */}
+          {/* Stats Grid */}
+          <div className="stats-grid" style={{ marginBottom: 64 }}>
+            {stats.map(s => (
+              <div key={s.label} className="card-elevated" style={{ padding: '24px' }}>
+                <div className="metric-label" style={{ color: s.accent ? 'var(--accent)' : 'var(--text-muted)' }}>
+                   <s.icon size={12} strokeWidth={3} style={{ marginRight: 8 }} /> {s.label}
+                </div>
+                <div className="metric-value">
+                   {s.value}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Resource Matrix */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 64 }}>
              {resourceMatrix.map(r => (
                <Link key={r.label} href={r.href} style={{ textDecoration: 'none' }}>
@@ -98,49 +141,11 @@ export default function Dashboard() {
                </Link>
              ))}
           </div>
-
-          {/* Stats Grid */}
-          <div className="stats-grid">
-            {stats.map(s => (
-              <div key={s.label} className="card-elevated" style={{ padding: '24px' }}>
-                <div className="metric-label" style={{ color: s.accent ? 'var(--accent)' : 'var(--text-muted)' }}>
-                   <s.icon size={12} strokeWidth={3} style={{ marginRight: 8 }} /> {s.label}
-                </div>
-                <div className="metric-value">
-                   {s.value}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Diagnostic Grid */}
-          <div style={{ marginBottom: 48 }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-                <h2 style={{ fontSize: 20, fontWeight: 800 }}>Primary <span style={{ color: 'var(--accent)' }}>Diagnostics</span></h2>
-                <Link href="/tools" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>Full Suite (7)</Link>
-             </div>
-             <div className="diagnostic-layout">
-                {tests.map(t => (
-                  <Link key={t.id} href={`/tools/${t.id}`} style={{ textDecoration: 'none' }}>
-                    <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 28 }}>{t.icon}</span>
-                        <span className="badge badge-ready">READY</span>
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>{t.name}</div>
-                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4, lineHeight: 1.4 }}>{t.desc}</div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-             </div>
-          </div>
         </div>
 
         {/* Right: Sidebar Panel */}
         <div className="sidebar-panel">
-           {/* ScanLab Shortcut */}
+           {/* Labs Shortcut */}
            <div style={{ borderLeft: '2px solid var(--accent)', paddingLeft: 32 }}>
               <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>System Telemetry</div>
               <h3 style={{ fontSize: 20, marginBottom: 12 }}>ScanLab Engine</h3>
