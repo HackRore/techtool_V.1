@@ -9,10 +9,15 @@ import {
   Download, Copy 
 } from 'lucide-react'
 
+import { useToast } from '../../components/ui/ToastProvider'
+
 export default function ScanLab() {
   const [isWindows, setIsWindows] = useState(true)
   const [scanResult, setScanResult] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [dragging, setDragging] = useState(false)
+  const { addToast } = useToast()
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     const platform = window.navigator.platform.toLowerCase()
@@ -21,6 +26,7 @@ export default function ScanLab() {
 
   const startDemo = () => {
     setLoading(true)
+    addToast('Initializing Virtual Simulation...', 'info')
     setTimeout(() => {
       setScanResult({
         score: 84,
@@ -35,7 +41,36 @@ export default function ScanLab() {
         ]
       })
       setLoading(false)
+      addToast('Simulation Audit Complete', 'success')
     }, 1500)
+  }
+
+  const handleFile = async (file) => {
+    if (!file) return
+    if (!file.name.endsWith('.json')) {
+      addToast('Invalid file format. Please upload a .json report.', 'error')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const text = await file.text()
+      const data = JSON.parse(text)
+      
+      // Validation (Quick Check)
+      if (!data.score && !data.modules) {
+        throw new Error('Invalid telemetry schema')
+      }
+
+      setTimeout(() => {
+        setScanResult(data)
+        setLoading(false)
+        addToast('Telemetry Synchronized Successfully', 'success')
+      }, 1000)
+    } catch (err) {
+      setLoading(false)
+      addToast('Failed to parse telemetry data', 'error')
+    }
   }
 
   return (
@@ -64,19 +99,50 @@ export default function ScanLab() {
         {!scanResult ? (
           <div className="dashboard-layout" style={{ marginBottom: 80 }}>
              {/* Path A: Upload */}
-             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 24, borderStyle: 'dashed', background: 'transparent' }}>
+             <div 
+               className="card" 
+               onDragOver={e => { e.preventDefault(); setDragging(true) }}
+               onDragLeave={() => setDragging(false)}
+               onDrop={e => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files[0]) }}
+               style={{ 
+                 display: 'flex', flexDirection: 'column', gap: 24, borderStyle: 'dashed', 
+                 background: dragging ? 'var(--accent-glow)' : 'transparent',
+                 borderColor: dragging ? 'var(--accent)' : 'var(--border)'
+               }}
+             >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                    <div style={{ width: 32, height: 32, background: 'var(--bg-secondary)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
                       <Terminal size={16} style={{ color: 'var(--text-secondary)' }} />
                    </div>
                    <h3 style={{ fontSize: 16, fontWeight: 800 }}>Upload Telemetry</h3>
                 </div>
-                <div style={{ flex: 1, border: '1px dashed var(--border)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 48, background: 'var(--bg-secondary)' }}>
-                   <Activity size={32} style={{ color: 'var(--text-muted)', opacity: 0.3, marginBottom: 16 }} />
-                   <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2 }}>Drop system_report.json</div>
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{ 
+                    flex: 1, border: '1px dashed var(--border)', borderRadius: 12, 
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', 
+                    justifyContent: 'center', padding: 48, background: 'var(--bg-secondary)',
+                    cursor: 'pointer'
+                  }}
+                >
+                   <Activity size={32} style={{ color: dragging ? 'var(--accent)' : 'var(--text-muted)', opacity: dragging ? 0.8 : 0.3, marginBottom: 16, transition: 'all 0.2s' }} />
+                   <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2 }}>
+                     {dragging ? 'Release to Scan' : 'Drop system_report.json'}
+                   </div>
+                   <input 
+                     type="file" 
+                     ref={fileInputRef} 
+                     onChange={e => handleFile(e.target.files[0])} 
+                     style={{ display: 'none' }} 
+                     accept=".json"
+                   />
                 </div>
-                <button className="btn-secondary" style={{ opacity: 0.5, cursor: 'not-allowed', width: '100%', padding: '14px' }}>
-                   Process Local File
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn-accent" 
+                  style={{ width: '100%', padding: '14px' }}
+                >
+                   {loading ? 'Processing...' : 'Select Local Report'}
                 </button>
              </div>
 

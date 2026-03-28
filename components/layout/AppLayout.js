@@ -3,12 +3,23 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles } from 'lucide-react'
+import { ToastProvider, useToast } from '../ui/ToastProvider'
 
 export default function AppLayout({ children }) {
+  return (
+    <ToastProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </ToastProvider>
+  )
+}
+
+function LayoutContent({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLightMode, setIsLightMode] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const pathname = usePathname()
   const router = useRouter()
+  const { addToast } = useToast()
 
   // Theme & Shortcuts
   useEffect(() => {
@@ -77,7 +88,7 @@ export default function AppLayout({ children }) {
         </div>
 
         {/* Center: Desktop Nav */}
-        <div className="desktop-only" style={{ display: 'flex', gap: 8 }}>
+        <div className="desktop-only" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {navItems.map(item => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
             return (
@@ -85,11 +96,29 @@ export default function AppLayout({ children }) {
                 key={item.href} 
                 href={item.href} 
                 className={`nav-link ${isActive ? 'active' : ''}`}
+                style={{ fontSize: 13, padding: '8px 16px' }}
               >
                 {item.name}
               </Link>
             )
           })}
+          
+          <div style={{ position: 'relative', marginLeft: 16 }}>
+             <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+             <input 
+               type="text" 
+               placeholder="Search..." 
+               value={searchQuery}
+               onChange={e => setSearchQuery(e.target.value)}
+               onKeyDown={e => e.key === 'Enter' && searchQuery && (router.push(`/search?q=${searchQuery}`), setSearchQuery(''))}
+               style={{ 
+                 background: 'var(--bg-secondary)', border: '1px solid var(--border)', 
+                 borderRadius: 8, padding: '8px 12px 8px 34px', fontSize: 13, 
+                 width: 160, transition: 'all 0.2s', outline: 'none'
+               }}
+               className="focus:w-240"
+             />
+          </div>
         </div>
 
         {/* Right: Status & User */}
@@ -108,7 +137,7 @@ export default function AppLayout({ children }) {
              <span className="desktop-only">SYNC_LIVE</span>
           </div>
           
-          <div className="desktop-only" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', fontSize: 11, fontWeight: 700 }}>
+          <div className="desktop-only" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', fontSize: 11, fontWeight: 700 }} aria-label="Current Operator">
              <User size={14} style={{ color: 'var(--accent)' }} />
              <span>Operator_01</span>
           </div>
@@ -116,6 +145,7 @@ export default function AppLayout({ children }) {
           <button 
             className="mobile-only"
             onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open Navigation Menu"
             style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', padding: 6, borderRadius: 6, border: '1px solid var(--border)' }}
           >
             <Menu size={20} />
@@ -129,58 +159,72 @@ export default function AppLayout({ children }) {
       </main>
 
       {/* Mobile Drawer */}
-      {isMobileMenuOpen && (
-        <>
-          <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)} />
-          <div style={{ 
-            position: 'fixed', right: 0, top: 0, bottom: 0, 
-            width: 300, background: 'var(--bg-primary)', 
-            borderLeft: '1px solid var(--border)', zIndex: 1600,
-            padding: 40, display: 'flex', flexDirection: 'column',
-            boxShadow: '-20px 0 60px rgba(0,0,0,0.5)'
-          }} className="animate-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
-              <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: -0.5 }}>Navigation</span>
-              <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                <X size={24} />
-              </button>
-            </div>
-            
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {navItems.map(item => {
-                const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
-                return (
-                  <Link 
-                    key={item.href} 
-                    href={item.href} 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    style={{ 
-                      padding: '14px 20px', borderRadius: 8, 
-                      textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text-primary)',
-                      background: isActive ? 'var(--accent-glow)' : 'var(--bg-secondary)',
-                      border: `1px solid ${isActive ? 'var(--accent)' : 'transparent'}`,
-                      fontWeight: 700, display: 'flex', alignItems: 'center', gap: 14,
-                      fontSize: 15, transition: 'all 0.2s'
-                    }}
-                  >
-                    <item.icon size={18} />
-                    {item.name}
-                  </Link>
-                )
-              })}
-            </nav>
+      <div className={`mobile-drawer ${isMobileMenuOpen ? 'open' : ''}`} style={{ 
+        position: 'fixed', right: 0, top: 0, bottom: 0, 
+        width: 300, background: 'var(--bg-primary)', 
+        borderLeft: '1px solid var(--border)', zIndex: 1600,
+        padding: 40, display: 'flex', flexDirection: 'column',
+        boxShadow: '-20px 0 60px rgba(0,0,0,0.5)',
+        transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+          <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: -0.5 }}>Navigation</span>
+          <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close Navigation" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+            <X size={24} />
+          </button>
+        </div>
 
-            <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: 32 }}>
-               <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20 }}>RESOURCES</div>
-               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><Settings size={16} /> System Settings</div>
-                  <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><BookOpen size={16} /> Documentation</div>
-               </div>
-               <div style={{ marginTop: 40, fontSize: 11, color: 'var(--text-muted)', fontWeight: 500 }}>HackRore Workbench v1.2</div>
-            </div>
-          </div>
-        </>
-      )}
+        <div style={{ position: 'relative', marginBottom: 32 }} role="search">
+           <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+           <input 
+             type="text" 
+             placeholder="Search hub..." 
+             aria-label="Search Diagnostic Hub"
+             value={searchQuery}
+             onChange={e => setSearchQuery(e.target.value)}
+             onKeyDown={e => e.key === 'Enter' && searchQuery && (router.push(`/search?q=${searchQuery}`), setIsMobileMenuOpen(false), setSearchQuery(''))}
+             style={{ width: '100%', height: 44, paddingLeft: 42, background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 14, color: 'var(--text-primary)', outline: 'none' }}
+           />
+        </div>
+        
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {navItems.map(item => {
+            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+            return (
+              <Link 
+                key={item.href} 
+                href={item.href} 
+                onClick={() => setIsMobileMenuOpen(false)}
+                style={{ 
+                  padding: '14px 20px', borderRadius: 8, 
+                  textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text-primary)',
+                  background: isActive ? 'var(--accent-glow)' : 'var(--bg-secondary)',
+                  border: `1px solid ${isActive ? 'var(--accent)' : 'transparent'}`,
+                  fontWeight: 700, display: 'flex', alignItems: 'center', gap: 14,
+                  fontSize: 15, transition: 'all 0.2s'
+                }}
+              >
+                <item.icon size={18} />
+                {item.name}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: 32 }}>
+           <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20 }}>RESOURCES</div>
+           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }} style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600, cursor: 'pointer' }}>
+                <Monitor size={16} /> Theme: {isLightMode ? 'Light' : 'Pulse Dark'}
+              </div>
+              <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><Settings size={16} /> System Settings</div>
+              <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><BookOpen size={16} /> Documentation</div>
+           </div>
+           <div style={{ marginTop: 40, fontSize: 11, color: 'var(--text-muted)', fontWeight: 500 }}>HackRore Workbench v1.2</div>
+        </div>
+      </div>
+      {isMobileMenuOpen && <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)} />}
 
       <style jsx global>{`
         @media (min-width: 1025px) {

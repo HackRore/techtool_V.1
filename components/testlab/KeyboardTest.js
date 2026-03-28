@@ -116,11 +116,11 @@ export default function KeyboardTest({ onResult, inline = false }) {
       {/* HUD Section */}
       {!inline ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }}>
-          <div className="card-elevated" style={{ padding: 20 }}>
+          <div className="card-elevated" style={{ padding: 20 }} aria-label="Diagnostic Coverage">
               <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>COVERAGE</div>
               <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
           </div>
-          <div className="card-elevated" style={{ padding: 20 }}>
+          <div className="card-elevated" style={{ padding: 20 }} aria-label="Tested Keys Count">
               <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>KEYS CHECKED</div>
               <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-mono)' }}>{testedKeys.size}<span style={{ color: 'var(--text-muted)', fontSize: 14 }}>/{totalKeys}</span></div>
           </div>
@@ -138,16 +138,16 @@ export default function KeyboardTest({ onResult, inline = false }) {
       ) : (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 8px' }}>
            <div style={{ display: 'flex', gap: 24 }}>
-              <div>
+              <div role="status" aria-label={`Coverage: ${pct}%`}>
                  <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>COVERAGE</div>
                  <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
               </div>
-              <div>
+              <div role="status" aria-label={`Anomalies: ${stuckKeys.size}`}>
                  <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>ANOMALIES</div>
                  <div style={{ fontSize: 18, fontWeight: 800, color: stuckKeys.size > 0 ? 'var(--status-fail)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stuckKeys.size}</div>
               </div>
            </div>
-           <div className={`badge ${status === 'pass' ? 'badge-pass' : 'badge-ready'}`}>
+           <div className={`badge ${status === 'pass' ? 'badge-pass' : 'badge-ready'}`} role="status">
               {status === 'pass' ? 'VALIDATED' : 'TESTING...'}
            </div>
         </div>

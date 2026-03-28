@@ -201,6 +201,14 @@ export default function Dashboard() {
            </div>
         </div>
       </div>
+
+      {/* Hardware Test Engine (Audit Fix: Launching Tests) */}
+      <QuickTestModal 
+        isOpen={!!activeQuickTest} 
+        onClose={() => setActiveQuickTest(null)}
+        testId={activeQuickTest?.id}
+        testName={activeQuickTest?.name}
+      />
     </AppLayout>
   )
 }

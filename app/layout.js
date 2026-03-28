@@ -17,8 +17,16 @@ const mono = JetBrains_Mono({
 })
 
 export const metadata = {
-  title: "HackRore TechWorkbench",
-  description: "AI-powered technician diagnostic platform",
+  title: "HackRore TechWorkbench | Advanced Hardware Diagnostics",
+  description: "The professional-grade companion for technicians. AI-powered hardware telemetry, precision testlab, and validated repair intelligence hub. Precision. Speed. Results.",
+  openGraph: {
+    title: "HackRore TechWorkbench",
+    description: "AI-powered technician diagnostic platform",
+    url: "https://hachtool.vercel.app",
+    siteName: "HackRore",
+    locale: "en_US",
+    type: "website",
+  },
 }
 
 export default function RootLayout({ children }) {
