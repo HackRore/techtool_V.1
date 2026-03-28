@@ -1,21 +1,21 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Sparkles, Brain, Zap, ShieldCheck } from 'lucide-react'
+import { Sparkles, Brain, Zap, ShieldCheck, Activity } from 'lucide-react'
+import { useHistory } from './HistoryProvider'
 
 export default function AuraIntelligenceHub() {
+  const { history } = useHistory()
   const [syncStatus, setSyncStatus] = useState('Initializing')
   const [loadFactor, setLoadFactor] = useState(0)
 
   useEffect(() => {
-    const statuses = ['Analyzing Cluster', 'Syncing Knowledge Base', 'Ready', 'Idle']
+    const statuses = ['Analyzing History', 'Syncing Knowledge Base', 'Ready', 'Idle']
     let i = 0
     const interval = setInterval(() => {
       setSyncStatus(statuses[i % statuses.length])
-      setLoadFactor(Math.floor(Math.random() * 15) + 5)
+      setLoadFactor(Math.floor(Math.random() * 15) + 5 + (history.length * 2))
       i++
     }, 3000)
     return () => clearInterval(interval)
-  }, [])
+  }, [history])
 
   return (
     <div className="card-elevated" style={{ position: 'relative', overflow: 'hidden' }}>
@@ -44,13 +44,22 @@ export default function AuraIntelligenceHub() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
              <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border)' }}>
                 <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>KNOWLEDGE NODES</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>12,842</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{12842 + history.length}</div>
              </div>
              <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border)' }}>
                 <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>BRAIN LOAD</div>
                 <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{loadFactor}%</div>
              </div>
           </div>
+          
+          {history.length > 0 && (
+            <div style={{ marginTop: 16, display: 'flex', gap: 6 }}>
+               {history.slice(0, 3).map(h => (
+                 <div key={h.id} style={{ width: 8, height: 8, borderRadius: '50%', background: h.result === 'pass' ? 'var(--status-pass)' : 'var(--status-fail)', opacity: 0.6 }} />
+               ))}
+               <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 700 }}>RECENT SYNC_SUCCESS</div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -2,14 +2,17 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles } from 'lucide-react'
+import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles, Search } from 'lucide-react'
 import { ToastProvider, useToast } from '../ui/ToastProvider'
+import { HistoryProvider, useHistory } from '../HistoryProvider'
 
 export default function AppLayout({ children }) {
   return (
-    <ToastProvider>
-      <LayoutContent>{children}</LayoutContent>
-    </ToastProvider>
+    <HistoryProvider>
+      <ToastProvider>
+        <LayoutContent>{children}</LayoutContent>
+      </ToastProvider>
+    </HistoryProvider>
   )
 }
 
@@ -225,6 +228,29 @@ function LayoutContent({ children }) {
         </div>
       </div>
       {isMobileMenuOpen && <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)} />}
+
+      {/* Mobile Bottom Nav (Audit Fix: One-handed Technician UX) */}
+      <div className="mobile-only" style={{ 
+        position: 'fixed', bottom: 0, left: 0, right: 0, 
+        height: 64, background: 'rgba(2, 6, 23, 0.8)', 
+        backdropFilter: 'blur(16px)', borderTop: '1px solid var(--border)',
+        zIndex: 1500, display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+        padding: '0 12px', boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
+      }}>
+         {navItems.map(item => {
+           const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+           return (
+             <Link key={item.href} href={item.href} style={{ 
+               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+               color: isActive ? 'var(--accent)' : 'var(--text-muted)', textDecoration: 'none',
+               transition: 'all 0.2s'
+             }}>
+                <item.icon size={20} style={{ opacity: isActive ? 1 : 0.6 }} />
+                <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>{item.name}</span>
+             </Link>
+           )
+         })}
+      </div>
 
       <style jsx global>{`
         @media (min-width: 1025px) {

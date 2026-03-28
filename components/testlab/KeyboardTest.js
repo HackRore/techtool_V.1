@@ -1,5 +1,5 @@
-'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useHistory } from '../HistoryProvider'
 
 const KEY_LAYOUT = [
   ['Escape','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','PrintScreen','ScrollLock','Pause'],
@@ -32,6 +32,7 @@ function getWidth(k) {
 }
 
 export default function KeyboardTest({ onResult, inline = false }) {
+  const { addHistory } = useHistory()
   const [pressedKeys, setPressedKeys] = useState(new Set())
   const [testedKeys, setTestedKeys]   = useState(new Set())
   const [stuckKeys, setStuckKeys]     = useState(new Set())
@@ -92,6 +93,12 @@ export default function KeyboardTest({ onResult, inline = false }) {
   }, [allKeys])
 
   const restore = () => {
+    if (testedKeys.size > 0) {
+      addHistory('hardware', 'Keyboard Analysis', testedKeys.size >= totalKeys * 0.7 ? 'pass' : 'warning', {
+        coverage: Math.round((testedKeys.size / totalKeys) * 100),
+        keysChecked: testedKeys.size
+      })
+    }
     setPressedKeys(new Set())
     setTestedKeys(new Set())
     setStuckKeys(new Set())

@@ -11,6 +11,8 @@ import {
 
 import QuickTestModal from '../components/testlab/QuickTestModal'
 import AuraIntelligenceHub from '../components/AuraIntelligenceHub'
+import LiveHUD from '../components/LiveHUD'
+import { useHistory } from '../components/HistoryProvider'
 
 export default function Dashboard() {
   const [sessionTime, setSessionTime] = useState(null) // Prevent hydration mismatch
@@ -76,6 +78,9 @@ export default function Dashboard() {
         {/* Left: Main Dashboard */}
         <div style={{ minWidth: 0 }}>
           
+          {/* Live System Telemetry (Audit Fix: Real-time Data) */}
+          <LiveHUD />
+
           {/* Quick Tests Row (Technician Priority) */}
           <div id="quick-tests" style={{ marginBottom: 48 }}>
              <h3 style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 20, letterSpacing: 1.5, fontWeight: 800 }}>QUICK HARDWARE TESTS</h3>

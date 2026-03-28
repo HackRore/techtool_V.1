@@ -1,5 +1,5 @@
-'use client'
 import { useState } from 'react'
+import { useHistory } from '../HistoryProvider'
 
 const MODES = [
   { id: 'black',   label: 'Dead Pixel (Black)', bg: '#000000', text: '#333' },
@@ -12,6 +12,7 @@ const MODES = [
 ]
 
 export default function ScreenTest({ onResult, inline = false }) {
+  const { addHistory } = useHistory()
   const [activeMode, setActiveMode] = useState(null)
   const [fullscreen, setFullscreen] = useState(false)
 
@@ -26,7 +27,17 @@ export default function ScreenTest({ onResult, inline = false }) {
     setActiveMode(null)
   }
 
-  const markPass = () => { onResult?.('pass'); exit() }
+  const markPass = () => { 
+    addHistory('hardware', 'Display Pulse Audit', 'pass', { mode: activeMode?.label })
+    onResult?.('pass'); 
+    exit() 
+  }
+
+  const markFail = () => {
+    addHistory('hardware', 'Display Pulse Audit', 'fail', { mode: activeMode?.label })
+    onResult?.('fail')
+    exit()
+  }
 
   const getBg = (mode) => {
     if (!mode) return '#000'
@@ -56,7 +67,7 @@ export default function ScreenTest({ onResult, inline = false }) {
             style={{ padding: '12px 24px', fontSize: 11, letterSpacing: 1, borderColor: 'var(--status-pass)', color: 'var(--status-pass)', background: 'rgba(0,0,0,0.8)' }}
           >VALIDATE PASS ✓</button>
           <button
-            onClick={e => { e.stopPropagation(); onResult?.('fail'); exit() }}
+            onClick={e => { e.stopPropagation(); markFail() }}
             className="btn-accent"
             style={{ padding: '12px 24px', fontSize: 11, letterSpacing: 1, borderColor: 'var(--status-fail)', color: 'var(--status-fail)', background: 'rgba(0,0,0,0.8)' }}
           >SIGNAL FAIL ✗</button>
