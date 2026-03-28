@@ -29,11 +29,15 @@ export const metadata = {
   },
 }
 
+import { Providers } from '../components/Providers'
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`}>
       <body style={{ fontFamily: 'var(--font-heading), var(--font-ui)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
         <Analytics />
       </body>
     </html>

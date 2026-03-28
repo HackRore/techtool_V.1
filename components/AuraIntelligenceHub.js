@@ -1,3 +1,5 @@
+'use client'
+import { useState, useEffect } from 'react'
 import { Sparkles, Brain, Zap, ShieldCheck, Activity } from 'lucide-react'
 import { useHistory } from './HistoryProvider'
 

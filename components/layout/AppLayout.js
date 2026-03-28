@@ -7,13 +7,7 @@ import { ToastProvider, useToast } from '../ui/ToastProvider'
 import { HistoryProvider, useHistory } from '../HistoryProvider'
 
 export default function AppLayout({ children }) {
-  return (
-    <HistoryProvider>
-      <ToastProvider>
-        <LayoutContent>{children}</LayoutContent>
-      </ToastProvider>
-    </HistoryProvider>
-  )
+  return <LayoutContent>{children}</LayoutContent>
 }
 
 function LayoutContent({ children }) {
