@@ -14,8 +14,13 @@
   --accent-dim:    #00a87d;   /* Hover states */
   --accent-glow:   rgba(0, 212, 160, 0.08); /* Reduced for restraint */
   
-  --border:        #1e2235;   /* Subtle structural border */
-  --border-bright: #2d324d;   /* Interactive/Active border */
+  --border:        rgba(30, 34, 53, 0.4);   /* Translucent structural border */
+  --border-bright: rgba(45, 50, 77, 0.6);   /* Interactive/Active border */
+  
+  /* Glassmorphism Tokens */
+  --glass-bg:      rgba(15, 17, 26, 0.7);
+  --glass-blur:    blur(16px);
+  --glass-shadow:  0 8px 32px 0 rgba(0, 0, 0, 0.37);
   
   --text-primary:   #e8eaf6;  /* High contrast reading */
   --text-secondary: #94a3b8;  /* De-emphasized info */
@@ -82,27 +87,47 @@ h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); text-transfo
 
 /* ── Refined Cards ──────────────────────────── */
 .card {
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(0, 212, 160, 0.06), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .card:hover {
   border-color: var(--accent);
-  background: var(--bg-elevated);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  background: rgba(21, 24, 33, 0.8);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
 }
 
 .card-elevated {
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-bright);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 16px 64px rgba(0,0,0,0.6);
 }
 
 .card-flat {
@@ -327,10 +352,36 @@ h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); text-transfo
 }
 
 /* ── Animations ────────────────────────────── */
-@keyframes fadeInUp  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* ── AURA AI Animations ────────────────────── */
+@keyframes aura-pulse {
+  0%   { transform: scale(1); opacity: 0.6; filter: blur(8px); }
+  50%  { transform: scale(1.1); opacity: 1; filter: blur(4px); }
+  100% { transform: scale(1); opacity: 0.6; filter: blur(8px); }
+}
 
-.animate-in { animation: fadeInUp .5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes aura-orb {
+  0%   { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50%  { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+
+.aura-node {
+  width: 64px;
+  height: 64px;
+  background: radial-gradient(circle at center, var(--accent), transparent 70%);
+  animation: aura-pulse 4s infinite ease-in-out, aura-orb 6s infinite ease-in-out;
+  position: relative;
+  z-index: 10;
+}
+
+.aura-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: radial-gradient(circle at center, rgba(0, 212, 160, 0.05), transparent 70%);
+  border-radius: 50%;
+}
 
 /* ── Responsive ────────────────────────────── */
 @media (max-width: 1024px) {

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 
 import QuickTestModal from '../components/testlab/QuickTestModal'
+import AuraIntelligenceHub from '../components/AuraIntelligenceHub'
 
 export default function Dashboard() {
   const [sessionTime, setSessionTime] = useState(null) // Prevent hydration mismatch
@@ -25,7 +26,22 @@ export default function Dashboard() {
       const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0')
       setSessionTime(`${h}:${m}:${s}`)
     }, 1000)
-    return () => clearInterval(timer)
+
+    const handleMouseMove = (e) => {
+      for(const card of document.getElementsByClassName("card")) {
+        const rect = card.getBoundingClientRect(),
+              x = e.clientX - rect.left,
+              y = e.clientY - rect.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      }
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => {
+      clearInterval(timer)
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
   }, [])
 
   const stats = [
@@ -122,20 +138,25 @@ export default function Dashboard() {
             ))}
           </div>
 
+          {/* AURA AI Intelligence Hub (Model Fulfillment) */}
+          <div style={{ marginBottom: 64 }}>
+             <AuraIntelligenceHub />
+          </div>
+
           {/* Resource Matrix */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 64 }}>
              {resourceMatrix.map(r => (
                <Link key={r.label} href={r.href} style={{ textDecoration: 'none' }}>
-                 <div className="card-elevated" style={{ 
-                   display: 'flex', gap: 20, padding: 24, transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                 <div className="card" style={{ 
+                   display: 'flex', gap: 20, padding: 32, transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                    borderLeft: `4px solid ${r.color}`
                  }}>
                     <div style={{ width: 44, height: 44, background: 'var(--bg-primary)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
                        <r.icon size={20} style={{ color: r.color }} />
                     </div>
                     <div>
-                       <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>{r.label}</div>
-                       <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>{r.desc}</div>
+                       <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--text-primary)' }}>{r.label}</div>
+                       <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>{r.desc}</div>
                     </div>
                  </div>
                </Link>
