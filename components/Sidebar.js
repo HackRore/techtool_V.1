@@ -57,8 +57,8 @@ export default function Sidebar({ isOpen, onClose }) {
               <span style={{ fontSize: 18, fontWeight: 900, color: 'white' }}>H</span>
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: -0.5, color: 'var(--text-1)' }}>HACKRORE</div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: 0.5 }}>TechWorkbench</div>
+              <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: -0.5, color: 'var(--text-primary)' }}>HACKRORE</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>TechWorkbench</div>
             </div>
           </div>
 
@@ -79,11 +79,11 @@ export default function Sidebar({ isOpen, onClose }) {
                     gap: 12,
                     padding: '12px 16px',
                     borderRadius: '10px',
-                    color: isActive ? 'var(--blue-600)' : 'var(--text-3)',
-                    background: isActive ? 'var(--blue-50)' : 'transparent',
+                    color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                    background: isActive ? 'var(--accent-glow)' : 'transparent',
                     fontWeight: isActive ? 700 : 500,
                     fontSize: 14,
-                    transition: 'all 0.2s',
+                    transition: 'all var(--duration) var(--ease)',
                   }} className={`nav-item ${isActive ? 'active' : ''}`}>
                     <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
                     {item.name}
@@ -97,8 +97,8 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* Footer Context */}
         <div style={{ marginTop: 'auto', padding: '24px', borderTop: '1px solid var(--border)' }}>
           <div style={{ background: 'var(--surface-2)', padding: '16px', borderRadius: 12, border: '1px solid var(--border)' }}>
-             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--blue-600)', marginBottom: 4 }}>OPERATOR MODE</div>
-             <div style={{ fontSize: 10, color: 'var(--text-4)' }}>v1.0.5 Release</div>
+             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>OPERATOR MODE</div>
+             <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>v1.0.5 Release</div>
           </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ export default function Breadcrumbs({ paths = [] }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ol style={{ display: 'flex', alignItems: 'center', listStyle: 'none', padding: 0, margin: 0, fontSize: 13, color: 'var(--text-4)' }}>
+      <ol style={{ display: 'flex', alignItems: 'center', listStyle: 'none', padding: 0, margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
         <li style={{ display: 'flex', alignItems: 'center' }}>
           <Link href="/" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Home size={14} />
@@ -39,7 +39,7 @@ export default function Breadcrumbs({ paths = [] }) {
           <li key={idx} style={{ display: 'flex', alignItems: 'center' }}>
             <ChevronRight size={14} style={{ margin: '0 8px', opacity: 0.5 }} />
             <Link href={path.href} style={{ 
-              color: idx === paths.length - 1 ? 'var(--text-1)' : 'inherit', 
+              color: idx === paths.length - 1 ? 'var(--text-primary)' : 'inherit', 
               textDecoration: 'none',
               fontWeight: idx === paths.length - 1 ? 600 : 400
             }}>

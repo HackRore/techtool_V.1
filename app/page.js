@@ -79,25 +79,33 @@ export default function Dashboard() {
         <div style={{ minWidth: 0 }}>
           
           {/* Command Center (Main Hero) */}
-          <div className="hero-zone" style={{ marginBottom: 56, background: 'var(--bg-secondary)', padding: '40px 48px', borderRadius: 16, border: '1px solid var(--border)' }}>
-             <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="1" />
+          <div className="hero-zone glass-elevated" style={{ 
+            marginBottom: 56, 
+            background: 'var(--bg-secondary)', 
+            padding: '48px 56px', 
+            borderRadius: 20, 
+            border: '1px solid var(--border-bright)',
+            boxShadow: '0 0 40px var(--accent-glow)',
+            transition: 'all var(--duration) var(--ease)'
+          }}>
+             <div style={{ position: 'relative', width: 120, height: 120, flexShrink: 0 }}>
+                <svg width="120" height="120" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="0.5" />
                   <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="2" 
                     strokeDasharray="301" strokeDashoffset="100" 
-                    style={{ animation: 'spin-slow 12s linear infinite', opacity: 0.6 }} />
+                    style={{ animation: 'spin-slow 12s linear infinite', filter: 'drop-shadow(0 0 8px var(--accent))' }} />
                 </svg>
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <Activity size={40} style={{ color: 'var(--accent)', opacity: 0.8 }} />
+                   <Activity size={48} style={{ color: 'var(--accent)', filter: 'drop-shadow(0 0 12px var(--accent))' }} />
                 </div>
              </div>
              <div>
-                <h1 style={{ fontSize: 44, fontWeight: 900, letterSpacing: '-2px', marginBottom: 8 }}>
+                <h1 style={{ fontSize: 52, fontWeight: 900, letterSpacing: '-3px', marginBottom: 8, color: 'var(--text-primary)' }}>
                   Tech<span style={{ color: 'var(--accent)' }}>Workbench</span>
                 </h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                   <span className="badge badge-ready" style={{ padding: '4px 10px' }}>SYSTEM ONLINE</span>
-                   <span style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600 }}>Command kernel v.1.0-stable</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                   <span className="badge badge-ready" style={{ padding: '6px 12px', fontSize: 11 }}>SYSTEM ONLINE</span>
+                   <span style={{ color: 'var(--text-secondary)', fontSize: 15, fontWeight: 600, fontFamily: 'var(--font-mono)' }}>Kernel v.1.0-stable</span>
                 </div>
              </div>
           </div>
@@ -118,8 +126,8 @@ export default function Dashboard() {
                     onClick={() => setActiveQuickTest(t)}
                     className="card"
                     style={{ 
-                      flexShrink: 0, width: 140, padding: '20px 16px', textAlign: 'center', 
-                      cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                      flexShrink: 0, width: 140, padding: '24px 16px', textAlign: 'center', 
+                      cursor: 'pointer', transition: 'all var(--duration) var(--ease)'
                     }}
                   >
                      <div style={{ fontSize: 32, marginBottom: 12 }}>{t.icon}</div>

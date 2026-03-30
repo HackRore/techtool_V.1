@@ -60,9 +60,9 @@ export default function Navbar() {
 
   return (
     <nav style={{ 
-      background: 'rgba(2, 6, 23, 0.85)', 
+      background: 'var(--glass-bg)', 
       borderBottom: '1px solid var(--border)', 
-      backdropFilter: 'blur(16px)', 
+      backdropFilter: 'var(--glass-blur)', 
       position: 'sticky', 
       top: 0, 
       zIndex: 1000 
@@ -70,17 +70,18 @@ export default function Navbar() {
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
         
         {/* Brand */}
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }} onClick={() => setOpen(false)}>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, transition: 'transform var(--duration) var(--ease)' }} 
+          className="hover-scale" onClick={() => setOpen(false)}>
           <div className="nav-logo-sq" style={{ width: 32, height: 32, fontSize: 13 }}>HR</div>
           <div className="nav-desktop">
-            <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-1)', letterSpacing: '-0.5px' }}>TECH<span style={{ color: 'var(--blue-600)' }}>TOOL</span></div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>TECH<span style={{ color: 'var(--accent)' }}>TOOL</span></div>
           </div>
         </Link>
 
         {/* Global Search */}
         <div ref={searchRef} style={{ flex: 1, maxWidth: 600, position: 'relative' }} className="nav-desktop">
           <div style={{ position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-4)' }} />
+            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input 
               type="text" 
               placeholder="Search tools, guides, resources..." 
@@ -89,14 +90,14 @@ export default function Navbar() {
               onFocus={() => searchQuery.length > 1 && setSearchResults(searchAll(searchQuery))}
               style={{
                 width: '100%',
-                background: 'var(--surface)',
+                background: 'var(--bg-elevated)',
                 border: '1px solid var(--border)',
                 borderRadius: 10,
                 padding: '10px 16px 10px 40px',
                 fontSize: 14,
-                color: 'var(--text-1)',
+                color: 'var(--text-primary)',
                 outline: 'none',
-                transition: 'all 0.2s'
+                transition: 'all var(--duration) var(--ease)'
               }}
             />
           </div>
@@ -108,7 +109,7 @@ export default function Navbar() {
               top: '100%',
               left: 0,
               right: 0,
-              background: 'var(--surface)',
+              background: 'var(--bg-secondary)',
               border: '1px solid var(--border)',
               borderRadius: 12,
               marginTop: 8,
@@ -157,7 +158,7 @@ export default function Navbar() {
                 )}
 
                 {searchResults.tools.length === 0 && searchResults.guides.length === 0 && searchResults.resources.length === 0 && (
-                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-4)', fontSize: 13 }}>
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
                     No exact matches found.
                   </div>
                 )}
@@ -176,17 +177,17 @@ export default function Navbar() {
                borderRadius: 8,
                fontSize: 13,
                fontWeight: 600,
-               color: isActive(item.href) ? 'var(--blue-600)' : 'var(--text-3)',
-               background: isActive(item.href) ? 'var(--blue-50)' : 'transparent',
-               transition: 'all 0.2s'
-             }}>
+               color: isActive(item.href) ? 'var(--accent)' : 'var(--text-secondary)',
+               background: isActive(item.href) ? 'var(--accent-glow)' : 'transparent',
+               transition: 'all var(--duration) var(--ease)'
+             }} className="hover-lift">
                {item.label}
              </Link>
            ))}
         </div>
 
         {/* Mobile Hamburger */}
-        <button className="nav-mobile" onClick={() => setOpen(!open)} style={{ background: 'none', border: 'none', color: 'var(--text-1)', cursor: 'pointer' }}>
+        <button className="nav-mobile" onClick={() => setOpen(!open)} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -195,8 +196,8 @@ export default function Navbar() {
        {open && (
          <div className="nav-mobile-overlay" style={{ 
            position: 'fixed', inset: 0, top: 64, 
-           background: 'rgba(9, 9, 15, 0.95)', 
-           backdropFilter: 'blur(16px)',
+           background: 'var(--glass-bg)', 
+           backdropFilter: 'var(--glass-blur)',
            zIndex: 999 
          }}>
            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 32 }}>
@@ -210,7 +211,8 @@ export default function Navbar() {
                  color: isActive(item.href) ? 'var(--accent)' : 'var(--text-primary)',
                  display: 'flex',
                  alignItems: 'center',
-                 justifyContent: 'space-between'
+                 justifyContent: 'space-between',
+                 transition: 'all var(--duration) var(--ease)'
                }}>
                  {item.label}
                  <ChevronRight size={16} style={{ opacity: 0.3 }} />

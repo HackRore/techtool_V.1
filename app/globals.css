@@ -26,6 +26,10 @@
   --text-secondary: #94a3b8;  /* De-emphasized info */
   --text-muted:     #64748b;  /* Metadata and breadcrumbs */
   
+  /* Motion Design */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration: 0.35s;
+
   /* Status Semantics */
   --status-pass:    #00ffb3;
   --status-warn:    #ffb800;
@@ -54,13 +58,18 @@
   --border:        rgba(0, 0, 0, 0.08);
   --border-bright: rgba(0, 0, 0, 0.12);
   
-  --glass-bg:      rgba(255, 255, 255, 0.8);
-  --glass-blur:    blur(12px);
-  --glass-shadow:  0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  --glass-bg:      rgba(255, 255, 255, 0.85);
+  --glass-blur:    blur(16px);
+  --glass-shadow:  0 8px 32px 0 rgba(0, 0, 0, 0.03);
   
   --text-primary:   #0f172a;
   --text-secondary: #475569;
   --text-muted:     #94a3b8;
+}
+
+@keyframes space-drift {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
 }
 
 /* ── Reset ─────────────────────────────────── */
