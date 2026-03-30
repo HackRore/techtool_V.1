@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Sparkles, Brain, Zap, ShieldCheck, Activity } from 'lucide-react'
+import { Sparkles, Brain, Zap, ShieldCheck, Activity, Cpu, Network } from 'lucide-react'
 import { useHistory } from './HistoryProvider'
 
 export default function AuraIntelligenceHub() {
@@ -9,71 +9,81 @@ export default function AuraIntelligenceHub() {
   const [loadFactor, setLoadFactor] = useState(0)
 
   useEffect(() => {
-    const statuses = ['Analyzing History', 'Syncing Knowledge Base', 'Ready', 'Idle']
+    const statuses = ['Analyzing_History', 'Syncing_Knowledge_Base', 'Kernel_Optimization', 'Aura_Ready', 'Monitoring_Signals']
     let i = 0
     const interval = setInterval(() => {
       setSyncStatus(statuses[i % statuses.length])
       setLoadFactor(Math.floor(Math.random() * 15) + 5 + (history.length * 2))
       i++
-    }, 3000)
+    }, 4000)
     return () => clearInterval(interval)
   }, [history])
 
   return (
-    <div className="card-elevated" style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* Background Ambient Glow */}
+    <div className="card-elevated" style={{ 
+      position: 'relative', overflow: 'hidden', padding: '40px',
+      borderLeft: '4px solid var(--accent)', transition: 'all var(--duration) var(--ease)'
+    }}>
+      {/* Background Deep Pulse */}
       <div style={{ 
-        position: 'absolute', top: '-50%', right: '-20%', width: '300px', height: '300px',
+        position: 'absolute', top: '-50%', right: '-30%', width: '500px', height: '500px',
         background: 'radial-gradient(circle, var(--accent-glow) 0%, transparent 70%)',
-        opacity: 0.5, pointerEvents: 'none'
+        animation: 'aura-pulse 10s infinite alternate', pointerEvents: 'none', zIndex: 0
       }}></div>
 
-      <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
-        <div className="aura-container">
-          <div className="aura-node"></div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 48, alignItems: 'center', position: 'relative', zIndex: 1 }}>
+        <div className="aura-container" style={{ flexShrink: 0 }}>
+          <div className="aura-node" style={{ width: 80, height: 80 }}></div>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <Sparkles size={16} className="text-accent" style={{ color: 'var(--accent)' }} />
-            <h3 style={{ fontSize: 13, letterSpacing: '2px', margin: 0 }}>AURA INTELLIGENCE</h3>
+        <div style={{ flex: 1, minWidth: 280 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <Sparkles size={16} style={{ color: 'var(--accent)', filter: 'drop-shadow(0 0 4px var(--accent))' }} />
+            <span style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 2.5, textTransform: 'uppercase' }}>Cognitive Diagnostic Core</span>
           </div>
           
-          <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>
-            AURA <span style={{ color: 'var(--accent)', opacity: 0.8 }}>v.1.0-alpha</span>
-          </div>
+          <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 16 }}>
+            AURA <span style={{ color: 'var(--accent)' }}>INTELLIGENCE</span>
+          </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-             <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>KNOWLEDGE NODES</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{12842 + history.length}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 16, marginBottom: 24 }}>
+             <div style={{ padding: '16px', background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                   <Cpu size={12} style={{ color: 'var(--text-muted)' }} />
+                   <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>KNOWLEDGE_NODES</div>
+                </div>
+                <div className="text-mono" style={{ fontSize: 20, fontWeight: 900, color: 'var(--accent)' }}>{12842 + history.length}</div>
              </div>
-             <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4 }}>BRAIN LOAD</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{loadFactor}%</div>
+             <div style={{ padding: '16px', background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                   <Activity size={12} style={{ color: 'var(--text-muted)' }} />
+                   <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>DYNAMIC_LOAD</div>
+                </div>
+                <div className="text-mono" style={{ fontSize: 20, fontWeight: 900, color: 'var(--accent)' }}>{loadFactor}%</div>
              </div>
           </div>
           
-          {history.length > 0 && (
-            <div style={{ marginTop: 16, display: 'flex', gap: 6 }}>
-               {history.slice(0, 3).map(h => (
-                 <div key={h.id} style={{ width: 8, height: 8, borderRadius: '50%', background: h.result === 'pass' ? 'var(--status-pass)' : 'var(--status-fail)', opacity: 0.6 }} />
-               ))}
-               <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 700 }}>RECENT SYNC_SUCCESS</div>
-            </div>
-          )}
+          <div style={{ padding: '16px 20px', background: 'var(--accent-glow)', borderRadius: 12, border: '1px solid var(--accent)', display: 'flex', alignItems: 'center', gap: 12 }}>
+             <Brain size={18} style={{ color: 'var(--accent)', filter: 'drop-shadow(0 0 5px var(--accent))' }} />
+             <div style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>
+               STATUS: <span style={{ color: 'var(--accent)' }}>{syncStatus?.toUpperCase()}...</span>
+             </div>
+          </div>
         </div>
-      </div>
 
-      <div style={{ 
-        marginTop: 24, padding: '16px', background: 'rgba(0, 212, 160, 0.05)', 
-        borderRadius: 8, border: '1px solid rgba(0, 212, 160, 0.1)',
-        display: 'flex', alignItems: 'center', gap: 12
-      }}>
-         <Brain size={16} style={{ color: 'var(--accent)' }} />
-         <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>
-           Status: <span style={{ color: 'var(--accent)' }}>{syncStatus}...</span>
-         </div>
+        {history.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 180 }} className="desktop-only">
+             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase' }}>Recent Signal Sync</div>
+             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {history.slice(0, 3).map(h => (
+                  <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                     <div style={{ width: 6, height: 6, borderRadius: '50%', background: h.result === 'pass' ? 'var(--status-pass)' : 'var(--status-warn)' }} />
+                     <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>{h.event || 'Subsystem Validation'}</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -2,12 +2,18 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles, Search } from 'lucide-react'
+import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles, Search, History } from 'lucide-react'
 import { ToastProvider, useToast } from '../ui/ToastProvider'
 import { HistoryProvider, useHistory } from '../HistoryProvider'
 
 export default function AppLayout({ children }) {
-  return <LayoutContent>{children}</LayoutContent>
+  return (
+    <ToastProvider>
+      <HistoryProvider>
+        <LayoutContent>{children}</LayoutContent>
+      </HistoryProvider>
+    </ToastProvider>
+  )
 }
 
 function LayoutContent({ children }) {
@@ -18,14 +24,12 @@ function LayoutContent({ children }) {
   const router = useRouter()
   const { addToast } = useToast()
 
-  // Theme & Shortcuts
   useEffect(() => {
     const savedTheme = localStorage.getItem('hr_theme') === 'light'
     setIsLightMode(savedTheme)
-    if (savedTheme) document.body.classList.add('light-mode')
+    if (savedTheme) document.body.setAttribute('data-theme', 'light')
 
     const handleShortcuts = (e) => {
-      // Don't trigger if user is typing in an input
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return
       
       if (e.key === '/') {
@@ -36,7 +40,6 @@ function LayoutContent({ children }) {
       if (e.key === '2') router.push('/#quick-tests')
       if (e.key === '3') router.push('/tools')
       if (e.key === '4') router.push('/fixlab')
-      if (e.key === '5') router.push('/resources')
       if (e.key === 'Escape') setIsMobileMenuOpen(false)
     }
     
@@ -48,44 +51,45 @@ function LayoutContent({ children }) {
     const next = !isLightMode
     setIsLightMode(next)
     localStorage.setItem('hr_theme', next ? 'light' : 'dark')
-    document.body.classList.toggle('light-mode')
+    document.body.setAttribute('data-theme', next ? 'light' : 'dark')
   }
 
   const navItems = [
     { name: 'Dashboard', href: '/', icon: Monitor },
-    { name: 'Quick Tests', href: '/#quick-tests', icon: Cpu },
-    { name: 'Labs Hub', href: '/tools', icon: Activity },
-    { name: 'FixLab', href: '/fixlab', icon: BookOpen },
-    { name: 'Resources', href: '/resources', icon: Sparkles },
+    { name: 'TestLab',    href: '/tools', icon: Activity },
+    { name: 'ScanLab',    href: '/diagnostics', icon: Cpu },
+    { name: 'FixLab',     href: '/fixlab', icon: BookOpen },
+    { name: 'Community',  href: '/resources', icon: Sparkles },
   ]
 
-  // Cleanup body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
+    if (isMobileMenuOpen) document.body.style.overflow = 'hidden'
+    else document.body.style.overflow = 'unset'
   }, [isMobileMenuOpen])
 
   return (
     <div className="app-shell">
       <a href="#main" className="skip-nav">Skip to main content</a>
 
-      {/* Hardened Top Navigation */}
+      {/* Hardened Top Navigation V.2 */}
       <nav className="top-nav">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div className="nav-logo-sq">H</div>
-          
-          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: -0.5 }}>HackRore</span>
-            <span style={{ width: 1, height: 16, background: 'var(--border)' }}></span>
-            <span style={{ color: 'var(--text-muted)', fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase' }}>Workbench</span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }} 
+            className="hover:scale-105 transition-transform">
+            <div style={{ 
+              width: 32, height: 32, background: 'var(--accent)', color: 'var(--bg-primary)',
+              borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 900, fontSize: 13, boxShadow: '0 0 20px var(--accent-glow)'
+            }}>HR</div>
+            <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column' }}>
+               <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>HACKRORE</span>
+               <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--accent)', letterSpacing: 1.5, marginTop: -2 }}>WORKBENCH</span>
+            </div>
+          </Link>
         </div>
 
         {/* Center: Desktop Nav */}
-        <div className="desktop-only" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="desktop-only glass" style={{ padding: '4px', borderRadius: 12, gap: 4, alignItems: 'center' }}>
           {navItems.map(item => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
             return (
@@ -93,98 +97,84 @@ function LayoutContent({ children }) {
                 key={item.href} 
                 href={item.href} 
                 className={`nav-link ${isActive ? 'active' : ''}`}
-                style={{ fontSize: 13, padding: '8px 16px' }}
               >
                 {item.name}
               </Link>
             )
           })}
-          
-          <div style={{ position: 'relative', marginLeft: 16 }}>
+        </div>
+
+        {/* Right: Status & Operator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div className="desktop-only" style={{ position: 'relative' }}>
              <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
              <input 
                type="text" 
-               placeholder="Search..." 
+               placeholder="Search kernel..." 
                value={searchQuery}
                onChange={e => setSearchQuery(e.target.value)}
                onKeyDown={e => e.key === 'Enter' && searchQuery && (router.push(`/search?q=${searchQuery}`), setSearchQuery(''))}
                style={{ 
                  background: 'var(--bg-secondary)', border: '1px solid var(--border)', 
-                 borderRadius: 8, padding: '8px 12px 8px 34px', fontSize: 13, 
-                 width: 160, transition: 'all 0.2s', outline: 'none'
+                 borderBottom: '1px solid var(--border-bright)',
+                 borderRadius: 8, padding: '8px 12px 8px 34px', fontSize: 12, 
+                 width: 140, transition: 'all 0.3s var(--ease)', outline: 'none',
+                 color: 'var(--text-primary)'
                }}
-               className="focus:w-240"
+               className="focus:w-200"
              />
           </div>
-        </div>
 
-        {/* Right: Status & User */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <button 
-            onClick={toggleTheme}
-            aria-label="Toggle Theme"
-            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: 4, transition: 'color 0.2s' }}
-            className="hover:text-accent"
-          >
-             {isLightMode ? <Monitor size={18} /> : <Sparkles size={18} />}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button 
+              onClick={toggleTheme}
+              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: 8, borderRadius: 8, transition: 'all 0.2s' }}
+              className="hover:border-accent hover:text-accent"
+            >
+               {isLightMode ? <Monitor size={16} /> : <Sparkles size={16} />}
+            </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)', fontSize: 10, fontWeight: 800, letterSpacing: 1 }}>
-             <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)' }}></div>
-             <span className="desktop-only">SYNC_LIVE</span>
+            <div className="desktop-only badge badge-ready" style={{ gap: 8, fontSize: 10 }}>
+               <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)', animation: 'aura-pulse 2s infinite' }}></div>
+               SYNC_READY
+            </div>
+
+            <button 
+              className="mobile-only"
+              onClick={() => setIsMobileMenuOpen(true)}
+              style={{ background: 'var(--accent-glow)', border: `1px solid var(--accent)`, color: 'var(--accent)', cursor: 'pointer', padding: '8px 12px', borderRadius: 8, fontWeight: 800, fontSize: 11 }}
+            >
+              MENU
+            </button>
           </div>
-          
-          <div className="desktop-only" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', fontSize: 11, fontWeight: 700 }} aria-label="Current Operator">
-             <User size={14} style={{ color: 'var(--accent)' }} />
-             <span>Operator_01</span>
-          </div>
-
-          <button 
-            className="mobile-only"
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Open Navigation Menu"
-            style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', padding: 6, borderRadius: 6, border: '1px solid var(--border)' }}
-          >
-            <Menu size={20} />
-          </button>
         </div>
       </nav>
 
       {/* Main Content Area */}
-      <main id="main" className="main-content">
+      <main id="main" className="main-content animate-in">
         {children}
       </main>
 
-      {/* Mobile Drawer */}
-      <div className={`mobile-drawer ${isMobileMenuOpen ? 'open' : ''}`} style={{ 
+      {/* Mobile Drawer Reconstruction */}
+      <div className={`glass ${isMobileMenuOpen ? 'open' : ''}`} style={{ 
         position: 'fixed', right: 0, top: 0, bottom: 0, 
-        width: 300, background: 'var(--bg-primary)', 
-        borderLeft: '1px solid var(--border)', zIndex: 1600,
-        padding: 40, display: 'flex', flexDirection: 'column',
-        boxShadow: '-20px 0 60px rgba(0,0,0,0.5)',
+        width: 320, background: 'var(--bg-primary)', 
+        borderLeft: '1px solid var(--accent)', zIndex: 2000,
+        padding: '40px 32px', display: 'flex', flexDirection: 'column',
+        boxShadow: '-20px 0 60px rgba(0,0,0,0.8)',
         transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
-          <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: -0.5 }}>Navigation</span>
-          <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close Navigation" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-            <X size={24} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+             <span style={{ fontWeight: 900, fontSize: 20 }}>HackRore</span>
+             <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800 }}>NAV_CLUSTER</span>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'var(--bg-elevated)', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 8, borderRadius: 50 }}>
+            <X size={20} />
           </button>
         </div>
 
-        <div style={{ position: 'relative', marginBottom: 32 }} role="search">
-           <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-           <input 
-             type="text" 
-             placeholder="Search hub..." 
-             aria-label="Search Diagnostic Hub"
-             value={searchQuery}
-             onChange={e => setSearchQuery(e.target.value)}
-             onKeyDown={e => e.key === 'Enter' && searchQuery && (router.push(`/search?q=${searchQuery}`), setIsMobileMenuOpen(false), setSearchQuery(''))}
-             style={{ width: '100%', height: 44, paddingLeft: 42, background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 14, color: 'var(--text-primary)', outline: 'none' }}
-           />
-        </div>
-        
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {navItems.map(item => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
@@ -194,66 +184,68 @@ function LayoutContent({ children }) {
                 href={item.href} 
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{ 
-                  padding: '14px 20px', borderRadius: 8, 
-                  textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text-primary)',
-                  background: isActive ? 'var(--accent-glow)' : 'var(--bg-secondary)',
-                  border: `1px solid ${isActive ? 'var(--accent)' : 'transparent'}`,
-                  fontWeight: 700, display: 'flex', alignItems: 'center', gap: 14,
-                  fontSize: 15, transition: 'all 0.2s'
+                  padding: '16px 24px', borderRadius: 12, 
+                  textDecoration: 'none', color: isActive ? 'var(--bg-primary)' : 'var(--text-primary)',
+                  background: isActive ? 'var(--accent)' : 'var(--bg-elevated)',
+                  fontWeight: 800, display: 'flex', alignItems: 'center', gap: 16,
+                  fontSize: 16, transition: 'all 0.2s',
+                  border: isActive ? 'none' : '1px solid var(--border)'
                 }}
               >
-                <item.icon size={18} />
+                <item.icon size={20} />
                 {item.name}
               </Link>
             )
           })}
         </nav>
 
-        <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: 32 }}>
-           <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20 }}>RESOURCES</div>
-           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }} style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600, cursor: 'pointer' }}>
-                <Monitor size={16} /> Theme: {isLightMode ? 'Light' : 'Pulse Dark'}
+        <div style={{ marginTop: 'auto', paddingTop: 40, borderTop: '1px solid var(--border)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border)' }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-bright)' }}>
+                 <User size={20} style={{ color: 'var(--accent)' }} />
               </div>
-              <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><Settings size={16} /> System Settings</div>
-              <div style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}><BookOpen size={16} /> Documentation</div>
+              <div>
+                 <div style={{ fontSize: 14, fontWeight: 800 }}>Operator_01</div>
+                 <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Level 3 Clearance</div>
+              </div>
            </div>
-           <div style={{ marginTop: 40, fontSize: 11, color: 'var(--text-muted)', fontWeight: 500 }}>HackRore Workbench v1.2</div>
+           
+           <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+              <button onClick={toggleTheme} style={{ flex: 1, padding: '12px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 700, fontSize: 12 }}>
+                 THEME
+              </button>
+              <button style={{ flex: 1, padding: '12px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 700, fontSize: 12 }}>
+                 LOGOUT
+              </button>
+           </div>
         </div>
       </div>
-      {isMobileMenuOpen && <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)} />}
+      
+      {isMobileMenuOpen && <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1900 }} onClick={() => setIsMobileMenuOpen(false)} />}
 
-      {/* Mobile Bottom Nav (Audit Fix: One-handed Technician UX) */}
+      {/* Mobile Bottom Bar (Technician Standard) */}
       <div className="mobile-only" style={{ 
-        position: 'fixed', bottom: 0, left: 0, right: 0, 
-        height: 64, background: 'rgba(2, 6, 23, 0.8)', 
-        backdropFilter: 'blur(16px)', borderTop: '1px solid var(--border)',
-        zIndex: 1500, display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-        padding: '0 12px', boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
+        position: 'fixed', bottom: 20, left: 20, right: 20, 
+        height: 64, background: 'rgba(10, 11, 18, 0.95)', 
+        backdropFilter: 'blur(20px)', border: '1px solid var(--border-bright)',
+        borderRadius: 20, zIndex: 1500, display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+        padding: '0 12px', boxShadow: '0 20px 40px rgba(0,0,0,0.8)'
       }}>
          {navItems.map(item => {
            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
            return (
              <Link key={item.href} href={item.href} style={{ 
-               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
                color: isActive ? 'var(--accent)' : 'var(--text-muted)', textDecoration: 'none',
-               transition: 'all 0.2s'
+               transition: 'all 0.2s', width: 50
              }}>
-                <item.icon size={20} style={{ opacity: isActive ? 1 : 0.6 }} />
-                <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>{item.name}</span>
+                <item.icon size={20} />
+                <span style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 0.5 }}>{item.name.slice(0, 5)}</span>
              </Link>
            )
          })}
       </div>
 
-      <style jsx global>{`
-        @media (min-width: 1025px) {
-          .mobile-only { display: none !important; }
-        }
-        @media (max-width: 1024px) {
-          .desktop-only { display: none !important; }
-        }
-      `}</style>
     </div>
   )
 }
