@@ -9,15 +9,40 @@ import {
   Download, Copy 
 } from 'lucide-react'
 
+import { useSearchParams } from 'next/navigation'
 import { useToast } from '../../components/ui/ToastProvider'
 
 export default function ScanLab() {
+  const searchParams = useSearchParams()
   const [isWindows, setIsWindows] = useState(true)
   const [scanResult, setScanResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { addToast } = useToast()
   const fileInputRef = useRef(null)
+
+  // Handle Base64 Import (Two-Way Bridge)
+  useEffect(() => {
+    const importData = searchParams.get('import')
+    if (importData) {
+      setLoading(true)
+      try {
+        const decoded = atob(importData)
+        const parsed = JSON.parse(decoded)
+        
+        // Simulation delay for premium feel
+        setTimeout(() => {
+          setScanResult(parsed)
+          setLoading(false)
+          addToast('Telemetry Synchronized Successfully', 'success')
+        }, 1500)
+      } catch (err) {
+        console.error('Import failed:', err)
+        setLoading(false)
+        addToast('Failed to decode telemetry payload', 'error')
+      }
+    }
+  }, [searchParams, addToast])
 
   useEffect(() => {
     const platform = window.navigator.platform.toLowerCase()

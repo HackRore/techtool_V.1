@@ -42,6 +42,27 @@
   --blue-50:  rgba(0, 212, 160, 0.05);
 }
 
+[data-theme='light'] {
+  --bg-primary:    #f8fafc;
+  --bg-secondary:  #ffffff;
+  --bg-elevated:   #f1f5f9;
+  
+  --accent:        #0d9488;   /* Deeper Teal for light bg */
+  --accent-dim:    #0f766e;
+  --accent-glow:   rgba(13, 148, 136, 0.05);
+  
+  --border:        rgba(0, 0, 0, 0.08);
+  --border-bright: rgba(0, 0, 0, 0.12);
+  
+  --glass-bg:      rgba(255, 255, 255, 0.8);
+  --glass-blur:    blur(12px);
+  --glass-shadow:  0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+}
+
 /* ── Reset ─────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; font-size: 16px; }

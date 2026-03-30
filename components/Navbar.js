@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Zap, Activity, BookOpen, Menu, X, Terminal, ChevronRight } from 'lucide-react'
+import { Search, Zap, Activity, BookOpen, Menu, X, Terminal, ChevronRight, Sun, Moon } from 'lucide-react'
 import { searchAll } from '../lib/engine/searchEngine'
 
 const NAV_ITEMS = [
@@ -16,9 +16,24 @@ const NAV_ITEMS = [
 export default function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [theme, setTheme] = useState('dark')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState(null)
   const searchRef = useRef(null)
+
+  // Theme Persistence
+  useEffect(() => {
+    const saved = localStorage.getItem('hackrore_theme') || 'dark'
+    setTheme(saved)
+    document.documentElement.setAttribute('data-theme', saved)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('hackrore_theme', next)
+    document.documentElement.setAttribute('data-theme', next)
+  }
 
   const handleSearch = (e) => {
     const q = e.target.value
@@ -176,23 +191,53 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {open && (
-        <div className="nav-mobile" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '24px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {NAV_ITEMS.map(item => (
-              <Link key={item.href} href={item.href} onClick={() => setOpen(false)} style={{
-                textDecoration: 'none',
-                fontSize: 18,
-                fontWeight: 600,
-                color: isActive(item.href) ? 'var(--blue-600)' : 'var(--text-1)'
-              }}>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+       {/* Mobile Menu */}
+       {open && (
+         <div className="nav-mobile-overlay" style={{ 
+           position: 'fixed', inset: 0, top: 64, 
+           background: 'rgba(9, 9, 15, 0.95)', 
+           backdropFilter: 'blur(16px)',
+           zIndex: 999 
+         }}>
+           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 32 }}>
+             {NAV_ITEMS.map(item => (
+               <Link key={item.href} href={item.href} onClick={() => setOpen(false)} style={{
+                 textDecoration: 'none',
+                 fontSize: 20,
+                 fontWeight: 800,
+                 padding: '16px 0',
+                 borderBottom: '1px solid var(--border)',
+                 color: isActive(item.href) ? 'var(--accent)' : 'var(--text-primary)',
+                 display: 'flex',
+                 alignItems: 'center',
+                 justifyContent: 'space-between'
+               }}>
+                 {item.label}
+                 <ChevronRight size={16} style={{ opacity: 0.3 }} />
+               </Link>
+             ))}
+             <button 
+               onClick={toggleTheme}
+               style={{
+                 marginTop: 24,
+                 background: 'var(--bg-secondary)',
+                 border: '1px solid var(--border)',
+                 borderRadius: 12,
+                 padding: '16px',
+                 display: 'flex',
+                 alignItems: 'center',
+                 justifyContent: 'center',
+                 gap: 12,
+                 color: 'var(--text-primary)',
+                 fontWeight: 700
+               }}
+             >
+               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+               {theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+             </button>
+           </div>
+         </div>
+       )}
 
       <style>{`
         .nav-desktop { display: flex !important; }

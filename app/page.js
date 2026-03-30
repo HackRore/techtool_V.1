@@ -78,6 +78,30 @@ export default function Dashboard() {
         {/* Left: Main Dashboard */}
         <div style={{ minWidth: 0 }}>
           
+          {/* Command Center (Main Hero) */}
+          <div className="hero-zone" style={{ marginBottom: 56, background: 'var(--bg-secondary)', padding: '40px 48px', borderRadius: 16, border: '1px solid var(--border)' }}>
+             <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="1" />
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="2" 
+                    strokeDasharray="301" strokeDashoffset="100" 
+                    style={{ animation: 'spin-slow 12s linear infinite', opacity: 0.6 }} />
+                </svg>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <Activity size={40} style={{ color: 'var(--accent)', opacity: 0.8 }} />
+                </div>
+             </div>
+             <div>
+                <h1 style={{ fontSize: 44, fontWeight: 900, letterSpacing: '-2px', marginBottom: 8 }}>
+                  Tech<span style={{ color: 'var(--accent)' }}>Workbench</span>
+                </h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                   <span className="badge badge-ready" style={{ padding: '4px 10px' }}>SYSTEM ONLINE</span>
+                   <span style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600 }}>Command kernel v.1.0-stable</span>
+                </div>
+             </div>
+          </div>
+
           {/* Live System Telemetry (Audit Fix: Real-time Data) */}
           <LiveHUD />
 
@@ -102,30 +126,6 @@ export default function Dashboard() {
                      <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-primary)' }}>{t.name}</div>
                   </div>
                 ))}
-             </div>
-          </div>
-
-          {/* Command Center (Main Hero) */}
-          <div className="hero-zone" style={{ marginBottom: 56, background: 'var(--bg-secondary)', padding: '40px 48px', borderRadius: 16, border: '1px solid var(--border)' }}>
-             <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="1" />
-                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="2" 
-                    strokeDasharray="301" strokeDashoffset="100" 
-                    style={{ animation: 'spin-slow 12s linear infinite', opacity: 0.6 }} />
-                </svg>
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <Activity size={40} style={{ color: 'var(--accent)', opacity: 0.8 }} />
-                </div>
-             </div>
-             <div>
-                <h1 style={{ fontSize: 44, fontWeight: 900, letterSpacing: '-2px', marginBottom: 8 }}>
-                  Tech<span style={{ color: 'var(--accent)' }}>Workbench</span>
-                </h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                   <span className="badge badge-ready" style={{ padding: '4px 10px' }}>SYSTEM ONLINE</span>
-                   <span style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600 }}>Command kernel v.1.0-stable</span>
-                </div>
              </div>
           </div>
 

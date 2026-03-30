@@ -654,7 +654,7 @@ if (Test-Path $ReportPath) {
     $EncodedData = [Convert]::ToBase64String($Bytes)
     
     # Open the browser directly to your ScanLab with the data payload
-    $TargetURL = "https://hachtool.vercel.app/scanlab?import=$EncodedData"
+    $TargetURL = "https://hachtool.vercel.app/diagnostics?import=$EncodedData"
     Start-Process $TargetURL
 } else {
     Write-Error "Report file not found. Please check permissions."
