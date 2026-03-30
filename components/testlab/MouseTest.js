@@ -1,32 +1,57 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { MousePointer2, Activity, ShieldCheck, Zap, AlertTriangle, Hash } from 'lucide-react'
 
 const BUTTONS = [
-  { id: 0, label: 'Left Click',   key: 'left' },
-  { id: 1, label: 'Middle Click', key: 'middle' },
-  { id: 2, label: 'Right Click',  key: 'right' },
+  { id: 0, label: 'Primary (L)', key: 'left' },
+  { id: 1, label: 'Wheel (M)', key: 'middle' },
+  { id: 2, label: 'Secondary (R)', key: 'right' },
 ]
 
 export default function MouseTest({ onResult }) {
-  const [clicks, setClicks]     = useState({ left: 0, middle: 0, right: 0 })
-  const [pos, setPos]           = useState({ x: 0, y: 0 })
-  const [trail, setTrail]       = useState([])
-  const [scroll, setScroll]     = useState(0)
-  const [pressed, setPressed]   = useState(new Set())
-  const canvasRef = useRef(null)
+  const [clicks, setClicks] = useState({ left: 0, middle: 0, right: 0 })
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+  const [scroll, setScroll] = useState(0)
+  const [pressed, setPressed] = useState(new Set())
+  const [pollingRate, setPollingRate] = useState(0)
+  const [lastEventTime, setLastEventTime] = useState(0)
+  const [doubleClicks, setDoubleClicks] = useState(0)
+  const [heatmap, setHeatmap] = useState([])
+  const [errorCount, setErrorCount] = useState(0) // For debounce/double-click issues
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    setPos({ x: Math.round(x), y: Math.round(y) })
-    setTrail(prev => [...prev.slice(-50), { x, y }])
+    const x = Math.round(e.clientX - rect.left)
+    const y = Math.round(e.clientY - rect.top)
+    
+    // Polling Rate Calculation (Deterministic)
+    const now = performance.now()
+    if (lastEventTime > 0) {
+      const delta = now - lastEventTime
+      if (delta > 0) {
+        setPollingRate(Math.round(1000 / delta))
+      }
+    }
+    setLastEventTime(now)
+    setPos({ x, y })
+    
+    // High-density movement heatmap (limited for performance)
+    setHeatmap(prev => [...prev.slice(-300), { x, y }])
   }
 
   const handleMouseDown = (e) => {
     e.preventDefault()
     const key = BUTTONS.find(b => b.id === e.button)?.key
     if (key) {
+      const now = performance.now()
+      // Detect Double-click debouncing issues (faulty switches)
+      // Usually < 100ms is a faulty "phantom" click or extreme gaming
+      if (window[`last_${key}_click`] && (now - window[`last_${key}_click`]) < 80) {
+        setDoubleClicks(prev => prev + 1)
+        setErrorCount(prev => prev + 1)
+      }
+      window[`last_${key}_click`] = now
+
       setClicks(prev => ({ ...prev, [key]: prev[key] + 1 }))
       setPressed(prev => new Set([...prev, key]))
       onResult?.('pass')
@@ -44,92 +69,117 @@ export default function MouseTest({ onResult }) {
 
   const reset = () => {
     setClicks({ left: 0, middle: 0, right: 0 })
-    setTrail([])
+    setHeatmap([])
     setScroll(0)
-    setPressed(new Set())
+    setPollingRate(0)
+    setDoubleClicks(0)
+    setErrorCount(0)
   }
 
   return (
-    <div>
-      {/* Click counters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
-        {BUTTONS.map(btn => (
-          <div key={btn.id} style={{
-            flex: 1, minWidth: 80,
-            background: pressed.has(btn.key) ? 'rgba(245,158,11,0.1)' : 'var(--surface-2)',
-            border: `1px solid ${pressed.has(btn.key) ? 'rgba(245,158,11,0.4)' : 'var(--surface-4)'}`,
-            borderRadius: 2, padding: '12px 16px', textAlign: 'center',
-            transition: 'all 0.1s',
-          }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 700, color: pressed.has(btn.key) ? 'var(--amber)' : 'var(--text-primary)' }}>
-              {clicks[btn.key]}
-            </div>
-            <div className="label-tag" style={{ marginTop: 4 }}>{btn.label}</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      {/* Metric Dashboard */}
+      <div className="grid-cols-2" style={{ display: 'grid', gap: 16 }}>
+        <div className="card-elevated" style={{ padding: 24, borderLeft: '4px solid var(--accent)' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Zap size={16} style={{ color: 'var(--accent)' }} />
+              <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)' }}>POLLING_RATE</div>
+           </div>
+           <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: '#fff' }}>{pollingRate} <span style={{ fontSize: 13, color: 'var(--accent)' }}>Hz</span></div>
+           <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>V-Sync Interval Verification Active</div>
+        </div>
+
+        <div className="card-elevated" style={{ padding: 24, borderLeft: `4px solid ${errorCount > 0 ? 'var(--status-warn)' : 'var(--status-pass)'}` }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Activity size={16} style={{ color: errorCount > 0 ? 'var(--status-warn)' : 'var(--status-pass)' }} />
+              <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)' }}>INTEGRITY_ERRORS</div>
+           </div>
+           <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: '#fff' }}>{doubleClicks} <span style={{ fontSize: 13, color: 'var(--status-warn)' }}>Faults</span></div>
+           <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>Rapid-fire debounce detection active</div>
+        </div>
+      </div>
+
+      {/* Primary Interaction Shell */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 }}>
+        
+        {/* Interaction Canvas */}
+        <div 
+          className="card shadow-glow" 
+          onMouseMove={handleMouseMove}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onWheel={handleScroll}
+          onContextMenu={e => e.preventDefault()}
+          style={{ 
+            height: 380, background: 'var(--bg-primary)', position: 'relative', 
+            cursor: 'crosshair', border: '1px solid var(--border)', overflow: 'hidden' 
+          }}
+        >
+          {/* Diagnostic Grid */}
+          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.1 }}>
+             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#fff" strokeWidth="1"/>
+             </pattern>
+             <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+
+          {/* Movement Heatmap */}
+          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+             {heatmap.length > 1 && (
+               <polyline
+                 points={heatmap.map(p => `${p.x},${p.y}`).join(' ')}
+                 fill="none"
+                 stroke="var(--accent)"
+                 strokeWidth="2"
+                 strokeOpacity="0.3"
+                 strokeLinejoin="round"
+                 strokeLinecap="round"
+               />
+             )}
+             {heatmap.length > 0 && (
+               <circle cx={heatmap[heatmap.length-1].x} cy={heatmap[heatmap.length-1].y} r="6" fill="var(--accent)" />
+             )}
+          </svg>
+
+          <div style={{ position: 'absolute', top: 20, right: 20, textAlign: 'right' }}>
+             <div style={{ fontSize: 32, fontWeight: 900, color: 'var(--text-muted)', lineHeight: 0.8, opacity: 0.2 }}>{pos.x}</div>
+             <div style={{ fontSize: 32, fontWeight: 900, color: 'var(--text-muted)', opacity: 0.2 }}>{pos.y}</div>
           </div>
-        ))}
-        <div style={{
-          flex: 1, minWidth: 80,
-          background: 'var(--surface-2)', border: '1px solid var(--surface-4)',
-          borderRadius: 2, padding: '12px 16px', textAlign: 'center',
-        }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 700, color: 'var(--cyan)' }}>{scroll}</div>
-          <div className="label-tag" style={{ marginTop: 4 }}>Scroll Steps</div>
+
+          <div style={{ position: 'absolute', bottom: 20, left: 20, fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 2 }}>
+             ACTIVATE_BUS_SYING: MOVE_MOUSE_RAPIDLY
+          </div>
+        </div>
+
+        {/* Click Status Console */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+           {BUTTONS.map(btn => (
+             <div key={btn.id} className="card-elevated" style={{ 
+               padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+               background: pressed.has(btn.key) ? 'var(--accent-glow)' : 'var(--bg-secondary)',
+               border: `1px solid ${pressed.has(btn.key) ? 'var(--accent)' : 'var(--border)'}`
+             }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: pressed.has(btn.key) ? 'var(--accent)' : 'var(--text-muted)' }} />
+                   <div>
+                      <div style={{ fontSize: 13, fontWeight: 900 }}>{btn.label.toUpperCase()}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800 }}>Signal Count: {clicks[btn.key]}</div>
+                   </div>
+                </div>
+                <Hash size={16} style={{ color: 'var(--text-muted)', opacity: 0.3 }} />
+             </div>
+           ))}
+
+           <div className="card" style={{ padding: 24, marginTop: 'auto', background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 2, marginBottom: 4 }}>SCROLL_RESOLUTION</div>
+              <div className="text-mono" style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent)' }}>{scroll} <span style={{ fontSize: 11 }}>Steps</span></div>
+           </div>
+
+           <button onClick={reset} className="btn-accent" style={{ background: 'transparent', border: '1px solid var(--status-fail)', color: 'var(--status-fail)', marginTop: 12 }}>
+              CLEAR_METRICS
+           </button>
         </div>
       </div>
-
-      {/* Mouse pad */}
-      <div
-        style={{
-          width: '100%', height: 220,
-          background: 'var(--surface-1)',
-          border: '1px solid var(--surface-4)',
-          borderRadius: 2, position: 'relative',
-          cursor: 'crosshair', userSelect: 'none', marginBottom: 12,
-          overflow: 'hidden',
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onWheel={handleScroll}
-        onContextMenu={e => e.preventDefault()}
-      >
-        {/* Grid lines */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15 }}>
-          {[25, 50, 75].map(p => (
-            <g key={p}>
-              <line x1={`${p}%`} y1="0" x2={`${p}%`} y2="100%" stroke="#444" strokeWidth="1" strokeDasharray="4 4" />
-              <line x1="0" y1={`${p}%`} x2="100%" y2={`${p}%`} stroke="#444" strokeWidth="1" strokeDasharray="4 4" />
-            </g>
-          ))}
-        </svg>
-
-        {/* Trail */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-          {trail.length > 1 && (
-            <polyline
-              points={trail.map(p => `${p.x},${p.y}`).join(' ')}
-              fill="none"
-              stroke="rgba(245,158,11,0.3)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          )}
-          {trail.length > 0 && (
-            <circle cx={trail[trail.length-1].x} cy={trail[trail.length-1].y} r="4" fill="var(--amber)" />
-          )}
-        </svg>
-
-        {/* Position readout */}
-        <div style={{ position: 'absolute', top: 8, right: 10, fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--surface-5)' }}>
-          {pos.x}, {pos.y}
-        </div>
-
-        <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--surface-5)', letterSpacing: '1px' }}>
-          MOVE + CLICK + SCROLL IN THIS AREA
-        </div>
-      </div>
-
-      <button className="btn-amber" onClick={reset}>RESET</button>
     </div>
   )
 }

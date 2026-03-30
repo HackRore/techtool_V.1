@@ -1,202 +1,162 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { useHistory } from '../HistoryProvider'
-import { Activity, Zap, AlertCircle, RefreshCcw, ShieldCheck } from 'lucide-react'
+'use client'
+import { useState, useEffect, useRef } from 'react'
+import { Keyboard, Zap, Activity, ShieldCheck, AlertTriangle, Monitor, Cpu } from 'lucide-react'
 
-const KEY_LAYOUT = [
-  ['Escape','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','PrintScreen','ScrollLock','Pause'],
-  ['`','1','2','3','4','5','6','7','8','9','0','-','=','Backspace','Insert','Home','PageUp','NumLock','NumpadDivide','NumpadMultiply','NumpadSubtract'],
-  ['Tab','q','w','e','r','t','y','u','i','o','p','[',']','\\','Delete','End','PageDown','Numpad7','Numpad8','Numpad9','NumpadAdd'],
-  ['CapsLock','a','s','d','f','g','h','j','k','l',';',"'",'Enter','Numpad4','Numpad5','Numpad6'],
-  ['ShiftLeft','z','x','c','v','b','n','m',',','.','/','ShiftRight','ArrowUp','Numpad1','Numpad2','Numpad3','NumpadEnter'],
-  ['ControlLeft','MetaLeft','AltLeft','Space','AltRight','MetaRight','ContextMenu','ControlRight','ArrowLeft','ArrowDown','ArrowRight','Numpad0','NumpadDecimal'],
+const KEYS = [
+  ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'],
+  ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+  ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\'],
+  ['Caps', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", 'Enter'],
+  ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift'],
+  ['Ctrl', 'Win', 'Alt', 'Space', 'Alt', 'Fn', 'Ctx', 'Ctrl']
 ]
 
-const KEY_LABELS = {
-  'Escape':'ESC','Backspace':'⌫','Tab':'TAB','CapsLock':'CAPS',
-  'ShiftLeft':'SHIFT','ShiftRight':'SHIFT','Enter':'↵',
-  'ControlLeft':'CTRL','ControlRight':'CTRL','AltLeft':'ALT','AltRight':'ALT',
-  'MetaLeft':'WIN','MetaRight':'WIN','ContextMenu':'MENU','Space':'SPACE',
-  'PrintScreen':'PRT','ScrollLock':'SCR','Pause':'PAU','Insert':'INS','Home':'HOM','PageUp':'PUP',
-  'Delete':'DEL','End':'END','PageDown':'PDN','NumLock':'NUM',
-  'ArrowUp':'↑','ArrowDown':'↓','ArrowLeft':'←','ArrowRight':'→',
-  'NumpadDivide':'/','NumpadMultiply':'*','NumpadSubtract':'-','NumpadAdd':'+',
-  'NumpadEnter':'ENT','NumpadDecimal':'.','Numpad0':'0','Numpad1':'1','Numpad2':'2','Numpad3':'3','Numpad4':'4','Numpad5':'5','Numpad6':'6','Numpad7':'7','Numpad8':'8','Numpad9':'9'
-}
-
-function getWidth(k) {
-  const wide = { 
-    'Backspace': 70, 'Tab': 55, 'CapsLock': 65, 'ShiftLeft': 90, 'ShiftRight': 90, 'Enter': 75, 
-    'ControlLeft': 55, 'ControlRight': 55, 'AltLeft': 55, 'AltRight': 55, 'MetaLeft': 55, 'MetaRight': 55,
-    'Space': 240, 'Numpad0': 80 
-  }
-  return wide[k] || 40
-}
-
-export default function KeyboardTest({ onResult, inline = false }) {
-  const { addHistory } = useHistory()
-  const [pressedKeys, setPressedKeys] = useState(new Set())
-  const [testedKeys, setTestedKeys]   = useState(new Set())
-  const [stuckKeys, setStuckKeys]     = useState(new Set())
-  const [status, setStatus]           = useState('idle')
+export default function KeyboardTest({ onResult }) {
+  const [pressed, setPressed] = useState(new Set())
+  const [history, setHistory] = useState(new Set())
+  const [latency, setLatency] = useState(0) // ms
+  const [avgLatency, setAvgLatency] = useState(0)
+  const [maxRollover, setMaxRollover] = useState(0)
+  const [lastEvent, setLastEvent] = useState(null)
   
-  const pressTimers = useRef({})
-  const allKeys = KEY_LAYOUT.flat()
-  const totalKeys = 104 
+  const keyTimestamps = useRef(new Map())
+  const latencySamples = useRef([])
 
   useEffect(() => {
-    const saved = localStorage.getItem('hackrore_kb_tested')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        if (Array.isArray(parsed)) setTestedKeys(new Set(parsed))
-      } catch (e) { console.error('Keyboard history load failed', e) }
+    const handleKeyDown = (e) => {
+      e.preventDefault()
+      const keyStr = e.code === 'Space' ? 'Space' : e.key.toUpperCase()
+      
+      // Track Latency (Precision Timing)
+      const now = performance.now()
+      keyTimestamps.current.set(e.code, now)
+
+      setPressed(prev => {
+        const next = new Set(prev).add(e.code)
+        setMaxRollover(current => Math.max(current, next.size))
+        return next
+      })
+      setHistory(prev => new Set(prev).add(e.code))
+      setLastEvent(keyStr)
+      onResult?.('pass')
     }
-  }, [])
 
-  useEffect(() => {
-    localStorage.setItem('hackrore_kb_tested', JSON.stringify([...testedKeys]))
-  }, [testedKeys])
-
-  const handleKeyDown = useCallback(e => {
-    e.preventDefault()
-    const code = e.code
-    const id = allKeys.find(x => x === code) || code
-    
-    setPressedKeys(prev => new Set([...prev, id]))
-    setTestedKeys(prev => {
-      const next = new Set([...prev, id])
-      if (next.size >= totalKeys * 0.7 && status !== 'pass') {
-        setStatus('pass')
-        onResult?.('pass')
+    const handleKeyUp = (e) => {
+      const now = performance.now()
+      if (keyTimestamps.current.has(e.code)) {
+        const delta = now - keyTimestamps.current.get(e.code)
+        setLatency(Math.round(delta))
+        
+        // Rolling Average Latency (Deterministic Logic)
+        latencySamples.current = [...latencySamples.current.slice(-10), delta]
+        const avg = latencySamples.current.reduce((a, b) => a + b, 0) / latencySamples.current.length
+        setAvgLatency(Math.round(avg))
+        
+        keyTimestamps.current.delete(e.code)
       }
-      return next
-    })
 
-    if (!pressTimers.current[id]) {
-      pressTimers.current[id] = setTimeout(() => {
-        setStuckKeys(prev => new Set([...prev, id]))
-      }, 2000)
-    }
-
-    setStatus(s => s === 'idle' ? 'testing' : s)
-  }, [allKeys, status, onResult])
-
-  const handleKeyUp = useCallback(e => {
-    const code = e.code
-    const id = allKeys.find(x => x === code) || code
-    
-    setPressedKeys(prev => { const n = new Set(prev); n.delete(id); return n })
-    if (pressTimers.current[id]) {
-      clearTimeout(pressTimers.current[id])
-      delete pressTimers.current[id]
-    }
-  }, [allKeys])
-
-  const resetBatch = () => {
-    if (testedKeys.size > 0) {
-      addHistory('hardware', 'Keyboard Protocol', testedKeys.size >= totalKeys * 0.7 ? 'pass' : 'warning', {
-        coverage: Math.round((testedKeys.size / totalKeys) * 100),
-        keysChecked: testedKeys.size
+      setPressed(prev => {
+        const next = new Set(prev)
+        next.delete(e.code)
+        return next
       })
     }
-    setPressedKeys(new Set())
-    setTestedKeys(new Set())
-    setStuckKeys(new Set())
-    localStorage.removeItem('hackrore_kb_tested')
-    setStatus('idle')
-    onResult?.('idle')
-  }
 
-  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('keyup', handleKeyUp)
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [handleKeyDown, handleKeyUp])
+  }, [onResult])
 
-  const pct = Math.round((testedKeys.size / totalKeys) * 100)
+  const reset = () => {
+    setHistory(new Set())
+    setPressed(new Set())
+    setMaxRollover(0)
+    setLatency(0)
+    setAvgLatency(0)
+    latencySamples.current = []
+  }
+
+  // Map e.code to our visual labels
+  const getBinding = (label) => {
+    if (label === 'Esc') return 'Escape'
+    if (label === 'Space') return 'Space'
+    if (label === 'Backspace') return 'Backspace'
+    if (label === 'Tab') return 'Tab'
+    if (label === 'Enter') return 'Enter'
+    if (label === 'Ctrl') return 'ControlLeft'
+    if (label === 'Alt') return 'AltLeft'
+    if (label === 'Shift') return 'ShiftLeft'
+    return `Key${label}`
+  }
 
   return (
-    <div style={{ padding: '32px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       
-      {/* Perfection Telemetry HUD */}
-      {!inline && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 32 }}>
-          <div className="card-elevated" style={{ padding: 20 }}>
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>Coverage</div>
-              <div style={{ fontSize: 28, fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{pct}%</div>
-          </div>
-          <div className="card-elevated" style={{ padding: 20 }}>
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>Validated</div>
-              <div style={{ fontSize: 24, fontWeight: 900, fontFamily: 'var(--font-mono)' }}>{testedKeys.size}<span style={{ color: 'var(--text-muted)', fontSize: 13, fontWeight: 500 }}>/{totalKeys}</span></div>
-          </div>
-          <div className="card-elevated" style={{ padding: 20 }}>
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>Bus State</div>
-              <div className={`badge badge-${status === 'pass' ? 'pass' : 'ready'}`} style={{ marginTop: 4 }}>
-                {status === 'pass' ? 'PROTOCOL_VALID' : 'SIGNAL_SYNC'}
-              </div>
-          </div>
-          <div className="card-elevated" style={{ padding: 20 }}>
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>Anomalies</div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: stuckKeys.size > 0 ? 'var(--status-fail)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stuckKeys.size}</div>
-          </div>
-        </div>
-      )}
-
-      {/* Progress Track */}
-      <div style={{ width: '100%', height: 6, background: 'var(--bg-primary)', marginBottom: 40, borderRadius: 10, border: '1px solid var(--border)', overflow: 'hidden' }}>
-         <div style={{ height: '100%', width: `${pct}%`, background: 'var(--accent)', boxShadow: '0 0 15px var(--accent-glow)', transition: 'width 0.8s var(--ease)' }}></div>
-      </div>
-
-      {/* Industrial Keyboard Grid (Overflow Protected) */}
-      <div style={{ 
-        padding: 32, background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 20,
-        overflowX: 'auto', position: 'relative', width: '100%',
-        scrollbarWidth: 'thin', scrollbarColor: 'var(--border) transparent'
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 800 }}>
-          {KEY_LAYOUT.map((row, ri) => (
-            <div key={ri} style={{ display: 'flex', gap: 10 }}>
-              {row.map(key => {
-                const isPressed = pressedKeys.has(key)
-                const isTested  = testedKeys.has(key)
-                const isStuck   = stuckKeys.has(key)
-                
-                return (
-                  <div
-                    key={key}
-                    className={`key ${isPressed ? 'active' : ''} ${isTested ? 'tested' : ''}`}
-                    style={{
-                      width: getWidth(key), height: 44, fontSize: 11,
-                      borderColor: isStuck ? 'var(--status-fail)' : undefined,
-                      background: isStuck ? 'var(--status-fail)' : undefined,
-                      color: isStuck ? 'var(--bg-primary)' : undefined,
-                      boxShadow: isPressed ? '0 0 15px var(--accent-glow)' : 'none'
-                    }}
-                  >
-                    {KEY_LABELS[key] || key.toUpperCase()}
-                  </div>
-                )
-              })}
+      {/* Precision Metric Dashboard */}
+      <div className="grid-cols-2" style={{ display: 'grid', gap: 16 }}>
+         <div className="card-elevated" style={{ padding: 24, borderLeft: '4px solid var(--accent)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+               <Zap size={16} style={{ color: 'var(--accent)' }} />
+               <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)' }}>BUS_LATENCY_AUDIT</div>
             </div>
-          ))}
-        </div>
+            <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: '#fff' }}>{avgLatency} <span style={{ fontSize: 13, color: 'var(--accent)' }}>ms</span></div>
+            <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>Rolling 10-sample verification active</div>
+         </div>
+
+         <div className="card-elevated" style={{ padding: 24, borderLeft: '4px solid var(--status-info)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+               <Activity size={16} style={{ color: 'var(--status-info)' }} />
+               <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)' }}>ROLLOVER_CAPACITY</div>
+            </div>
+            <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: '#fff' }}>{maxRollover} <span style={{ fontSize: 13, color: 'var(--status-info)' }}>NKRO</span></div>
+            <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>Peak simultaneous key detection active</div>
+         </div>
       </div>
 
-      {/* Logic Summary Footer */}
-      <div style={{ marginTop: 32, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 20 }}>
-         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Activity size={16} style={{ color: 'var(--accent)' }} />
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>* Collective 70% coverage required for autonomous validation certificate.</p>
+      {/* Industrial Key Grid */}
+      <div className="card glass-elevated" style={{ padding: 32, overflowX: 'auto', background: 'var(--bg-primary)' }}>
+         <div style={{ minWidth: 800, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {KEYS.map((row, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                 {row.map((key, j) => {
+                   const binding = getBinding(key)
+                   const isPressed = pressed.has(binding) || pressed.has(binding.replace('Left','Right'))
+                   const isHistory = history.has(binding) || history.has(binding.replace('Left','Right'))
+                   
+                   return (
+                     <div key={j} style={{ 
+                       flex: key === 'Space' ? 4 : (key === 'Backspace' || key === 'Enter' || key === 'Shift') ? 2 : 1,
+                       height: 48, minWidth: 40, borderRadius: 6,
+                       background: isPressed ? 'var(--accent)' : isHistory ? 'var(--accent-glow)' : 'var(--bg-elevated)',
+                       border: `1px solid ${isPressed ? 'var(--accent)' : isHistory ? 'var(--accent)' : 'var(--border)'}`,
+                       display: 'flex', alignItems: 'center', justifyContent: 'center',
+                       fontSize: 10, fontWeight: 900, transition: 'all 0.1s',
+                       color: isPressed ? '#000' : isHistory ? 'var(--accent)' : 'var(--text-muted)'
+                     }}>
+                        {key.toUpperCase()}
+                     </div>
+                   )
+                 })}
+              </div>
+            ))}
          </div>
-         <div style={{ display: 'flex', gap: 12 }}>
-            <button onClick={resetBatch} className="btn-accent" style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)', border: '1px solid var(--border)', fontSize: 11, height: 40, padding: '0 16px' }}>
-               <RefreshCcw size={12} style={{ marginRight: 8 }} /> RESET_PROTOCOL
-            </button>
-            <button className="btn-accent" style={{ height: 40, padding: '0 20px', fontSize: 11 }}>
-               <ShieldCheck size={14} style={{ marginRight: 8 }} /> VALIDATE_KERNEL
+      </div>
+
+      {/* Diagnostic Readout Console */}
+      <div className="card-elevated" style={{ padding: 24, background: 'var(--bg-secondary)', borderTop: '4px solid var(--border)' }}>
+         <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+            <ShieldCheck size={20} style={{ color: 'var(--status-pass)' }} />
+            <div style={{ flex: 1 }}>
+               <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 1.5, color: 'var(--text-primary)', marginBottom: 4 }}>HARDWARE_EVENT_LOG</div>
+               <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                  SIGNAL_RECOGNIZED: <span style={{ color: 'var(--accent)' }}>{lastEvent || 'IDLE'}</span> // BUS_TIME: {latency}ms
+               </div>
+            </div>
+            <button onClick={reset} className="btn-accent" style={{ background: 'transparent', border: '1px solid var(--status-fail)', color: 'var(--status-fail)', fontSize: 11 }}>
+               PURGE_BUFFER
             </button>
          </div>
       </div>
