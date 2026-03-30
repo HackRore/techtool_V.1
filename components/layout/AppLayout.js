@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles, Search, History } from 'lucide-react'
+import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles, Search, History, Zap, Download } from 'lucide-react'
 import { ToastProvider, useToast } from '../ui/ToastProvider'
 import { HistoryProvider, useHistory } from '../HistoryProvider'
 
@@ -59,7 +59,7 @@ function LayoutContent({ children }) {
     { name: 'TestLab',    href: '/tools', icon: Activity },
     { name: 'ScanLab',    href: '/diagnostics', icon: Cpu },
     { name: 'FixLab',     href: '/fixlab', icon: BookOpen },
-    { name: 'Community',  href: '/resources', icon: Sparkles },
+    { name: 'Resources',  href: '/resources', icon: Zap },
   ]
 
   useEffect(() => {

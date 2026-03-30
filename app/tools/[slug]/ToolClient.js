@@ -11,7 +11,7 @@ import MicTest from '../../../components/testlab/MicTest'
 import SpeakerTest from '../../../components/testlab/SpeakerTest'
 import MouseTest from '../../../components/testlab/MouseTest'
 import TouchTest from '../../../components/testlab/TouchTest'
-import { ArrowRight, Sparkles, Download, History, Shield, Info, Activity, Cpu, Layout, Terminal, Zap } from 'lucide-react'
+import { ArrowRight, Sparkles, Download, History, Shield, Info, Activity, Cpu, Layout, Terminal, Zap, Copy } from 'lucide-react'
 
 const COMPONENT_MAP = {
   keyboard: KeyboardTest,
@@ -147,11 +147,21 @@ export default function ToolClient({ tool, relatedGuides }) {
                 <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 }}>Subsystem Path</div>
                 <div style={{ fontSize: 12, fontWeight: 900, color: 'var(--accent)' }}>/hardware/peripheral/{tool.id}</div>
              </div>
-             <div style={{ padding: 16, background: 'var(--bg-primary)', borderRadius: 10, border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 }}>Audit Complexity</div>
-                <div style={{ fontSize: 12, fontWeight: 900, color: 'var(--text-primary)' }}>{tool.difficulty?.toUpperCase() || 'INDUSTRIAL'}</div>
-             </div>
           </div>
+        </div>
+
+        {/* Command Center (Software Support) */}
+        <div className="card-elevated" style={{ padding: 32, background: 'var(--bg-secondary)', borderTop: '4px solid var(--accent)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+              <Terminal size={18} style={{ color: 'var(--accent)' }} />
+              <h3 style={{ textTransform: 'uppercase', letterSpacing: 2, fontSize: 13 }}>Command Center</h3>
+           </div>
+           <div style={{ padding: 16, background: 'var(--bg-primary)', borderRadius: 12, border: '1px solid var(--border)', cursor: 'copy' }} onClick={() => navigator.clipboard.writeText(tool.id === 'screen' ? 'dxdiag' : tool.id === 'mouse' ? 'ms-settings:mousetouchpad' : 'sfc /scannow')}>
+              <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginBottom: 8 }}>QUICK_DEPLOY:</div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                 {tool.id === 'screen' ? 'dxdiag' : tool.id === 'mouse' ? 'ms-settings:mousetouchpad' : 'sfc /scannow'}
+              </div>
+           </div>
         </div>
 
         {allGuides.length > 0 && (

@@ -80,5 +80,18 @@
     "tags": ["Hardware", "Display", "Input"],
     "difficulty": "Easy",
     "relatedGuides": ["touchscreen-not-syncing"]
+  },
+  {
+    "id": "network-pulse",
+    "slug": "network-test",
+    "name": "Network Pulse",
+    "icon": "🌐",
+    "category": "Network",
+    "description": "Real-time latency, jitter, and DNS resolution diagnostics.",
+    "tags": ["Software", "Network", "Connectivity"],
+    "difficulty": "Pro",
+    "relatedGuides": ["wifi-connects-no-internet"],
+    "featured": true,
+    "recommended": true
   }
 ]

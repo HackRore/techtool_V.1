@@ -171,7 +171,7 @@ export default function SpeakerTest({ onResult }) {
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '0 8px' }}>
          <Info size={14} style={{ color: 'var(--status-info)' }} />
          <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            Technical Warning: High-frequency sweeps (>12kHz) monitor tweeter response. Low-frequency (<60Hz) sweeps monitor subwoofer/driver displacement. Listen for rattling or phase inversion.
+            {`Technical Warning: High-frequency sweeps (>12kHz) monitor tweeter response. Low-frequency (<60Hz) sweeps monitor subwoofer/driver displacement. Listen for rattling or phase inversion.`}
          </div>
       </div>
     </div>

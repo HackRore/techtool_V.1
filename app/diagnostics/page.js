@@ -51,17 +51,21 @@ function ScanLabContent() {
     addToast('Initializing Virtual Simulation...', 'info')
     setTimeout(() => {
       setScanResult({
-        score: 84,
-        status: 'PASS',
+        score: 91,
+        status: 'SECURE',
         timestamp: new Date().toISOString(),
-        kernel: 'v.2.0.1-stable',
+        kernel: 'v.2.1.0-pro-audit',
         modules: [
+          { id: 'os', name: 'Software Env', val: 'Windows 11 Pro (23H2)', state: 'optimal', icon: Monitor },
+          { id: 'kernel', name: 'Kernel Build', val: '22631.2506 (Stable)', state: 'optimal', icon: Terminal },
           { id: 'cpu', name: 'Processor', val: 'Intel i7-12700K', state: 'optimal', icon: Cpu },
           { id: 'ram', name: 'Memory', val: '32GB DDR4 3200MHz', state: 'optimal', icon: Database },
           { id: 'storage', name: 'Disk Integrity', val: '98% Health (SMART)', state: 'optimal', icon: Shield },
           { id: 'thermal', name: 'Thermals', val: '42°C Baseline', state: 'optimal', icon: Thermometer },
-          { id: 'network', name: 'Adapters', val: 'Intel Wi-Fi 6E', state: 'warning', icon: Network },
-          { id: 'events', name: 'OS Events', val: '3 Kernel Errors', state: 'warning', icon: Activity },
+          { id: 'network', name: 'Network Protocol', val: 'Gigabit LAN (Active)', state: 'optimal', icon: Network },
+          { id: 'services', name: 'Win Services', val: 'All Systems Nominal', state: 'optimal', icon: Zap },
+          { id: 'events', name: 'Log Audit', val: '0 Critical Faults', state: 'optimal', icon: Activity },
+          { id: 'security', name: 'Security Posture', val: 'Secure Boot: ON', state: 'optimal', icon: Shield },
         ]
       })
       setLoading(false)
