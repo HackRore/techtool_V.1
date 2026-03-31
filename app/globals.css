@@ -174,15 +174,50 @@ h3 { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transfo
 .badge-fail  { color: var(--status-fail); border-color: var(--status-fail); }
 
 /* ── Buttons ───────────────────────────────── */
-.btn-accent {
-  background: var(--accent); color: var(--bg-primary);
-  border: none; border-radius: 10px; padding: 14px 28px;
-  font-weight: 900; cursor: pointer; transition: all var(--duration) var(--ease);
-  text-transform: uppercase; letter-spacing: 1px; font-size: 13px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+.btn-accent, .btn-primary {
+  background: var(--accent); color: #000;
+  border: none; border-radius: 10px; padding: 12px 24px;
+  font-weight: 800; cursor: pointer; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none;
 }
 
-.btn-accent:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.1); box-shadow: 0 0 30px var(--accent-glow); }
+.btn-accent:hover, .btn-primary:hover { 
+  transform: translateY(-2px); 
+  filter: brightness(1.1); 
+  box-shadow: 0 0 20px var(--accent-glow); 
+}
+
+.btn-outline {
+  background: transparent; color: var(--text-primary);
+  border: 1px solid var(--border-bright); border-radius: 10px; padding: 12px 24px;
+  font-weight: 800; cursor: pointer; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none;
+}
+
+.btn-outline:hover { 
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+input, select, textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
 
 /* ── Components: Shell ─────────────────────── */
 .top-nav {

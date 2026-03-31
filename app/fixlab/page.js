@@ -3,10 +3,10 @@ import { useState, useMemo, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import { KB, CATEGORIES } from '../../lib/knowledgeBase'
 import { 
-  Search, BookOpen, ChevronDown, 
-  ChevronRight, Star, CheckCircle, 
-  Clock, Tool, AlertCircle, Share, Printer,
-  Filter, Sparkles
+  Search, ChevronDown, 
+  ChevronRight, Star, 
+  Terminal, AlertCircle, Printer,
+  Filter
 } from 'lucide-react'
 
 export default function FixLab() {
@@ -60,20 +60,19 @@ export default function FixLab() {
     <AppLayout>
       <div className="animate-in">
         
-        {/* Hub Header Perfection */}
-        <header style={{ marginBottom: 64, borderBottom: '1px solid var(--border)', paddingBottom: 40 }}>
-           <div className="badge badge-ready" style={{ marginBottom: 24, fontSize: 10 }}>INTELLIGENCE_LAYER // FIXLAB_HUB</div>
-           <h1 style={{ marginBottom: 16 }}>Troubleshooting <span className="glow-text" style={{ color: 'var(--accent)' }}>Repair Hub</span></h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: 17, maxWidth: 650, lineHeight: 1.6 }}>
-             Access a high-fidelity knowledge graph of hardware symptoms, validated fix protocols, and component-level repair documentation.
+        {/* Hub Header */}
+        <header style={{ marginBottom: 48, borderBottom: '1px solid var(--border)', paddingBottom: 32 }}>
+           <h1 style={{ marginBottom: 12 }}>Repair <span style={{ color: 'var(--accent)' }}>Solutions</span></h1>
+           <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: 650, lineHeight: 1.6 }}>
+             Hardware troubleshooting guides, validated fix protocols, and component-level repair documentation.
            </p>
         </header>
 
         <div className="dashboard-layout">
           
-          {/* Main Content: Intelligence Entries */}
+          {/* Main Content: Fix Entries */}
           <div style={{ minWidth: 0 }}>
-             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 80 }}>
+             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 60 }}>
                 {filtered.map(entry => {
                   const isExpanded = expandedId === entry.id
                   const isBookmarked = bookmarks.includes(entry.id)
@@ -91,39 +90,38 @@ export default function FixLab() {
                       }}
                     >
                       {/* Entry Header */}
-                      <div style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                      <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                             <div onClick={(e) => toggleBookmark(entry.id, e)} style={{ padding: 4 }}>
-                               <Star size={18} style={{ 
+                               <Star size={16} style={{ 
                                  color: isBookmarked ? 'var(--accent)' : 'var(--text-muted)', 
                                  fill: isBookmarked ? 'var(--accent)' : 'none',
-                                 filter: isBookmarked ? 'drop-shadow(0 0 4px var(--accent))' : 'none'
                                }} />
                             </div>
                             <div>
-                               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-                                  <span style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5 }}>{entry.category}</span>
-                                  {isDone && <span className="badge badge-pass" style={{ fontSize: 8 }}>VALIDATED_FIX</span>}
+                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                                  <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{entry.category}</span>
+                                  {isDone && <span className="badge badge-pass" style={{ fontSize: 8 }}>FIXED</span>}
                                </div>
-                               <h3 style={{ fontSize: 18, fontWeight: 900, letterSpacing: -0.5, textTransform: 'none', color: 'var(--text-primary)' }}>{entry.title}</h3>
+                               <h3 style={{ fontSize: 16, fontWeight: 700, textTransform: 'none', color: 'var(--text-primary)', margin:0 }}>{entry.title}</h3>
                             </div>
                          </div>
                          <div style={{ color: 'var(--text-muted)' }}>
-                            {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                            {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                          </div>
                       </div>
 
                       {/* Expanded View */}
                       {isExpanded && (
-                        <div className="animate-in" style={{ padding: '0 32px 40px 80px', borderTop: '1px solid var(--border)' }}>
-                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 48, marginTop: 40 }}>
+                        <div className="animate-in" style={{ padding: '0 24px 32px 64px', borderTop: '1px solid var(--border)' }}>
+                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, marginTop: 24 }}>
                               
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
                                  <section>
-                                    <h4 style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 }}>Standard Pathing (Causes)</h4>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                                    <h4 style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Common Causes</h4>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                                        {entry.causes.map(c => (
-                                         <div key={c} style={{ fontSize: 12, color: 'var(--text-secondary)', background: 'var(--bg-primary)', padding: '6px 14px', borderRadius: 8, border: '1px solid var(--border)' }}>
+                                         <div key={c} style={{ fontSize: 12, color: 'var(--text-secondary)', background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: 6, border: '1px solid var(--border)' }}>
                                             {c}
                                          </div>
                                        ))}
@@ -131,48 +129,40 @@ export default function FixLab() {
                                  </section>
 
                                  <section>
-                                    <h4 style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 24 }}>Verified Repair Protocol</h4>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                    <h4 style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 16 }}>Repair Protocol</h4>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                                        {entry.steps.map((step, i) => (
-                                         <div key={i} style={{ display: 'flex', gap: 24 }}>
+                                         <div key={i} style={{ display: 'flex', gap: 16 }}>
                                             <div className="text-mono" style={{ 
-                                              width: 32, height: 32, borderRadius: 8, background: 'var(--bg-primary)', 
+                                              width: 24, height: 24, borderRadius: 6, background: 'var(--bg-primary)', 
                                               border: '1px solid var(--accent)', display: 'flex', alignItems: 'center', 
-                                              justifyContent: 'center', fontSize: 13, fontWeight: 900, color: 'var(--accent)' 
+                                              justifyContent: 'center', fontSize: 11, fontWeight: 800, color: 'var(--accent)' 
                                             }}>
                                                {i + 1}
                                             </div>
-                                            <div style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.7, paddingTop: 4 }}>{step}</div>
+                                            <div style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.6, paddingTop: 2 }}>{step}</div>
                                          </div>
                                        ))}
                                     </div>
                                  </section>
                               </div>
 
-                              {/* Sidebar Stats */}
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                                 <div className="card-elevated" style={{ padding: 24, background: 'var(--bg-primary)' }}>
-                                    <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 20 }}>Required Toolkit</div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                                       {entry.tools.map(t => <span key={t} className="badge" style={{ background: 'var(--bg-elevated)', fontSize: 9 }}>{t}</span>)}
+                              {/* Sidebar Details */}
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                 <div className="card" style={{ padding: 20, background: 'var(--bg-primary)' }}>
+                                    <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 16 }}>Required Tools</div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                                       {entry.tools.map(t => <span key={t} className="badge" style={{ fontSize: 9 }}>{t}</span>)}
                                     </div>
                                  </div>
 
-                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                    <button onClick={(e) => toggleDone(entry.id, e)} className="btn-accent" style={{ 
-                                      width: '100%', height: 48, background: isDone ? 'transparent' : 'var(--accent)', 
-                                      border: `1px solid var(--accent)`, color: isDone ? 'var(--accent)' : 'var(--bg-primary)'
-                                    }}>
-                                       {isDone ? 'RE-OPEN_SYMPTOM' : 'MARK_AS_RESOLVED'}
+                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                    <button onClick={(e) => toggleDone(entry.id, e)} className="btn-primary" style={{ width: '100%', height: 44 }}>
+                                       {isDone ? 'Re-open Case' : 'Mark as Fixed'}
                                     </button>
-                                    <div style={{ display: 'flex', gap: 12 }}>
-                                       <button className="btn-accent" style={{ flex: 1, height: 44, background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
-                                          SHARE
-                                       </button>
-                                       <button className="btn-accent" style={{ flex: 1, height: 44, background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
-                                          PRINT
-                                       </button>
-                                    </div>
+                                    <button className="btn-outline" style={{ width: '100%', height: 40 }} onClick={(e) => {e.stopPropagation(); window.print()}}>
+                                       <Printer size={14} /> Print Guide
+                                    </button>
                                  </div>
                               </div>
 
@@ -185,70 +175,57 @@ export default function FixLab() {
              </div>
           </div>
 
-          {/* Sidebar: Filters & Intelligence Hub */}
+          {/* Sidebar: Filters */}
           <aside className="sidebar-panel">
              
-             {/* Search Cluster */}
-             <div className="card-elevated" style={{ padding: 32 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                   <Search size={16} style={{ color: 'var(--accent)' }} />
-                   <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: 2, textDecoration: 'none' }}>Search Cluster</h3>
+             {/* Search */}
+             <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                   <Search size={14} style={{ color: 'var(--accent)' }} />
+                   <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Search Hub</h3>
                 </div>
                 <input 
                   type="text" 
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  placeholder="Query kernel..." 
-                  style={{ 
-                    width: '100%', height: 48, padding: '0 16px', background: 'var(--bg-primary)', 
-                    border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text-primary)',
-                    fontSize: 13, outline: 'none'
-                  }}
-                  className="focus:border-accent"
+                  placeholder="Search symptoms..." 
+                  style={{ width: '100%', fontSize: 13 }}
                 />
              </div>
 
-             {/* Functional Filters */}
-             <div className="card" style={{ padding: 32 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-                   <Filter size={16} style={{ color: 'var(--text-muted)' }} />
-                   <h3>Kernel Filters</h3>
+             {/* Categories */}
+             <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                   <Filter size={14} style={{ color: 'var(--text-muted)' }} />
+                   <h3 style={{ fontSize: 11 }}>Categories</h3>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                    {['All', ...CATEGORIES].map(cat => (
                      <button 
                        key={cat}
                        onClick={() => setActiveCategory(cat)}
                        style={{ 
-                         textAlign: 'left', padding: '12px 16px', borderRadius: 10,
+                         textAlign: 'left', padding: '10px 14px', borderRadius: 8,
                          background: activeCategory === cat ? 'var(--accent-glow)' : 'var(--bg-elevated)',
                          color: activeCategory === cat ? 'var(--accent)' : 'var(--text-secondary)',
                          border: `1px solid ${activeCategory === cat ? 'var(--accent)' : 'transparent'}`,
-                         fontSize: 12, fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s'
+                         fontSize: 12, fontWeight: 700, cursor: 'pointer'
                        }}
                      >
-                        {cat.toUpperCase()} {cat === 'All' ? 'HARDWARE' : ''}
+                        {cat}
                      </button>
                    ))}
                 </div>
              </div>
 
-             {/* Personal Hub Sync */}
-             <div className="card-elevated" style={{ padding: 32, borderTop: '4px solid var(--status-info)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-                   <Sparkles size={18} style={{ color: 'var(--status-info)' }} />
-                   <div style={{ fontSize: 13, fontWeight: 900 }}>Personal Hub Sync</div>
-                </div>
+             {/* Bookmarks */}
+             <div className="card" style={{ padding: 24, borderTop: '4px solid var(--accent)' }}>
                 <button 
                   onClick={() => setShowBookmarks(!showBookmarks)}
-                  className="btn-accent"
-                  style={{ 
-                    width: '100%', height: 44, background: showBookmarks ? 'var(--status-info)' : 'transparent', 
-                    border: `1px solid var(--status-info)`, color: showBookmarks ? 'var(--bg-primary)' : 'var(--status-info)',
-                    fontSize: 11
-                  }}
+                  className="btn-outline"
+                  style={{ width: '100%', color: showBookmarks ? 'var(--accent)' : 'var(--text-primary)', borderColor: showBookmarks ? 'var(--accent)' : 'var(--border)' }}
                 >
-                  {showBookmarks ? 'SHOW_ALL_REPORTS' : `VIEW_BOOKMARKS (${bookmarks.length})`}
+                  {showBookmarks ? 'Show All' : `Bookmarks (${bookmarks.length})`}
                 </button>
              </div>
 
