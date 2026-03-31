@@ -1,6 +1,6 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Keyboard, Zap, Activity, ShieldCheck, AlertTriangle, Volume2 } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { Zap, Activity, Volume2 } from 'lucide-react'
 
 const KEYS = [
   ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Prt', 'ScL', 'Pau'],
@@ -11,17 +11,22 @@ const KEYS = [
   ['Ctrl', 'Win', 'Alt', 'Space', 'Alt', 'Fn', 'Ctx', 'Ctrl', '←', '↓', '→']
 ]
 
-export default function KeyboardTest({ onResult }) {
+// Flatten keys for coverage calculation (approx 104 keys)
+const TOTAL_PHYSICAL_KEYS = 104 
+
+export default function KeyboardTest({ onComplete }) {
   const [pressed, setPressed] = useState(new Set())
   const [history, setHistory] = useState(new Set())
   const [latency, setLatency] = useState(0)
   const [avgLatency, setAvgLatency] = useState(0)
   const [maxRollover, setMaxRollover] = useState(0)
   const [lastEvent, setLastEvent] = useState(null)
+  const [stuckKeys, setStuckKeys] = useState([])
   
   const keyTimestamps = useRef(new Map())
   const latencySamples = useRef([])
   const audioCtx = useRef(null)
+  const stuckTimers = useRef(new Map())
 
   const playClick = useCallback(() => {
     if (!audioCtx.current) {
@@ -40,18 +45,36 @@ export default function KeyboardTest({ onResult }) {
     osc.stop(audioCtx.current.currentTime + 0.1)
   }, [])
 
+  const coverage = useMemo(() => {
+    const unique = history.size
+    return Math.min(100, Math.round((unique / TOTAL_PHYSICAL_KEYS) * 100))
+  }, [history])
+
+  useEffect(() => {
+    if (coverage >= 100) {
+      onComplete?.({ status: 'pass', coverage: 100 })
+    }
+  }, [coverage, onComplete])
+
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Prevent browser shortcuts for testing
       if (!e.ctrlKey && !e.metaKey && e.key !== 'F12' && e.key !== 'F5') {
         e.preventDefault()
       }
       
       const code = e.code
-      if (pressed.has(code)) return // Prevent repeat-key noise
+      if (pressed.has(code)) return
 
       playClick()
       if (navigator.vibrate) navigator.vibrate(5)
+
+      // Stuck key detection (2000ms)
+      if (!stuckTimers.current.has(code)) {
+        const timer = setTimeout(() => {
+          setStuckKeys(prev => Array.from(new Set([...prev, e.key.toUpperCase()])))
+        }, 2000)
+        stuckTimers.current.set(code, timer)
+      }
 
       const now = performance.now()
       keyTimestamps.current.set(code, now)
@@ -63,23 +86,30 @@ export default function KeyboardTest({ onResult }) {
       })
       setHistory(prev => new Set(prev).add(code))
       setLastEvent(e.key.toUpperCase())
-      onResult?.('pass')
     }
 
     const handleKeyUp = (e) => {
+      const code = e.code
+      
+      // Clear stuck timer
+      if (stuckTimers.current.has(code)) {
+        clearTimeout(stuckTimers.current.get(code))
+        stuckTimers.current.delete(code)
+      }
+
       const now = performance.now()
-      if (keyTimestamps.current.has(e.code)) {
-        const delta = now - keyTimestamps.current.get(e.code)
+      if (keyTimestamps.current.has(code)) {
+        const delta = now - keyTimestamps.current.get(code)
         setLatency(Math.round(delta))
         latencySamples.current = [...latencySamples.current.slice(-15), delta]
         const avg = latencySamples.current.reduce((a, b) => a + b, 0) / latencySamples.current.length
         setAvgLatency(Math.round(avg))
-        keyTimestamps.current.delete(e.code)
+        keyTimestamps.current.delete(code)
       }
 
       setPressed(prev => {
         const next = new Set(prev)
-        next.delete(e.code)
+        next.delete(code)
         return next
       })
     }
@@ -90,7 +120,7 @@ export default function KeyboardTest({ onResult }) {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [pressed, onResult, playClick])
+  }, [pressed, playClick])
 
   const reset = () => {
     setHistory(new Set())
@@ -98,7 +128,10 @@ export default function KeyboardTest({ onResult }) {
     setMaxRollover(0)
     setLatency(0)
     setAvgLatency(0)
+    setStuckKeys([])
     latencySamples.current = []
+    stuckTimers.current.forEach(clearTimeout)
+    stuckTimers.current.clear()
   }
 
   const getBinding = (label) => {
@@ -113,32 +146,40 @@ export default function KeyboardTest({ onResult }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       
-      <div className="grid-cols-2" style={{ display: 'grid', gap: 16 }}>
-         <div className="card-elevated" style={{ padding: 24, borderLeft: '4px solid var(--accent)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-               <Zap size={16} style={{ color: 'var(--accent)' }} />
-               <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)' }}>BUS_LATENCY_AUDIT</div>
-            </div>
-            <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: '#fff' }}>{avgLatency} <span style={{ fontSize: 13, color: 'var(--accent)' }}>ms</span></div>
-            <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>High-precision polling active</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+         <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>LATENCY</div>
+            <div style={{ fontSize: 24, fontWeight: 700 }}>{avgLatency}ms</div>
          </div>
-
-         <div className="card-elevated" style={{ padding: 24, borderLeft: '4px solid var(--status-info)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-               <Activity size={16} style={{ color: 'var(--status-info)' }} />
-               <div style={{ fontSize: 9, fontWeight: 900, color: 'var(--text-muted)' }}>ROLLOVER_CAPACITY</div>
-            </div>
-            <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: '#fff' }}>{maxRollover} <span style={{ fontSize: 13, color: 'var(--status-info)' }}>NKRO</span></div>
-            <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>Peak concurrent signals</div>
+         <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>ROLLOVER</div>
+            <div style={{ fontSize: 24, fontWeight: 700 }}>{maxRollover}</div>
+         </div>
+         <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>COVERAGE</div>
+            <div style={{ fontSize: 24, fontWeight: 700 }}>{coverage}%</div>
+         </div>
+         <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>LAST KEY</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent)' }}>{lastEvent || '—'}</div>
          </div>
       </div>
 
-      <div className="card glass-elevated" style={{ padding: '48px 32px', overflowX: 'auto', background: 'var(--bg-primary)', border: '1px solid var(--border)' }}>
-         <div style={{ minWidth: 900, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ padding: '16px 20px', borderRadius: 12, background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>
+          Click anywhere in the keyboard area below, then press each physical key.
+        </p>
+      </div>
+
+      <div style={{ 
+        overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%',
+        padding: '24px 0', borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border)'
+      }}>
+         <div style={{ minWidth: 720, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {KEYS.map((row, i) => (
-              <div key={i} style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <div key={i} style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '0 20px' }}>
                  {row.map((key, j) => {
                    const binding = getBinding(key)
                    const isPressed = pressed.has(binding) || (key === 'Shift' && pressed.has('ShiftRight')) || (key === 'Ctrl' && pressed.has('ControlRight')) || (key === 'Alt' && pressed.has('AltRight'))
@@ -147,12 +188,11 @@ export default function KeyboardTest({ onResult }) {
                    return (
                      <div key={j} style={{ 
                         flex: key === 'Space' ? 5 : (key === 'Backspace' || key === 'Enter' || key === 'Shift' || key === 'Caps' || key === 'Tab') ? 2 : 1,
-                        height: 52, minWidth: 44, borderRadius: 8,
+                        height: 44, minWidth: 32, borderRadius: 6,
                         background: isPressed ? 'var(--accent)' : isHistory ? 'var(--accent-glow)' : 'var(--bg-elevated)',
-                        border: `1px solid ${isPressed ? 'var(--accent)' : isHistory ? 'rgba(0, 243, 255, 0.4)' : 'var(--border)'}`,
-                        boxShadow: isPressed ? '0 0 20px var(--accent-glow)' : 'none',
+                        border: `1px solid ${isPressed ? 'var(--accent)' : isHistory ? 'var(--accent)' : 'var(--border)'}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 9, fontWeight: 900, transition: 'all 0.05s linear',
+                        fontSize: 9, fontWeight: 700, transition: 'all 0.05s linear',
                         color: isPressed ? '#000' : isHistory ? 'var(--accent)' : 'var(--text-muted)'
                       }}>
                          {key.toUpperCase()}
@@ -164,19 +204,22 @@ export default function KeyboardTest({ onResult }) {
          </div>
       </div>
 
-      <div className="card-elevated" style={{ padding: 24, background: 'var(--bg-secondary)', borderTop: '4px solid var(--border)' }}>
-         <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
-            <Volume2 size={20} style={{ color: 'var(--accent)' }} />
-            <div style={{ flex: 1 }}>
-               <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 1.5, color: 'var(--text-primary)', marginBottom: 4 }}>SIGNAL_RECOGNIZED: <span style={{ color: 'var(--accent)' }}>{lastEvent || 'IDLE'}</span></div>
-               <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                  BUS_TIME: {latency}ms // STATUS: {maxRollover > 6 ? 'FULL_NKRO' : 'MEMBRANE_LIMIT'}
-               </div>
-            </div>
-            <button onClick={reset} className="btn-accent" style={{ background: 'transparent', border: '1px solid var(--status-fail)', color: 'var(--status-fail)', fontSize: 11, height: 40, padding: '0 20px' }}>
-               PURGE_BUFFER
-            </button>
-         </div>
+      {coverage >= 100 && (
+        <div style={{ padding: '12px 16px', borderRadius: 8, border: '1px solid var(--accent)', background: 'rgba(0,212,160,0.08)', color: 'var(--accent)', fontWeight: 600 }}>
+          ✓ All 104 keys tested — keyboard is working correctly
+        </div>
+      )}
+
+      {stuckKeys.length > 0 && (
+        <div style={{ padding: '12px 16px', borderRadius: 8, border: '1px solid var(--red)', background: 'rgba(255,71,87,0.08)', color: 'var(--red)', fontWeight: 600 }}>
+          ⚠ Stuck key detected: {stuckKeys.join(', ')} — possible hardware fault
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 12 }}>
+        <button onClick={reset} className="btn-outline" style={{ borderColor: 'var(--red)', color: 'var(--red)' }}>
+          Reset Test
+        </button>
       </div>
     </div>
   )
