@@ -40,32 +40,42 @@ export default function TestLabHub() {
 
         <div className="dashboard-layout">
           
-          {/* Main Grid: Tools */}
-          <div style={{ minWidth: 0 }}>
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 80 }}>
-                {tools.map(t => (
-                  <Link key={t.id} href={`/tools/${t.slug}`} style={{ textDecoration: 'none' }}>
-                    <div className="card-elevated" style={{ 
-                      height: '100%', display: 'flex', flexDirection: 'column', 
-                      borderColor: results[t.id] === 'pass' ? 'var(--status-pass)' : 'var(--border)',
-                      transition: 'all var(--duration) var(--ease)',
-                      padding: 32
-                    }}>
-                      <div style={{ fontSize: 44, marginBottom: 24 }}>{t.icon}</div>
-                      <h3 style={{ fontSize: 18, marginBottom: 12, fontWeight: 900, color: 'var(--text-primary)', textTransform: 'none', letterSpacing: -0.5 }}>{t.name}</h3>
-                      <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 32 }}>{t.description}</p>
-                      
-                      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                         <span className={`badge badge-${results[t.id] === 'pass' ? 'pass' : 'ready'}`}>{t.difficulty || 'standard'}</span>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontWeight: 900, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1.5 }}>
-                            LAUNCH <ChevronRight size={14} />
-                         </div>
-                      </div>
+        {/* Main Grid: Tools (thetest.com Minimalist Architecture) */}
+        <div style={{ minWidth: 0 }}>
+           <div style={{ 
+             display: 'grid', 
+             gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', 
+             gap: 24, marginBottom: 80 
+           }}>
+              {tools.map(t => (
+                <Link key={t.id} href={`/tools/${t.slug}`} style={{ textDecoration: 'none' }}>
+                  <div className="card-elevated" style={{ 
+                    height: '100%', display: 'flex', flexDirection: 'column', 
+                    alignItems: 'center', textAlign: 'center',
+                    borderColor: results[t.id] === 'pass' ? 'var(--status-pass)' : 'var(--border)',
+                    padding: '48px 32px 32px 32px'
+                  }}>
+                    <div style={{ fontSize: 64, marginBottom: 32, filter: 'drop-shadow(0 0 20px var(--accent-glow))' }}>{t.icon}</div>
+                    
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                       <h2 style={{ fontSize: 20, marginBottom: 12, fontWeight: 900, color: '#fff', letterSpacing: -0.5 }}>{t.name}</h2>
+                       <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 32, maxWidth: 200 }}>
+                          {t.description.split('.')[0]}.
+                       </p>
                     </div>
-                  </Link>
-                ))}
-             </div>
-          </div>
+                    
+                    <button className="btn-accent" style={{ 
+                       width: '100%', height: 48, background: 'var(--bg-primary)', 
+                       border: '1px solid var(--accent)', color: 'var(--accent)',
+                       fontSize: 11, letterSpacing: 2, borderRadius: 12
+                    }}>
+                       START_DIAGNOSTIC
+                    </button>
+                  </div>
+                </Link>
+              ))}
+           </div>
+        </div>
 
           {/* Sidebar: Progress & Audit Trail */}
           <aside className="sidebar-panel">

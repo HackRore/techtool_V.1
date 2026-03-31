@@ -11,7 +11,8 @@ import MicTest from '../../../components/testlab/MicTest'
 import SpeakerTest from '../../../components/testlab/SpeakerTest'
 import MouseTest from '../../../components/testlab/MouseTest'
 import TouchTest from '../../../components/testlab/TouchTest'
-import { ArrowRight, Sparkles, Download, History, Shield, Info, Activity, Cpu, Layout, Terminal, Zap, Copy } from 'lucide-react'
+import { ArrowRight, Sparkles, Download, History, Shield, Info, Activity, Cpu, Layout, Terminal, Zap, Copy, ChevronLeft, ChevronRight } from 'lucide-react'
+import tools from '../../../data/tools.json'
 
 const COMPONENT_MAP = {
   keyboard: KeyboardTest,
@@ -40,6 +41,11 @@ export default function ToolClient({ tool, relatedGuides }) {
   const allGuides = [...new Set([...relatedGuides, ...autoRelatedGuides])]
   
   const [lastResult, setLastResult] = useState(null)
+  
+  // Session Cycling Logic
+  const currentIndex = tools.findIndex(t => t.id === tool.id)
+  const prevTool = tools[currentIndex - 1] || tools[tools.length - 1]
+  const nextTool = tools[currentIndex + 1] || tools[0]
 
   useEffect(() => {
     const saved = localStorage.getItem(`hackrore_result_${tool.id}`)
@@ -194,6 +200,26 @@ export default function ToolClient({ tool, relatedGuides }) {
         </div>
 
       </aside>
+
+      {/* Session Cycling: fixed Navigation (thetest.com Model) */}
+      <Link href={`/tools/${prevTool.slug}`} className="desktop-only" style={{ 
+        position: 'fixed', left: 20, top: '50%', transform: 'translateY(-50%)',
+        padding: 20, background: 'var(--bg-elevated)', border: '1px solid var(--border-bright)',
+        borderRadius: '50%', color: 'var(--text-muted)', transition: 'all 0.3s var(--ease)',
+        zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center'
+      }}>
+         <ChevronLeft size={24} />
+      </Link>
+
+      <Link href={`/tools/${nextTool.slug}`} className="desktop-only" style={{ 
+        position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)',
+        padding: 20, background: 'var(--bg-elevated)', border: '1px solid var(--border-bright)',
+        borderRadius: '50%', color: 'var(--accent)', transition: 'all 0.3s var(--ease)',
+        zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: '0 0 20px var(--accent-glow)'
+      }}>
+         <ChevronRight size={24} />
+      </Link>
 
     </div>
   )
