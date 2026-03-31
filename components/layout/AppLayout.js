@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Settings, Sparkles, Search, History, Zap, Download } from 'lucide-react'
+import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Sparkles, Search, Zap } from 'lucide-react'
 import { ToastProvider, useToast } from '../ui/ToastProvider'
-import { HistoryProvider, useHistory } from '../HistoryProvider'
+import { HistoryProvider } from '../HistoryProvider'
 
 export default function AppLayout({ children }) {
   return (
@@ -37,8 +37,8 @@ function LayoutContent({ children }) {
         document.querySelector('input')?.focus()
       }
       if (e.key === '1') router.push('/')
-      if (e.key === '2') router.push('/#quick-tests')
-      if (e.key === '3') router.push('/tools')
+      if (e.key === '2') router.push('/tools')
+      if (e.key === '3') router.push('/diagnostics')
       if (e.key === '4') router.push('/fixlab')
       if (e.key === 'Escape') setIsMobileMenuOpen(false)
     }
@@ -55,11 +55,13 @@ function LayoutContent({ children }) {
   }
 
   const navItems = [
-    { name: 'Dashboard', href: '/', icon: Monitor },
-    { name: 'TestLab',    href: '/tools', icon: Activity },
-    { name: 'ScanLab',    href: '/diagnostics', icon: Cpu },
-    { name: 'FixLab',     href: '/fixlab', icon: BookOpen },
-    { name: 'Resources',  href: '/resources', icon: Zap },
+    { name: 'Dashboard', mobile: 'Home',  href: '/', icon: Monitor },
+    { name: 'TestLab',    mobile: 'Tests',  href: '/tools', icon: Activity },
+    { name: 'ScanLab',    mobile: 'Scan',   href: '/diagnostics', icon: Cpu },
+    { name: 'FixLab',     mobile: 'Fixes',  href: '/fixlab', icon: BookOpen },
+    { name: 'Resources',  mobile: 'Tools',  href: '/resources', icon: Zap },
+    { name: 'QuickRef',   mobile: 'Ref',    href: '/quickref/bsod', icon: Search },
+    { name: 'Jobs',       mobile: 'Jobs',   href: '/jobs', icon: User },
   ]
 
   useEffect(() => {
@@ -71,7 +73,7 @@ function LayoutContent({ children }) {
     <div className="app-shell">
       <a href="#main" className="skip-nav">Skip to main content</a>
 
-      {/* Hardened Top Navigation V.2 */}
+      {/* Top Navigation */}
       <nav className="top-nav">
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }} 
@@ -89,7 +91,7 @@ function LayoutContent({ children }) {
         </div>
 
         {/* Center: Desktop Nav */}
-        <div className="desktop-only glass" style={{ padding: '4px', borderRadius: 12, gap: 4, alignItems: 'center' }}>
+        <div className="desktop-only glass" style={{ padding: '4px', borderRadius: 12, gap: 4, display: 'flex', alignItems: 'center' }}>
           {navItems.map(item => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
             return (
@@ -97,6 +99,12 @@ function LayoutContent({ children }) {
                 key={item.href} 
                 href={item.href} 
                 className={`nav-link ${isActive ? 'active' : ''}`}
+                style={{
+                  padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                  background: isActive ? 'var(--accent-glow)' : 'transparent',
+                  textDecoration: 'none', transition: 'all 0.2s'
+                }}
               >
                 {item.name}
               </Link>
@@ -104,27 +112,8 @@ function LayoutContent({ children }) {
           })}
         </div>
 
-        {/* Right: Status & Operator */}
+        {/* Right: Status & Tech Info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div className="desktop-only" style={{ position: 'relative' }}>
-             <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-             <input 
-               type="text" 
-               placeholder="Search kernel..." 
-               value={searchQuery}
-               onChange={e => setSearchQuery(e.target.value)}
-               onKeyDown={e => e.key === 'Enter' && searchQuery && (router.push(`/search?q=${searchQuery}`), setSearchQuery(''))}
-               style={{ 
-                 background: 'var(--bg-secondary)', border: '1px solid var(--border)', 
-                 borderBottom: '1px solid var(--border-bright)',
-                 borderRadius: 8, padding: '8px 12px 8px 34px', fontSize: 12, 
-                 width: 140, transition: 'all 0.3s var(--ease)', outline: 'none',
-                 color: 'var(--text-primary)'
-               }}
-               className="focus:w-200"
-             />
-          </div>
-
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button 
               onClick={toggleTheme}
@@ -134,9 +123,9 @@ function LayoutContent({ children }) {
                {isLightMode ? <Monitor size={16} /> : <Sparkles size={16} />}
             </button>
 
-            <div className="desktop-only badge badge-ready" style={{ gap: 8, fontSize: 10 }}>
-               <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)', animation: 'aura-pulse 2s infinite' }}></div>
-               SYNC_READY
+            <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, fontWeight: 800, color: 'var(--text-muted)' }}>
+               <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)' }}></div>
+               ONLINE · RAVINDRA @ HYNET
             </div>
 
             <button 
@@ -155,7 +144,7 @@ function LayoutContent({ children }) {
         {children}
       </main>
 
-      {/* Mobile Drawer Reconstruction */}
+      {/* Mobile Drawer */}
       <div className={`glass ${isMobileMenuOpen ? 'open' : ''}`} style={{ 
         position: 'fixed', right: 0, top: 0, bottom: 0, 
         width: 320, background: 'var(--bg-primary)', 
@@ -168,7 +157,7 @@ function LayoutContent({ children }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
              <span style={{ fontWeight: 900, fontSize: 20 }}>HackRore</span>
-             <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800 }}>NAV_CLUSTER</span>
+             <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800 }}>TECHNICIAN_PORTAL</span>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'var(--bg-elevated)', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 8, borderRadius: 50 }}>
             <X size={20} />
@@ -205,8 +194,8 @@ function LayoutContent({ children }) {
                  <User size={20} style={{ color: 'var(--accent)' }} />
               </div>
               <div>
-                 <div style={{ fontSize: 14, fontWeight: 800 }}>Operator_01</div>
-                 <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Level 3 Clearance</div>
+                 <div style={{ fontSize: 14, fontWeight: 800 }}>Ravindra · Hynet</div>
+                 <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Technician Mode Active</div>
               </div>
            </div>
            
@@ -214,22 +203,19 @@ function LayoutContent({ children }) {
               <button onClick={toggleTheme} style={{ flex: 1, padding: '12px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 700, fontSize: 12 }}>
                  THEME
               </button>
-              <button style={{ flex: 1, padding: '12px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 700, fontSize: 12 }}>
-                 LOGOUT
-              </button>
            </div>
         </div>
       </div>
       
       {isMobileMenuOpen && <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1900 }} onClick={() => setIsMobileMenuOpen(false)} />}
 
-      {/* Mobile Bottom Bar (Technician Standard) */}
+      {/* Mobile Bottom Bar (Refined Labels) */}
       <div className="mobile-only" style={{ 
         position: 'fixed', bottom: 20, left: 20, right: 20, 
         height: 64, background: 'rgba(10, 11, 18, 0.95)', 
         backdropFilter: 'blur(20px)', border: '1px solid var(--border-bright)',
         borderRadius: 20, zIndex: 1500, display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-        padding: '0 12px', boxShadow: '0 20px 40px rgba(0,0,0,0.8)'
+        padding: '0 8px', boxShadow: '0 20px 40px rgba(0,0,0,0.8)'
       }}>
          {navItems.map(item => {
            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
@@ -237,10 +223,10 @@ function LayoutContent({ children }) {
              <Link key={item.href} href={item.href} style={{ 
                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
                color: isActive ? 'var(--accent)' : 'var(--text-muted)', textDecoration: 'none',
-               transition: 'all 0.2s', width: 50
+               transition: 'all 0.2s', minWidth: 40
              }}>
-                <item.icon size={20} />
-                <span style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 0.5 }}>{item.name.slice(0, 5)}</span>
+                <item.icon size={18} />
+                <span style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 0.5 }}>{item.mobile}</span>
              </Link>
            )
          })}
