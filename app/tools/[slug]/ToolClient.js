@@ -201,24 +201,27 @@ export default function ToolClient({ tool, relatedGuides }) {
 
       </aside>
 
-      {/* Session Cycling: fixed Navigation (thetest.com Model) */}
+      {/* Session Cycling: Promoted fixed Navigation (v.4.0 Hardened) */}
       <Link href={`/tools/${prevTool.slug}`} className="desktop-only" style={{ 
-        position: 'fixed', left: 20, top: '50%', transform: 'translateY(-50%)',
-        padding: 20, background: 'var(--bg-elevated)', border: '1px solid var(--border-bright)',
-        borderRadius: '50%', color: 'var(--text-muted)', transition: 'all 0.3s var(--ease)',
-        zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        position: 'fixed', left: 32, top: '50%', transform: 'translateY(-50%)',
+        padding: '24px 16px', background: 'rgba(10, 11, 18, 0.9)', backdropFilter: 'blur(10px)',
+        border: '1px solid var(--border-bright)', borderRadius: 16, color: 'var(--text-muted)', 
+        transition: 'all 0.3s var(--ease)', zIndex: 5000, display: 'flex', flexDirection: 'column', 
+        alignItems: 'center', gap: 8, textDecoration: 'none'
       }}>
          <ChevronLeft size={24} />
+         <span style={{ fontSize: 9, fontWeight: 900, writingMode: 'vertical-lr', textTransform: 'uppercase', letterSpacing: 1 }}>PREV_MODULE</span>
       </Link>
 
       <Link href={`/tools/${nextTool.slug}`} className="desktop-only" style={{ 
-        position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)',
-        padding: 20, background: 'var(--bg-elevated)', border: '1px solid var(--border-bright)',
-        borderRadius: '50%', color: 'var(--accent)', transition: 'all 0.3s var(--ease)',
-        zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 0 20px var(--accent-glow)'
+        position: 'fixed', right: 32, top: '50%', transform: 'translateY(-50%)',
+        padding: '24px 16px', background: 'rgba(10, 11, 18, 0.9)', backdropFilter: 'blur(10px)',
+        border: '1px solid var(--accent)', borderRadius: 16, color: 'var(--accent)', 
+        transition: 'all 0.3s var(--ease)', zIndex: 5000, display: 'flex', flexDirection: 'column', 
+        alignItems: 'center', gap: 8, textDecoration: 'none', boxShadow: '0 0 30px var(--accent-glow)'
       }}>
          <ChevronRight size={24} />
+         <span style={{ fontSize: 9, fontWeight: 900, writingMode: 'vertical-lr', textTransform: 'uppercase', letterSpacing: 1 }}>NEXT_MODULE</span>
       </Link>
 
     </div>

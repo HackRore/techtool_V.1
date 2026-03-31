@@ -7,12 +7,13 @@ import {
   ChevronRight, ArrowRight, Search, 
   Clock, CheckCircle2, AlertCircle,
   Terminal, BookOpen, Layers, Cpu,
-  Database
+  Database, FileCode, Hammer
 } from 'lucide-react'
 
 import QuickTestModal from '../components/testlab/QuickTestModal'
 import AuraIntelligenceHub from '../components/AuraIntelligenceHub'
 import LiveHUD from '../components/LiveHUD'
+import JobBoard from '../components/dashboard/JobBoard'
 
 export default function Dashboard() {
   const [sessionTime, setSessionTime] = useState(null)
@@ -81,12 +82,12 @@ export default function Dashboard() {
 
              <div style={{ position: 'relative', zIndex: 1 }}>
                 <h1 className="glow-text" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
-                  Tech<span style={{ color: 'var(--accent)' }}>Workbench</span>
+                   Tech<span style={{ color: 'var(--accent)' }}>Workbench</span>
                 </h1>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 16 }}>
                    <span className="badge badge-ready" style={{ padding: '8px 16px', fontSize: 11 }}>SYSTEM_STATUS::OPERATIONAL</span>
                    <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', letterSpacing: 1 }}>
-                     KERNEL VERSION v.2.0.1-ELITE
+                     KERNEL VERSION v.2.1.0-DAILY
                    </span>
                 </div>
              </div>
@@ -95,6 +96,28 @@ export default function Dashboard() {
           {/* Telemetry HUD */}
           <div style={{ marginBottom: 48 }}>
              <LiveHUD />
+          </div>
+
+          {/* Quick Access Intelligence Nodes */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 56 }}>
+             <Link href="/fixlab/bsod" className="card-elevated hover:glow-border" style={{ padding: 32, display: 'flex', gap: 24, alignItems: 'center', textDecoration: 'none' }}>
+                <div style={{ width: 48, height: 48, background: 'var(--status-fail)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <Zap size={24} color="#000" />
+                </div>
+                <div>
+                   <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 4 }}>TIME_SAVER // 03_MIN</div>
+                   <div style={{ fontSize: 16, fontWeight: 900, color: '#fff' }}>BSOD Decoder</div>
+                </div>
+             </Link>
+             <Link href="/fixlab/commands" className="card-elevated hover:glow-border" style={{ padding: 32, display: 'flex', gap: 24, alignItems: 'center', textDecoration: 'none' }}>
+                <div style={{ width: 48, height: 48, background: 'var(--accent)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <FileCode size={24} color="#000" />
+                </div>
+                <div>
+                   <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 4 }}>TIME_SAVER // 05_MIN</div>
+                   <div style={{ fontSize: 16, fontWeight: 900, color: '#fff' }}>Command Forge</div>
+                </div>
+             </Link>
           </div>
 
           {/* Core Diagnostic Grid */}
@@ -135,8 +158,8 @@ export default function Dashboard() {
 
         {/* Intelligence Side-Panel */}
         <aside className="sidebar-panel">
-           <div className="card-elevated" style={{ padding: 32, borderTop: '4px solid var(--accent)' }}>
-              <Terminal size={24} style={{ color: 'var(--accent)', marginBottom: 20 }} />
+           <div className="card-elevated" style={{ padding: 32, borderTop: '4px solid var(--accent)', marginBottom: 24 }}>
+              <Hammer size={24} style={{ color: 'var(--accent)', marginBottom: 20 }} />
               <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: 12 }}>Operator Hub</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.7, marginBottom: 32 }}>
                 Advanced diagnostic kernel initialized. Run collective system scans or specific hardware validations.
@@ -146,34 +169,20 @@ export default function Dashboard() {
                  <Link href="/diagnostics" className="btn-accent" style={{ textDecoration: 'none' }}>
                     Execute Global Scan
                  </Link>
-                 <Link href="/fixlab" style={{ 
+                 <Link href="/tools" style={{ 
                     padding: '14px', borderRadius: 10, background: 'var(--bg-elevated)', 
                     border: '1px solid var(--border)', color: 'var(--text-primary)', 
                     textAlign: 'center', fontWeight: 800, fontSize: 12, textDecoration: 'none',
                     letterSpacing: 1
                  }}>
-                    KNOWLEDGE HUB
+                    TOOLKIT_HUB
                  </Link>
               </div>
            </div>
 
-           <div className="card" style={{ padding: 32 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                 <h3>Kernel Logs</h3>
-                 <div className="badge badge-ready" style={{ gap: 6 }}>ONLINE</div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 24, position: 'relative' }}>
-                 {[
-                   { t: '13:04', e: 'HID cluster handshake complete', s: 'pass' },
-                   { t: '12:51', e: 'Bus encryption synchronized', s: 'pass' },
-                   { t: '12:44', e: 'Diagnostic telemetry active', s: 'info' },
-                 ].map((log, i) => (
-                   <div key={i} style={{ display: 'flex', gap: 16 }}>
-                      <div style={{ color: 'var(--accent)', fontWeight: 900, fontSize: 11, fontFamily: 'var(--font-mono)', minWidth: 40 }}>{log.t}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{log.e}</div>
-                   </div>
-                 ))}
-              </div>
+           {/* Sticky Feature: JobBoard */}
+           <div style={{ height: 600 }}>
+              <JobBoard />
            </div>
         </aside>
       </div>

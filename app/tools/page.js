@@ -38,14 +38,12 @@ export default function TestLabHub() {
            </p>
         </header>
 
-        <div className="dashboard-layout">
-          
-        {/* Main Grid: Tools (thetest.com Minimalist Architecture) */}
-        <div style={{ minWidth: 0 }}>
+        {/* thetest.com Style Hub: Full-Width Diagnostic Grid */}
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
            <div style={{ 
              display: 'grid', 
-             gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', 
-             gap: 24, marginBottom: 80 
+             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+             gap: 32, marginBottom: 80 
            }}>
               {tools.map(t => (
                 <Link key={t.id} href={`/tools/${t.slug}`} style={{ textDecoration: 'none' }}>
@@ -53,21 +51,22 @@ export default function TestLabHub() {
                     height: '100%', display: 'flex', flexDirection: 'column', 
                     alignItems: 'center', textAlign: 'center',
                     borderColor: results[t.id] === 'pass' ? 'var(--status-pass)' : 'var(--border)',
-                    padding: '48px 32px 32px 32px'
+                    padding: '64px 32px 48px 32px'
                   }}>
-                    <div style={{ fontSize: 64, marginBottom: 32, filter: 'drop-shadow(0 0 20px var(--accent-glow))' }}>{t.icon}</div>
+                    <div style={{ fontSize: 72, marginBottom: 32, filter: 'drop-shadow(0 0 20px var(--accent-glow))' }}>{t.icon}</div>
                     
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                       <h2 style={{ fontSize: 20, marginBottom: 12, fontWeight: 900, color: '#fff', letterSpacing: -0.5 }}>{t.name}</h2>
-                       <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 32, maxWidth: 200 }}>
+                       <h2 style={{ fontSize: 24, marginBottom: 12, fontWeight: 900, color: '#fff', letterSpacing: -1 }}>{t.name}</h2>
+                       <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 40, maxWidth: 240 }}>
                           {t.description.split('.')[0]}.
                        </p>
                     </div>
                     
                     <button className="btn-accent" style={{ 
-                       width: '100%', height: 48, background: 'var(--bg-primary)', 
+                       width: '100%', height: 54, background: 'var(--bg-primary)', 
                        border: '1px solid var(--accent)', color: 'var(--accent)',
-                       fontSize: 11, letterSpacing: 2, borderRadius: 12
+                       fontSize: 12, fontWeight: 900, letterSpacing: 2, borderRadius: 14,
+                       boxShadow: '0 4px 0 var(--accent-dim)'
                     }}>
                        START_DIAGNOSTIC
                     </button>
@@ -75,69 +74,6 @@ export default function TestLabHub() {
                 </Link>
               ))}
            </div>
-        </div>
-
-          {/* Sidebar: Progress & Audit Trail */}
-          <aside className="sidebar-panel">
-             
-             {/* Progress Engine */}
-             <div className="card" style={{ padding: 32 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                   <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 2 }}>HUB_VALIDATION</div>
-                   <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{progressPct}%</div>
-                </div>
-                
-                <div style={{ width: '100%', height: 6, background: 'var(--bg-primary)', borderRadius: 10, border: '1px solid var(--border)', overflow: 'hidden', marginBottom: 24 }}>
-                   <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--accent)', boxShadow: '0 0 10px var(--accent)', transition: 'width 1s var(--ease)' }}></div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--text-secondary)', fontSize: 12, fontWeight: 800 }}>
-                   <Shield size={14} style={{ color: 'var(--accent)' }} />
-                   {completedCount}/{tools.length} MODULES_VERIFIED
-                </div>
-             </div>
-
-             {/* Audit Trail List */}
-             <div className="card-elevated" style={{ padding: 32, background: 'var(--bg-secondary)' }}>
-                <h3 style={{ fontSize: 11, marginBottom: 24, letterSpacing: 1.5 }}>Kernel Audit Trail</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                   {tools.map(t => {
-                     const res = results[t.id]
-                     return (
-                       <Link key={t.id} href={`/tools/${t.slug}`} style={{ textDecoration: 'none' }}>
-                         <div style={{ 
-                           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                           padding: '12px 16px', borderRadius: 10, background: 'var(--bg-primary)',
-                           border: `1px solid ${res ? 'var(--accent-glow)' : 'var(--border)'}`,
-                           opacity: res ? 1 : 0.6
-                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                               {res === 'pass' ? <CheckCircle2 size={14} style={{ color: 'var(--status-pass)' }} /> : 
-                                res === 'warn' ? <AlertCircle size={14} style={{ color: 'var(--status-warn)' }} /> : 
-                                <Activity size={14} style={{ color: 'var(--text-muted)' }} />}
-                               <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)' }}>{t.name}</span>
-                            </div>
-                            {res && <span style={{ fontSize: 8, fontWeight: 900, color: 'var(--accent)' }}>VALIDATED</span>}
-                         </div>
-                       </Link>
-                     )
-                   })}
-                </div>
-
-                <button className="btn-accent" style={{ width: '100%', marginTop: 32, height: 50, background: 'transparent', border: '1px solid var(--border-bright)', color: 'var(--text-primary)' }}>
-                   <Download size={16} /> GENERATE_REPORT
-                </button>
-             </div>
-
-             <div className="card" style={{ padding: 24, borderLeft: '4px solid var(--status-info)' }}>
-                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                   <Filter size={18} style={{ color: 'var(--status-info)' }} />
-                   <div style={{ fontSize: 11, fontWeight: 800 }}>QUICK_FILTER // ALL_MODULES</div>
-                </div>
-             </div>
-
-          </aside>
-
         </div>
       </div>
     </AppLayout>
