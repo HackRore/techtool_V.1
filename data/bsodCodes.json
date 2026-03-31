@@ -1,0 +1,62 @@
+[
+  {
+    "code": "CRITICAL_PROCESS_DIED",
+    "meaning": "A critical system process has terminated.",
+    "causes": ["Corrupt system files", "Faulty device drivers", "Disk errors"],
+    "fix": "Run sfc /scannow. If persistent, check for driver updates or recent hardware changes."
+  },
+  {
+    "code": "MEMORY_MANAGEMENT",
+    "meaning": "A severe memory management error occurred.",
+    "causes": ["Faulty RAM module", "Outdated BIOS", "Driver conflicts"],
+    "fix": "Run MemTest86 or Windows Memory Diagnostic. Reseat RAM sticks and check for BIOS updates."
+  },
+  {
+    "code": "IRQL_NOT_LESS_OR_EQUAL",
+    "meaning": "Driver tried to access an address it didn't have permission for.",
+    "causes": ["Incompatible drivers", "Overclocking unstable", "Malware"],
+    "fix": "Standard driver update. Disable any CPU/RAM overclocking. Run DDU for GPU drivers."
+  },
+  {
+    "code": "WHEA_UNCORRECTABLE_ERROR",
+    "meaning": "Hard hardware error detected.",
+    "causes": ["CPU over-voltage/heat", "Failing SSD/HDD", "Dying motherboard"],
+    "fix": "Check thermals. Verify drive health with CrystalDiskInfo. If undervolting, revert to stock."
+  },
+  {
+    "code": "UNEXPECTED_STORE_EXCEPTION",
+    "meaning": "Store component caught an unexpected exception.",
+    "causes": ["SSD/HDD failure", "Corrupt store app cache"],
+    "fix": "Check disk for errors using chkdsk. Run DISM restorehealth. Check SSD SATA/NVMe connection."
+  },
+  {
+    "code": "DPC_WATCHDOG_VIOLATION",
+    "meaning": "DPC watchdog timer was triggered due to a long-running DPC.",
+    "causes": ["Incompatible SATA AHCI driver", "Solid state drive firmware issues"],
+    "fix": "Update SSD firmware. Update SATA AHCI controller driver in Device Manager."
+  },
+  {
+    "code": "SYSTEM_SERVICE_EXCEPTION",
+    "meaning": "Error in a system service.",
+    "causes": ["GUI-related drivers", "System file corruption", "Antivirus conflicts"],
+    "fix": "Update display drivers. Perform clean boot to identify conflicting software."
+  },
+  {
+    "code": "PAGE_FAULT_IN_NONPAGED_AREA",
+    "meaning": "Requested data was not found in memory.",
+    "causes": ["Faulty RAM", "Virtual memory errors", "Antivirus software"],
+    "fix": "Check RAM. Set 'Automatically manage paging file size' in System Properties."
+  },
+  {
+    "code": "BAD_POOL_HEADER",
+    "meaning": "Error in memory pool header.",
+    "causes": ["Incompatible drivers", "RAM issues", "Incompatible anti-malware"],
+    "fix": "Perform a Clean Boot. Update all network and printer drivers."
+  },
+  {
+    "code": "INACCESSIBLE_BOOT_DEVICE",
+    "meaning": "Windows lost access to the system partition during startup.",
+    "causes": ["Corrupt boot configuration", "Faulty SATA cable/SSD", "BIOS mode change (IDE to AHCI)"],
+    "fix": "Check BIOS storage settings. Run Startup Repair from Windows Recovery."
+  }
+]
