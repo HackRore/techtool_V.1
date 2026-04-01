@@ -13,6 +13,16 @@ const nextConfig = {
         destination: '/tools',
         permanent: true,
       },
+      {
+        source: '/assistant',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/compare',
+        destination: '/tools',
+        permanent: true,
+      },
     ]
   },
 }

@@ -21,11 +21,11 @@ export default function BSODDecoder() {
     <AppLayout>
       <main style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1.5rem' }}>
         
-        <div style={{ marginBottom: '32px' }}>
-           <h1 style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '32px', marginBottom: '8px' }}>BSOD Decoder</h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '600px' }}>
-             Professional reference for Windows Stop Codes (Blue Screen of Death). 
-             Enter the error string from the crash screen.
+        <div style={{ marginBottom: '40px', borderBottom: '1px solid var(--border)', paddingBottom: '32px' }}>
+           <h1 style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '32px', marginBottom: '8px', letterSpacing: '-1px' }}>System StopCode Repository</h1>
+           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '600px', lineHeight: 1.6 }}>
+             Official technical reference for Windows NT Kernel StopCodes (BSOD). 
+             Enter the error string to retrieve validated diagnostic protocols.
            </p>
         </div>
 

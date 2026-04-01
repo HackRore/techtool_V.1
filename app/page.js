@@ -51,15 +51,17 @@ export default function Dashboard() {
             marginBottom: 48, borderRadius: 24, padding: '64px 56px',
             position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 64
           }}>
-             <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0, zIndex: 1 }}>
+             <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0, zIndex: 1, filter: 'drop-shadow(0 0 20px var(--accent-glow))' }}>
                 <svg width="140" height="140" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="48" fill="none" stroke="var(--border)" strokeWidth="0.5" />
-                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="2.5" 
-                    strokeDasharray="301" strokeDashoffset="40" 
-                    style={{ animation: 'spin-slow 20s linear infinite', filter: 'drop-shadow(0 0 12px var(--accent))' }} />
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeDasharray="4 8"
+                    style={{ animation: 'spin-slow 40s linear infinite' }} />
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeWidth="4" 
+                    strokeDasharray="1 300" strokeLinecap="round"
+                    style={{ animation: 'spin-slow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite' }} />
                 </svg>
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <Activity size={56} style={{ color: 'var(--accent)', filter: 'drop-shadow(0 0 20px var(--accent))' }} />
+                   <Activity size={48} style={{ color: 'var(--accent)' }} />
                 </div>
              </div>
 
@@ -70,7 +72,7 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 16 }}>
                    <span className="badge badge-ready" style={{ padding: '8px 16px', fontSize: 11 }}>SYSTEM ONLINE</span>
                    <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', letterSpacing: 1 }}>
-                     v2.1.0-DAILY
+                     v7.0_STABLE // PROD
                    </span>
                 </div>
              </div>

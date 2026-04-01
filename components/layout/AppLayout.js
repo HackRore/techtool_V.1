@@ -84,8 +84,8 @@ function LayoutContent({ children }) {
               fontWeight: 900, fontSize: 13, boxShadow: '0 0 20px var(--accent-glow)'
             }}>HR</div>
             <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column' }}>
-               <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>HACKRORE</span>
-               <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--accent)', letterSpacing: 1.5, marginTop: -2 }}>WORKBENCH</span>
+               <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>HYNET_DIAGNOSTIC</span>
+               <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--accent)', letterSpacing: 1.5, marginTop: -2 }}>WORKBENCH // v7.0</span>
             </div>
           </Link>
         </div>
@@ -125,7 +125,7 @@ function LayoutContent({ children }) {
 
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, fontWeight: 800, color: 'var(--text-muted)' }}>
                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)' }}></div>
-               OPERATOR_STATUS :: ACTIVE // HYNET_DOMAIN
+               SYSTEM_STATUS :: ACTIVE // HYNET_DOMAIN
             </div>
 
             <button 
@@ -194,8 +194,8 @@ function LayoutContent({ children }) {
                  <User size={20} style={{ color: 'var(--accent)' }} />
               </div>
               <div>
-                 <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: -0.2 }}>ADMINISTRATOR // HYNET</div>
-                 <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase' }}>Production Status: ACTIVE</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: -0.2 }}>SR_SYSTEM_ENGINEER // HYNET</div>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase' }}>Production Status: STABLE</div>
               </div>
            </div>
            
