@@ -19,10 +19,8 @@ export default function AppLayout({ children }) {
 function LayoutContent({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLightMode, setIsLightMode] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const pathname = usePathname()
   const router = useRouter()
-  const { addToast } = useToast()
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('hr_theme') === 'light'
@@ -32,10 +30,6 @@ function LayoutContent({ children }) {
     const handleShortcuts = (e) => {
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return
       
-      if (e.key === '/') {
-        e.preventDefault()
-        document.querySelector('input')?.focus()
-      }
       if (e.key === '1') router.push('/')
       if (e.key === '2') router.push('/tools')
       if (e.key === '3') router.push('/diagnostics')
@@ -84,8 +78,8 @@ function LayoutContent({ children }) {
               fontWeight: 900, fontSize: 13, boxShadow: '0 0 20px var(--accent-glow)'
             }}>HR</div>
             <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column' }}>
-               <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>HYNET_DIAGNOSTIC</span>
-               <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--accent)', letterSpacing: 1.5, marginTop: -2 }}>WORKBENCH // v7.0</span>
+               <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.5px', color: 'var(--text-primary)' }}>HackRore</span>
+               <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--accent)', letterSpacing: 1.5, marginTop: -2 }}>TechWorkbench // v5.0_DEFINITIVE</span>
             </div>
           </Link>
         </div>
@@ -125,7 +119,7 @@ function LayoutContent({ children }) {
 
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, fontWeight: 800, color: 'var(--text-muted)' }}>
                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)' }}></div>
-               SYSTEM_STATUS :: ACTIVE // HYNET_DOMAIN
+               SYSTEM_STATUS :: ACTIVE
             </div>
 
             <button 
@@ -189,21 +183,10 @@ function LayoutContent({ children }) {
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: 40, borderTop: '1px solid var(--border)' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border)' }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-bright)' }}>
-                 <User size={20} style={{ color: 'var(--accent)' }} />
-              </div>
-              <div>
-                  <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: -0.2 }}>SR_SYSTEM_ENGINEER // HYNET</div>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase' }}>Production Status: STABLE</div>
-              </div>
-           </div>
-           
-           <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
-              <button onClick={toggleTheme} style={{ flex: 1, padding: '12px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 700, fontSize: 12 }}>
-                 THEME
-              </button>
-           </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border)' }}>
+               <User size={18} style={{ color: 'var(--text-muted)' }} />
+               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>Ravindra · Hynet</span>
+            </div>
         </div>
       </div>
       
