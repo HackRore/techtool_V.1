@@ -140,31 +140,28 @@ export default function JobRegistryPage() {
     <AppLayout>
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
         
-        {/* Header Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px' }}>
-           <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                 <div style={{ padding: '6px 10px', background: 'var(--accent-glow)', borderRadius: 6, fontSize: 10, fontWeight: 900, color: 'var(--accent)', letterSpacing: 1 }}>LOCAL_REGISTRY // JOBS</div>
-                 <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800 }}>PERSISTENCE: LOCAL_STORAGE</div>
+        {/* Header Section: v8.0 Responsive Layout */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', marginBottom: '40px' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 24 }}>
+              <div>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                    <div style={{ padding: '6px 12px', background: 'var(--accent-soft)', borderRadius: 50, fontSize: 10, fontWeight: 900, color: 'var(--accent)', letterSpacing: 1 }}>MODULE: JOB_REGISTRY</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800 }}>PERSISTENCE: LOCAL_STORAGE</div>
+                 </div>
+                 <h1 style={{ fontSize: '42px', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: '8px' }}>Job Registry</h1>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: '600px', lineHeight: 1.6 }}>
+                    Persistent local database for tracking hardware repair cycles. Private data management.
+                 </p>
               </div>
-              <h1 style={{ fontSize: '36px', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: '8px' }}>Job Registry</h1>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: '600px', lineHeight: 1.6 }}>
-                 Persistent local database for tracking hardware repair cycles and client hardware profiles. 
-                 Private, zero-server data management.
-              </p>
-           </div>
-           
-           <div style={{ display: 'flex', gap: 12 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                 <button onClick={() => setShowAdd(true)} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px' }}>
-                    <Plus size={20} strokeWidth={3} /> Create Ticket
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: '200px' }}>
+                 <button onClick={() => setShowAdd(true)} className="btn-primary" style={{ width: '100%', height: '48px' }}>
+                    <Plus size={18} strokeWidth={3} /> Create Repair Ticket
                  </button>
-                 <div style={{ display: 'flex', gap: 10 }}>
-                    <button onClick={exportJobs} className="btn-outline" style={{ flex: 1, fontSize: 10, padding: '4px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-                       <Download size={12} /> Export
-                    </button>
-                    <label className="btn-outline" style={{ flex: 1, fontSize: 10, padding: '4px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer' }}>
-                       <Upload size={12} /> Import
+                 <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={exportJobs} className="btn-outline" style={{ flex: 1, fontSize: 10 }}>Download Backup</button>
+                    <label className="btn-outline" style={{ flex: 1, fontSize: 10, cursor: 'pointer' }}>
+                       Restore Data
                        <input type="file" accept=".json" onChange={importJobs} style={{ display: 'none' }} />
                     </label>
                  </div>
@@ -276,12 +273,12 @@ export default function JobRegistryPage() {
           )}
         </div>
 
-        {/* Global Toast */}
+        {/* Global Toast: v8.0 Professional */}
         {toast && (
            <div className="animate-in" style={{ 
-              position: 'fixed', bottom: 40, left: '50%', transform: 'translateX(-50%)', 
-              background: 'var(--accent)', color: '#000', padding: '12px 24px', borderRadius: 50, 
-              fontSize: 12, fontWeight: 900, boxShadow: '0 10px 40px rgba(0,212,160,0.3)', zIndex: 10000 
+              position: 'fixed', bottom: 100, left: '50%', transform: 'translateX(-50%)', 
+              background: 'var(--accent)', color: '#000', padding: '12px 24px', borderRadius: 12, 
+              fontSize: 11, fontWeight: 900, zIndex: 10000 
            }}>
               {toast.toUpperCase()}
            </div>

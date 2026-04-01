@@ -60,12 +60,27 @@ export default function FixLab() {
     <AppLayout>
       <div className="animate-in">
         
-        {/* Hub Header */}
-        <header style={{ marginBottom: 48, borderBottom: '1px solid var(--border)', paddingBottom: 32 }}>
-           <h1 style={{ marginBottom: 12 }}>Repair <span style={{ color: 'var(--accent)' }}>Solutions</span></h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: 650, lineHeight: 1.6 }}>
-             Hardware troubleshooting guides, validated fix protocols, and component-level repair documentation.
+        {/* Hub Header: v8.0 Professional Search */}
+        <header style={{ marginBottom: 40 }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 10, fontWeight: 900, padding: '4px 12px', borderRadius: 50, letterSpacing: 1 }}>STEP_03 // REPAIR_GUIDES</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>MODULE: FIXLAB_PROTOCOLS</div>
+           </div>
+           <h1 style={{ fontSize: 40, fontWeight: 900, marginBottom: 12 }}>Repair Guides & Protocols</h1>
+           <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 640, marginBottom: 32 }}>
+             Detailed troubleshooting guides and validated repair protocols for hardware technicians.
            </p>
+
+           <div style={{ position: 'relative', maxWidth: '800px' }}>
+              <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input
+                type="text"
+                placeholder="Search symptom, error code, or fix protocol..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                style={{ width: '100%', padding: '14px 16px 14px 48px', fontSize: '15px' }}
+              />
+           </div>
         </header>
 
         <div className="dashboard-layout">
@@ -81,12 +96,13 @@ export default function FixLab() {
                   return (
                     <div 
                       key={entry.id} 
-                      className={`card ${isExpanded ? 'glow-border' : ''}`} 
+                      className="card" 
                       onClick={() => setExpandedId(isExpanded ? null : entry.id)}
                       style={{ 
                         padding: 0, cursor: 'pointer',
                         borderLeft: `4px solid ${severityColors[entry.severity] || 'var(--border)'}`,
                         background: isExpanded ? 'var(--bg-elevated)' : 'var(--bg-secondary)',
+                        borderColor: isExpanded ? 'var(--accent)' : 'var(--border)',
                       }}
                     >
                       {/* Entry Header */}
@@ -181,16 +197,14 @@ export default function FixLab() {
              {/* Search */}
              <div className="card" style={{ padding: 24, marginBottom: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                   <Search size={14} style={{ color: 'var(--accent)' }} />
-                   <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Search Hub</h3>
+                   <Activity size={14} style={{ color: 'var(--accent)' }} />
+                   <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Analysis Tools</h3>
                 </div>
-                <input 
-                  type="text" 
-                  value={query}
-                  onChange={e => setQuery(e.target.value)}
-                  placeholder="Search symptoms..." 
-                  style={{ width: '100%', fontSize: 13 }}
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                   <Link href="/tools" className="btn-outline" style={{ justifyContent: 'flex-start', padding: '12px' }}>
+                      Open Diagnostics →
+                   </Link>
+                </div>
              </div>
 
              {/* Categories */}

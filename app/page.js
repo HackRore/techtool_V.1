@@ -25,10 +25,10 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         
         {/* Step 0: Minimalist Branding Header */}
-        <section style={{ marginTop: '24px' }}>
+        <section style={{ marginTop: '16px' }}>
            <h1 style={{ fontSize: '48px', fontWeight: 900, letterSpacing: '-2px', marginBottom: '8px' }}>
               Diagnostics Dashboard
            </h1>
@@ -44,7 +44,7 @@ export default function Dashboard() {
         }}>
            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ padding: '8px 12px', background: 'var(--bg-elevated)', borderRadius: 8, fontSize: 10, fontWeight: 900, color: 'var(--accent)', width: 'fit-content' }}>STEP_01</div>
-              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', textTransform: 'none', letterSpacing: 'normal' }}>Run Hardware Tests</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff' }}>Run Hardware Tests</h3>
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                  Execute real-time diagnostics on input devices, display, and audio.
               </p>
@@ -53,7 +53,7 @@ export default function Dashboard() {
            
            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: '1px solid var(--border)', paddingLeft: '24px' }}>
               <div style={{ padding: '8px 12px', background: 'var(--bg-elevated)', borderRadius: 8, fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', width: 'fit-content' }}>STEP_02</div>
-              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', textTransform: 'none', letterSpacing: 'normal' }}>Analyze Reports</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff' }}>Analyze Reports</h3>
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                  Upload system telemetry files or view manual scan logs.
               </p>
@@ -62,8 +62,7 @@ export default function Dashboard() {
 
            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: '1px solid var(--border)', paddingLeft: '24px' }}>
               <div style={{ padding: '8px 12px', background: 'var(--bg-elevated)', borderRadius: 8, fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', width: 'fit-content' }}>STEP_03</div>
-              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', textTransform: 'none', letterSpacing: 'normal' }}>Apply Repairs</h3>
-              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', textTransform: 'none', letterSpacing: 'normal' }}>Repair Guides</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff' }}>Repair Guides</h3>
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                  Access validated fix protocols and technician repair documentation.
               </p>
@@ -119,7 +118,7 @@ export default function Dashboard() {
                    { name: 'Audio', icon: '🔊' },
                    { name: 'Battery', icon: '🔋' },
                  ].map(t => (
-                   <Link key={t.name} href="/tools" className="card hover:glow-border" style={{ textAlign: 'center', padding: '24px 12px', textDecoration: 'none' }}>
+                   <Link key={t.name} href="/tools" className="card" style={{ textAlign: 'center', padding: '24px 12px', textDecoration: 'none' }}>
                       <div style={{ fontSize: 32, marginBottom: 12 }}>{t.icon}</div>
                       <div style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>{t.name}</div>
                    </Link>

@@ -46,14 +46,14 @@ function LayoutContent({ children }) {
     document.body.setAttribute('data-theme', next ? 'light' : 'dark')
   }
 
+  // Unified Nav Items (v8.0 Sync)
   const navItems = [
-    { name: 'Dashboard', mobile: 'Home',  href: '/', icon: Monitor },
-    { name: 'Diagnostics', mobile: 'Tests',  href: '/tools', icon: Activity },
-    { name: 'Reports',    mobile: 'Scan',   href: '/diagnostics', icon: Cpu },
-    { name: 'Repair Guides', mobile: 'Fixes', href: '/fixlab', icon: BookOpen },
-    { name: 'Toolbox',    mobile: 'Tools',  href: '/resources', icon: Zap },
-    { name: 'StopCodes',  mobile: 'Ref',    href: '/quickref/bsod', icon: Search },
-    { name: 'Job Registry', mobile: 'Jobs', href: '/jobs', icon: User },
+    { name: 'Dashboard',   mobile: 'Home',    href: '/', icon: Monitor },
+    { name: 'Diagnostics', mobile: 'Tests',   href: '/tools', icon: Activity },
+    { name: 'System Reports', mobile: 'Reports', href: '/diagnostics', icon: Cpu },
+    { name: 'Repair Guides', mobile: 'Guides',  href: '/fixlab', icon: BookOpen },
+    { name: 'Toolbox',     mobile: 'Toolbox', href: '/resources', icon: Zap },
+    { name: 'Registry',    mobile: 'Jobs',    href: '/jobs', icon: User },
   ]
 
   useEffect(() => {
@@ -65,7 +65,7 @@ function LayoutContent({ children }) {
     <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <a href="#main" className="skip-nav" style={{ position: 'absolute', top: -100, left: 0, background: 'var(--accent)', color: '#000', padding: '10px 20px', zIndex: 10000 }}>Skip to main content</a>
 
-      {/* Top Navigation (v6.0 Minimalist) */}
+      {/* Top Navigation: Standardized Labels */}
       <nav className="top-nav">
         <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -81,8 +81,8 @@ function LayoutContent({ children }) {
           </Link>
         </div>
 
-        {/* Center: Desktop Nav */}
-        <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {/* Center: Desktop Nav (Aligned with v8.0 Labels) */}
+        <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {navItems.slice(0, 5).map(item => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
             return (
@@ -93,7 +93,7 @@ function LayoutContent({ children }) {
           })}
         </div>
 
-        {/* Right: Status & Tech Info */}
+        {/* Right: Status Indicator (Clean) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>
@@ -112,12 +112,15 @@ function LayoutContent({ children }) {
         </div>
       </nav>
 
-      {/* Main Content Area */}
-      <main id="main" style={{ flex: 1, width: '100%', maxWidth: 'var(--max-width)', margin: '0 auto', padding: '2rem 1.5rem' }}>
+      {/* Main Content Area: Added global padding-bottom for mobile nav clearance */}
+      <main id="main" style={{ 
+        flex: 1, width: '100%', maxWidth: 'var(--max-width)', 
+        margin: '0 auto', padding: '2rem 1.5rem 120px 1.5rem' 
+      }}>
         {children}
       </main>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (v8.0 Sync) */}
       <div style={{ 
         position: 'fixed', right: 0, top: 0, bottom: 0, 
         width: 320, background: 'var(--bg-primary)', 
@@ -160,7 +163,7 @@ function LayoutContent({ children }) {
       
       {isMobileMenuOpen && <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1900 }} onClick={() => setIsMobileMenuOpen(false)} />}
 
-      {/* Mobile Bottom Bar (thetest.com Minimalist) */}
+      {/* Mobile Bottom Bar: Unified Terminology */}
       <div className="mobile-only" style={{ 
         position: 'fixed', bottom: 24, left: 16, right: 16, 
         height: 64, background: 'rgba(24, 24, 27, 0.9)', 

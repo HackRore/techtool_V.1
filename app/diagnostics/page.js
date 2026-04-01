@@ -56,7 +56,7 @@ export default function SystemReportsPage() {
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText('.\\HackRore_Master.ps1')
+    navigator.clipboard.writeText('.\\Hachtool_Master.ps1')
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -94,7 +94,7 @@ export default function SystemReportsPage() {
                    Execute the Hachtool utility on any Windows machine to generate a technical report.
                 </p>
                 <div style={{ background: '#09090B', padding: '12px 14px', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border)', marginBottom: 16 }}>
-                   <code style={{ fontSize: 11, color: '#7ee787', fontFamily: 'var(--font-mono)' }}>.\HackRore_Master.ps1</code>
+                   <code style={{ fontSize: 11, color: '#7ee787', fontFamily: 'var(--font-mono)' }}>.\Hachtool_Master.ps1</code>
                    <button onClick={handleCopy} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                       {copied ? <CheckCircle2 size={14} color="var(--accent)" /> : <Clipboard size={14} />}
                    </button>
