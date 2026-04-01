@@ -1,11 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { Zap, Battery, Activity, ShieldCheck } from 'lucide-react'
 
 export default function BatteryTest({ onComplete }) {
   const [battery, setBattery] = useState(null)
   const [unsupported, setUnsupported] = useState(false)
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
+    setIsReady(true)
     if (!('getBattery' in navigator)) {
       setUnsupported(true)
       return
@@ -28,14 +31,20 @@ export default function BatteryTest({ onComplete }) {
   }, [])
 
   useEffect(() => {
-    if (battery) onComplete?.({ level: battery.level, charging: battery.charging })
+    if (battery) {
+      onComplete?.({ 
+        status: battery.level > 80 ? 'PASS' : battery.level > 50 ? 'WARNING' : 'FAIL',
+        level: `${battery.level}%`,
+        state: battery.charging ? 'Charging' : 'Discharging'
+      })
+    }
   }, [battery, onComplete])
 
   const getAssessment = (level) => {
-    if (level > 80) return { text: 'Battery appears healthy', color: 'var(--accent)' }
-    if (level > 50) return { text: 'Moderate wear — monitor battery closely', color: 'var(--amber)' }
-    if (level > 20) return { text: 'Significant wear — replacement recommended', color: 'var(--red)' }
-    return { text: 'Critical — replace battery immediately', color: 'var(--red)' }
+    if (level > 80) return { text: 'BATTERY HEALTHY // OPTIMAL PERFORMANCE', color: '#11A37F', icon: <ShieldCheck size={16}/> }
+    if (level > 50) return { text: 'MODERATE WEAR // MONITOR CYCLES', color: '#B47917', icon: <Activity size={16}/> }
+    if (level > 20) return { text: 'SIGNIFICANT DEGRADATION // REPLACE RECOMMENDED', color: '#E24B4A', icon: <Zap size={16}/> }
+    return { text: 'CRITICAL FAILURE // REPLACE IMMEDIATELY', color: '#E24B4A', icon: <Zap size={16}/> }
   }
 
   const formatTime = (seconds) => {
@@ -45,105 +54,93 @@ export default function BatteryTest({ onComplete }) {
     return h > 0 ? `${h}h ${m}m` : `${m} minutes`
   }
 
+  if (!isReady) return null
+
   if (unsupported) return (
-    <div>
-      <h2 style={{ marginBottom: '16px' }}>Battery Test</h2>
-      <div className="card" style={{ borderLeft:'3px solid var(--amber)' }}>
-        <p style={{marginBottom:'12px'}}>
-          Battery status API is only available in Chrome and Edge.
-          For a detailed Windows battery report, run this command:
+    <div style={{ maxWidth: 600 }}>
+      <h3 style={{ marginBottom: 12, fontSize: 18, fontWeight: 900 }}>Battery Diagnostic // API_RESTRICTED</h3>
+      <div className="card" style={{ borderLeft:'4px solid var(--amber)', padding: 24 }}>
+        <p style={{ marginBottom: 16, fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+          The Browser Battery Status API is only available in Chromium-based environments (Chrome, Edge).
+          For full technician analysis, we recommend generating a native Windows report.
         </p>
-        <CopyCmd cmd="powercfg /batteryreport /output &quot;%USERPROFILE%\Desktop\battery-report.html&quot;" />
-        <p style={{fontSize:'12px', color:'var(--text-muted)', marginTop:'8px'}}>
-          Then open battery-report.html from your Desktop in a browser.
+        <div style={{ background: '#09090B', padding: '12px 16px', borderRadius: 8, fontFamily: 'monospace', fontSize: 12, color: '#7ee787', border: '1px solid var(--border)' }}>
+          powercfg /batteryreport
+        </div>
+        <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 12 }}>
+          Run the above command in PowerShell as Admin and upload the generated HTML to ScanLab.
         </p>
       </div>
     </div>
   )
 
-  if (!battery) return <div style={{padding:'2rem', color:'var(--text-muted)'}}>Reading battery status...</div>
+  if (!battery) return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Retrieving system battery telemetry...</div>
 
   const assessment = getAssessment(battery.level)
   const circumference = 2 * Math.PI * 54 // r=54
   const dashOffset = circumference - (battery.level / 100) * circumference
 
   return (
-    <div>
-      <h2 style={{marginBottom:'4px'}}>Battery Test</h2>
-      <p style={{color:'var(--text-secondary)', marginBottom:'24px', fontSize:'13px'}}>
-        Live battery charge level and health assessment.
-      </p>
-
-      <div style={{display:'flex', alignItems:'center', gap:'32px', flexWrap:'wrap'}}>
-
-        {/* Circle progress */}
-        <svg width="140" height="140" viewBox="0 0 140 140">
-          <circle cx="70" cy="70" r="54" fill="none" stroke="var(--border)" strokeWidth="10"/>
-          <circle cx="70" cy="70" r="54" fill="none"
-            stroke={battery.level > 20 ? 'var(--accent)' : 'var(--red)'}
-            strokeWidth="10"
-            strokeDasharray={circumference}
-            strokeDashoffset={dashOffset}
-            strokeLinecap="round"
-            transform="rotate(-90 70 70)"
-            style={{transition:'stroke-dashoffset 0.8s ease'}}/>
-          <text x="70" y="65" textAnchor="middle" fill="var(--text-primary)"
-            style={{fontFamily:'JetBrains Mono,monospace',fontSize:'26px',fontWeight:700}}>
-            {battery.level}%
-          </text>
-          <text x="70" y="84" textAnchor="middle" fill="var(--text-secondary)"
-            style={{fontFamily:'JetBrains Mono,monospace',fontSize:'11px'}}>
-            {battery.charging ? 'CHARGING' : 'DISCHARGING'}
-          </text>
-        </svg>
-
-        {/* Stats */}
-        <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-          <div className="card" style={{minWidth:'200px'}}>
-            <div style={{fontSize:'11px', color:'var(--text-muted)', marginBottom:'4px', textTransform:'uppercase'}}>Status</div>
-            <div style={{fontSize:'16px', fontWeight:600, color: battery.charging ? 'var(--accent)' : 'var(--text-primary)'}}>
-              {battery.charging ? '⚡ Charging' : '🔋 On Battery'}
-            </div>
+    <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: 40, flexWrap: 'wrap' }}>
+        
+        {/* Hynet Circular Telemetry Ring */}
+        <div style={{ position: 'relative', width: 140, height: 140 }}>
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="54" fill="none" stroke="var(--border)" strokeWidth="8"/>
+            <circle cx="70" cy="70" r="54" fill="none"
+              stroke={assessment.color}
+              strokeWidth="8"
+              strokeDasharray={circumference}
+              strokeDashoffset={dashOffset}
+              strokeLinecap="round"
+              transform="rotate(-90 70 70)"
+              style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1)' }}/>
+          </svg>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+             <span style={{ fontSize: 26, fontWeight: 900, fontFamily: 'var(--font-mono)', lineHeight: 1 }}>{battery.level}%</span>
+             <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', marginTop: 4, letterSpacing: 1 }}>{battery.charging ? 'CHARGING' : 'ACTIVE'}</span>
           </div>
-          {battery.charging && formatTime(battery.chargingTime) && (
-            <div className="card">
-              <div style={{fontSize:'11px', color:'var(--text-muted)', marginBottom:'4px', textTransform:'uppercase'}}>Full in</div>
-              <div style={{fontSize:'16px', fontWeight:600}}>{formatTime(battery.chargingTime)}</div>
-            </div>
-          )}
-          {!battery.charging && formatTime(battery.dischargingTime) && (
-            <div className="card">
-              <div style={{fontSize:'11px', color:'var(--text-muted)', marginBottom:'4px', textTransform:'uppercase'}}>Remaining</div>
-              <div style={{fontSize:'16px', fontWeight:600}}>{formatTime(battery.dischargingTime)}</div>
-            </div>
-          )}
+        </div>
+
+        {/* Diagnostic Metadata */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, flex: 1 }}>
+           <div className="card" style={{ padding: '16px 20px' }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4, letterSpacing: 1 }}>POWER_STATE</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: battery.charging ? 'var(--accent)' : 'var(--text-primary)' }}>
+                 {battery.charging ? '⚡ EXTERNAL_AC' : '🔋 DC_DISCHARGE'}
+              </div>
+           </div>
+           
+           <div className="card" style={{ padding: '16px 20px' }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 4, letterSpacing: 1 }}>TIME_REMAINING</div>
+              <div style={{ fontSize: 16, fontWeight: 800 }}>
+                 {battery.charging ? (formatTime(battery.chargingTime) || 'CALCULATING') : (formatTime(battery.dischargingTime) || 'CALCULATING')}
+              </div>
+           </div>
+
+           <div className="card" style={{ padding: '16px 20px', gridColumn: 'span 2', borderLeft: `4px solid ${assessment.color}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                 {assessment.icon}
+                 <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, letterSpacing: 1 }}>HELLTH_ASSESSMENT</span>
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 900, color: assessment.color }}>
+                 {assessment.text}
+              </div>
+           </div>
         </div>
       </div>
 
-      {/* Assessment */}
-      <div style={{marginTop:'24px', padding:'14px 16px', borderRadius:'8px',
-        border:`1px solid ${assessment.color}`,
-        background:`${assessment.color}18`}}>
-        <div style={{fontSize:'13px', fontWeight:600, color:assessment.color}}>
-          Assessment: {assessment.text}
-        </div>
+      {/* Technician Guidance */}
+      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24 }}>
+         <h4 style={{ fontSize: 12, fontWeight: 900, marginBottom: 16, color: 'var(--text-primary)', letterSpacing: 1 }}>REPAIR PROTOCOLS // GUIDANCE</h4>
+         <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 600 }}>
+           If battery level remains static while charging, verify adapter wattage and BIOS battery status. 
+           Capacity below 70% suggests cell degradation and imminent failure during high-current tasks.
+         </p>
       </div>
-    </div>
-  )
-}
 
-function CopyCmd({ cmd }) {
-  const [copied, setCopied] = useState(false)
-  return (
-    <div style={{background:'#0d1117', borderRadius:'6px', padding:'10px 14px',
-      fontFamily:'JetBrains Mono,monospace', fontSize:'12px', color:'#7ee787',
-      display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px'}}>
-      <span>{cmd}</span>
-      <button onClick={() => { navigator.clipboard.writeText(cmd.replace(/&quot;/g,'"')); setCopied(true); setTimeout(()=>setCopied(false),1500) }}
-        style={{fontSize:'10px', padding:'3px 10px', background:'rgba(255,255,255,0.06)',
-          color: copied ? 'var(--accent)' : '#8b949e', border:'none', borderRadius:'4px', cursor:'pointer', whiteSpace:'nowrap'}}>
-        {copied ? '✓ Copied' : 'Copy'}
-      </button>
     </div>
   )
 }

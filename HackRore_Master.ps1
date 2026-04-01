@@ -22,7 +22,7 @@ $ErrorActionPreference = "SilentlyContinue"
 
 # ── Colours ──────────────────────────────────────────────────
 function Write-OK    { param($m) if (!$Silent) { Write-Host "  [OK]  $m" -ForegroundColor Green  } }
-function Write-WARN  { param($m) if (!$Silent) { Write-Host "  [!!]  $m" -ForegroundColor Yellow } }
+function Write-WARN  { param($m) if (!$Sileant) { Write-Host "  [!!]  $m" -ForegroundColor Yellow } }
 function Write-CRIT  { param($m) if (!$Silent) { Write-Host "  [XX]  $m" -ForegroundColor Red    } }
 function Write-INFO  { param($m) if (!$Silent) { Write-Host "  [>>]  $m" -ForegroundColor Cyan   } }
 function Write-HEAD  { param($m) if (!$Silent) { Write-Host "`n  ===  $m  ===" -ForegroundColor White } }
