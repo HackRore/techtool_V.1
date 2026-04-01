@@ -2,25 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design System: Hynet Industrial v5.0 DEFINITIVE ────── */
+/* ── Design System: Hynet Precision v6.0 INDUSTRIAL ────── */
 :root {
-  /* Core Palette (High-Contrast Industrial) */
+  /* Core Palette (Clean Technician Professional) */
   --bg-primary:    #09090B;   /* Zinc 950 */
   --bg-secondary:  #18181B;   /* Zinc 900 */
   --bg-elevated:   #27272A;   /* Zinc 800 */
   
   --accent:        #00D4A0;   /* Hynet Professional Cyan */
   --accent-dim:    #059669;   
-  --accent-glow:   rgba(0, 212, 160, 0.08);
+  --accent-soft:   rgba(0, 212, 160, 0.05);
   
-  --border:        #27272A;   /* Standard Zinc Border */
+  --border:        #27272A;   
   --border-bright: #3F3F46;   
   
   --text-primary:   #FAFAFA;  
   --text-secondary: #A1A1AA;  
   --text-muted:     #52525B;  
   
-  /* Status Semantics */
+  /* Status Semantics (Neutral Industrial) */
   --status-pass:    #10B981;
   --status-warn:    #F59E0B;
   --status-fail:    #EF4444;
@@ -33,7 +33,7 @@
   --header-h:  64px;
   
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --duration: 0.3s;
+  --duration: 0.2s;
 }
 
 /* ── Reset & Core ──────────────────────────── */
@@ -50,7 +50,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── Industrial Components ─────────────────── */
+/* ── Industrial Components (v6.0 Minimalist) ── */
 .card {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -59,30 +59,29 @@ body {
 }
 
 .card:hover {
-  border-color: var(--accent);
+  border-color: var(--border-bright);
   background: var(--bg-elevated);
-  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
 }
 
 .card-elevated {
   background: var(--bg-elevated);
   border: 1px solid var(--border-bright);
   border-radius: 16px;
-  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
 }
 
+/* Primary CTA (thetest.com style) */
 .btn-primary {
   background: var(--accent);
   color: #000;
   border: none;
   border-radius: 8px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-weight: 800;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.1s, filter 0.1s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -91,9 +90,12 @@ body {
 }
 
 .btn-primary:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.05);
   transform: translateY(-1px);
-  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-outline {
@@ -101,7 +103,7 @@ body {
   color: var(--text-primary);
   border: 1px solid var(--border-bright);
   border-radius: 8px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-weight: 800;
   font-size: 11px;
   text-transform: uppercase;
@@ -117,14 +119,35 @@ body {
 
 .btn-outline:hover {
   border-color: var(--accent);
-  background: var(--accent-glow);
+  background: var(--accent-soft);
 }
 
+/* ── Navigation ────────────────────────────── */
+.top-nav {
+  height: var(--header-h);
+  background: rgba(9, 9, 11, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; position: sticky; top: 0; z-index: 1000;
+}
+
+.nav-link {
+  color: var(--text-secondary); text-decoration: none;
+  font-weight: 700; font-size: 12px; padding: 10px 16px;
+  border-radius: 8px; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.nav-link:hover { color: var(--text-primary); background: var(--bg-secondary); }
+.nav-link.active { color: var(--accent); background: var(--accent-soft); }
+
+/* ── Forms ──────────────────────────────────── */
 input, select, textarea {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 14px;
   font-size: 14px;
   color: var(--text-primary);
   outline: none;
@@ -135,17 +158,16 @@ input:focus {
   border-color: var(--accent);
 }
 
-/* ── Typography Utilities ──────────────────── */
+/* ── Typography & Utilities ────────────────── */
 .text-accent { color: var(--accent); }
 .font-mono { font-family: var(--font-mono); }
 
-/* ── Animations ────────────────────────────── */
 .animate-in {
-  animation: fade-in-up 0.4s cubic-bezier(0, 0, 0.2, 1) forwards;
+  animation: fade-in 0.4s ease forwards;
 }
 
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(10px); }
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 

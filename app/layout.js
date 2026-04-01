@@ -17,10 +17,10 @@ const mono = JetBrains_Mono({
 })
 
 export const metadata = {
-  title: "Hachtool // Professional TechWorkbench v5.0",
-  description: "High-performance diagnostic portal for hardware technicians. Precision telemetry, real-time testing, and validated repair reference hub. Professional. Reliable. Fast.",
+  title: "Hachtool // Professional Hardware Diagnostics v6.0",
+  description: "Minimalist, high-performance diagnostic portal for hardware technicians. Precision telemetry, real-time testing, and validated repair protocols. Professional. Reliable. Fast.",
   openGraph: {
-    title: "Hachtool // Professional TechWorkbench",
+    title: "Hachtool // Professional Hardware Diagnostics",
     description: "Industrial hardware diagnostic and repair portal.",
     url: "https://hachtool.vercel.app",
     siteName: "Hachtool",
