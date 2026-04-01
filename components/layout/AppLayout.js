@@ -46,14 +46,14 @@ function LayoutContent({ children }) {
     document.body.setAttribute('data-theme', next ? 'light' : 'dark')
   }
 
-  // Unified Nav Items (v8.0 Sync)
+  // Unified Nav Items (v8.1 Industrial Sync)
   const navItems = [
-    { name: 'Dashboard',   mobile: 'Home',    href: '/', icon: Monitor },
-    { name: 'Diagnostics', mobile: 'Tests',   href: '/tools', icon: Activity },
-    { name: 'System Reports', mobile: 'Reports', href: '/diagnostics', icon: Cpu },
-    { name: 'Repair Guides', mobile: 'Guides',  href: '/fixlab', icon: BookOpen },
-    { name: 'Toolbox',     mobile: 'Toolbox', href: '/resources', icon: Zap },
-    { name: 'Registry',    mobile: 'Jobs',    href: '/jobs', icon: User },
+    { name: 'Home',         mobile: 'Home',    href: '/', icon: Monitor },
+    { name: 'Diagnostics',  mobile: 'Tests',   href: '/tools', icon: Activity },
+    { name: 'Reports',      mobile: 'Reports', href: '/diagnostics', icon: Cpu },
+    { name: 'Guides',       mobile: 'Guides',  href: '/fixlab', icon: BookOpen },
+    { name: 'Toolbox',      mobile: 'Toolbox', href: '/resources', icon: Zap },
+    { name: 'Jobs',         mobile: 'Jobs',    href: '/jobs', icon: User },
   ]
 
   useEffect(() => {

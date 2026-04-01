@@ -176,3 +176,12 @@ input:focus {
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── v8.1 Industrial Polish (Glow Suppression) ── */
+body::before, body::after, 
+html::before, html::after,
+main::before, main::after {
+  display: none !important;
+  content: none !important;
+}
+
