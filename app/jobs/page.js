@@ -59,6 +59,34 @@ export default function JobBoardPage() {
     setTimeout(() => w.print(), 500)
   }
 
+  const exportJobs = () => {
+    const data = JSON.stringify(jobs, null, 2)
+    const blob = new Blob([data], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `techworkbench_jobs_${new Date().toISOString().slice(0,10)}.json`
+    a.click()
+  }
+
+  const importJobs = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (evt) => {
+      try {
+        const imported = JSON.parse(evt.target.result)
+        if (Array.isArray(imported)) {
+          setJobs([...imported, ...jobs])
+          alert(`Success: Imported ${imported.length} tickets.`)
+        }
+      } catch (err) {
+        alert('Error: Invalid backup file format.')
+      }
+    }
+    reader.readAsText(file)
+  }
+
   const filtered = jobs.filter(j => 
     j.client.toLowerCase().includes(search.toLowerCase()) || 
     j.device.toLowerCase().includes(search.toLowerCase())
@@ -71,7 +99,14 @@ export default function JobBoardPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
            <div>
               <h1 style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '32px', marginBottom: '8px' }}>JobBoard</h1>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Local-first repair ticket management.</p>
+              <div style={{display:'flex', gap:'12px'}}>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Local-first repair ticket management.</p>
+                 <button onClick={exportJobs} style={{background:'none', border:'none', color:'var(--accent)', fontSize:'11px', cursor:'pointer', padding:0}}>Export JSON</button>
+                 <label style={{color:'var(--text-muted)', fontSize:'11px', cursor:'pointer'}}>
+                    Import JSON
+                    <input type="file" accept=".json" onChange={importJobs} style={{display:'none'}} />
+                 </label>
+              </div>
            </div>
            <button className="btn-primary" onClick={() => setShowAdd(true)} style={{display:'flex', alignItems:'center', gap:'8px'}}>
               <Plus size={18} strokeWidth={3} /> New Ticket

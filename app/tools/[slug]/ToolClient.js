@@ -4,13 +4,15 @@ import { getSimilarTools, getRelatedGuides } from '../../../lib/engine/searchEng
 import { useState, useEffect } from 'react'
 
 // Dynamic component mapping
-import KeyboardTest from '../../../components/testlab/KeyboardTest'
-import ScreenTest from '../../../components/testlab/ScreenTest'
-import WebcamTest from '../../../components/testlab/WebcamTest'
-import MicTest from '../../../components/testlab/MicTest'
-import SpeakerTest from '../../../components/testlab/SpeakerTest'
-import MouseTest from '../../../components/testlab/MouseTest'
-import TouchTest from '../../../components/testlab/TouchTest'
+import KeyboardTest from '../../../components/tests/KeyboardTest'
+import ScreenTest from '../../../components/tests/ScreenTest'
+import WebcamTest from '../../../components/tests/WebcamTest'
+import MicTest from '../../../components/tests/MicTest'
+import SpeakerTest from '../../../components/tests/SpeakerTest'
+import MouseTest from '../../../components/tests/MouseTest'
+import TouchTest from '../../../components/tests/TouchTest'
+import BatteryTest from '../../../components/tests/BatteryTest'
+import GpuStressTest from '../../../components/tests/GpuStressTest'
 import { ArrowRight, Sparkles, Download, History, Shield, Info, Activity, Cpu, Layout, Terminal, Zap, Copy, ChevronLeft, ChevronRight } from 'lucide-react'
 import tools from '../../../data/tools.json'
 
@@ -21,7 +23,9 @@ const COMPONENT_MAP = {
   mic: MicTest,
   speaker: SpeakerTest,
   mouse: MouseTest,
-  touch: TouchTest
+  touch: TouchTest,
+  battery: BatteryTest,
+  gpu: GpuStressTest
 }
 
 const TECH_NOTES = {
@@ -63,7 +67,7 @@ export default function ToolClient({ tool, relatedGuides }) {
       id: tool.id,
       result: lastResult,
       timestamp: new Date().toISOString(),
-      kernel: 'v.2.0.1-elite-diag'
+      version: 'v.2.1.0-DAILY'
     }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -85,9 +89,9 @@ export default function ToolClient({ tool, relatedGuides }) {
            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)' }}></div>
-                 <span style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5 }}>MODULE_ACTIVE</span>
+                 <span style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5 }}>DIAGNOSTIC_ACTIVE</span>
               </div>
-              <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5 }}>SYNC_STATUS: <span style={{ color: 'var(--status-pass)' }}>READY</span></div>
+              <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5 }}>STATUS: <span style={{ color: 'var(--status-pass)' }}>READY</span></div>
            </div>
         </div>
 
@@ -96,9 +100,9 @@ export default function ToolClient({ tool, relatedGuides }) {
            <div style={{ padding: '20px 32px', background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                  <Terminal size={16} style={{ color: 'var(--accent)' }} />
-                 <span style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: 2 }}>DIAGNOSTIC_SHELL_V2</span>
+                 <span style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: 2 }}>TECH_WORKBENCH_V2</span>
               </div>
-              <div className="badge badge-ready" style={{ fontSize: 9 }}>PRO_AUDIT_MODE</div>
+              <div className="badge badge-ready" style={{ fontSize: 9 }}>PRO_MODE</div>
            </div>
 
            <div style={{ flex: 1, padding: '48px 32px' }}>
@@ -106,8 +110,8 @@ export default function ToolClient({ tool, relatedGuides }) {
                 <TestComponent onResult={handleResult} />
               ) : (
                 <div style={{ padding: 80, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-                   <Activity size={48} style={{ color: 'var(--accent)', opacity: 0.3, animation: 'aura-pulse 2s infinite' }} />
-                   <p style={{ color: 'var(--text-secondary)', fontSize: 15, fontWeight: 800 }}>Initializing diagnostic environment...</p>
+                   <Activity size={48} style={{ color: 'var(--accent)', opacity: 0.3, animation: 'hr-pulse 2s infinite' }} />
+                   <p style={{ color: 'var(--text-secondary)', fontSize: 15, fontWeight: 800 }}>Initializing environment...</p>
                 </div>
               )}
            </div>
@@ -130,7 +134,7 @@ export default function ToolClient({ tool, relatedGuides }) {
               </div>
             </div>
             <button onClick={exportResult} className="btn-accent" style={{ background: 'var(--accent)', color: 'var(--bg-primary)', fontWeight: 900, height: 50, padding: '0 32px', fontSize: 12 }}>
-               DOWNLOAD_HARDWARE_PROTOCOL
+               DOWNLOAD_DIAGNOSTIC_REPORT
             </button>
           </div>
         )}
@@ -210,7 +214,7 @@ export default function ToolClient({ tool, relatedGuides }) {
         alignItems: 'center', gap: 8, textDecoration: 'none'
       }}>
          <ChevronLeft size={24} />
-         <span style={{ fontSize: 9, fontWeight: 900, writingMode: 'vertical-lr', textTransform: 'uppercase', letterSpacing: 1 }}>PREV_MODULE</span>
+         <span style={{ fontSize: 9, fontWeight: 900, writingMode: 'vertical-lr', textTransform: 'uppercase', letterSpacing: 1 }}>PREV_TEST</span>
       </Link>
 
       <Link href={`/tools/${nextTool.slug}`} className="desktop-only" style={{ 
@@ -221,7 +225,7 @@ export default function ToolClient({ tool, relatedGuides }) {
         alignItems: 'center', gap: 8, textDecoration: 'none', boxShadow: '0 0 30px var(--accent-glow)'
       }}>
          <ChevronRight size={24} />
-         <span style={{ fontSize: 9, fontWeight: 900, writingMode: 'vertical-lr', textTransform: 'uppercase', letterSpacing: 1 }}>NEXT_MODULE</span>
+         <span style={{ fontSize: 9, fontWeight: 900, writingMode: 'vertical-lr', textTransform: 'uppercase', letterSpacing: 1 }}>NEXT_TEST</span>
       </Link>
 
     </div>

@@ -12,7 +12,7 @@ export default function ReportPage() {
     setReport(manifest)
   }, [])
 
-  if (!report) return <div style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: 100 }}>GENERATING_MANIFEST...</div>
+  if (!report) return <div style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: 100, fontSize: 13, fontWeight: 900, letterSpacing: 2 }}>INITIALIZING_REPORT...</div>
 
   const handlePrint = () => {
     window.print()
@@ -29,7 +29,7 @@ export default function ReportPage() {
       }}>
          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <Link href="/" style={{ color: 'var(--text-muted)' }}><ArrowLeft size={18} /></Link>
-            <div className="badge badge-ready" style={{ fontSize: 9 }}>REPORT_GENERATOR_v2.1</div>
+            <div className="badge badge-ready" style={{ fontSize: 9 }}>SYSTEM_ENGINE_v2.1</div>
             <h2 style={{ fontSize: 13, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 2 }}>Diagnostic Certificate</h2>
          </div>
          <button onClick={handlePrint} className="btn-accent" style={{ height: 44, padding: '0 24px', display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -50,7 +50,7 @@ export default function ReportPage() {
                   <ShieldCheck size={40} style={{ color: 'var(--accent)' }} />
                   <h1 style={{ fontSize: 40, letterSpacing: -2, fontWeight: 900 }}>Validation <span className="glow-text" style={{ color: 'var(--accent)' }}>Certificate</span></h1>
                </div>
-               <div style={{ fontSize: 13, color: 'var(--text-muted)', letterSpacing: 2, fontWeight: 900 }}>ENGINE :: HACKRORE_PULSE_V.2.1.0</div>
+               <div style={{ fontSize: 13, color: 'var(--text-muted)', letterSpacing: 2, fontWeight: 900 }}>ENGINE :: HYNET_DIAGNOSTIC_V.2.1.0</div>
             </div>
             <div style={{ textAlign: 'right' }}>
                <div style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 4 }}>REPORT_ID</div>
@@ -61,7 +61,7 @@ export default function ReportPage() {
 
          {/* Device Signal Analytics */}
          <section style={{ marginBottom: 64 }}>
-            <h3 style={{ fontSize: 12, fontWeight: 900, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 32 }}>Hardware Signal Analytics</h3>
+            <h3 style={{ fontSize: 12, fontWeight: 900, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 32 }}>Hardware Telemetry Analytics</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
                <div className="card-elevated" style={{ padding: 24, background: 'var(--bg-primary)' }}>
                   <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 8 }}>CPU_TOPOLOGY</div>
@@ -80,7 +80,7 @@ export default function ReportPage() {
 
          {/* Diagnostic History: The Proof of Performance */}
          <section style={{ marginBottom: 64 }}>
-            <h3 style={{ fontSize: 12, fontWeight: 900, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 32 }}>Diagnostic Proof [LAST_20_STEPS]</h3>
+            <h3 style={{ fontSize: 12, fontWeight: 900, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 32 }}>Diagnostic Log [VALIDATED]</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                {report.history.length === 0 ? (
                  <div style={{ padding: 24, background: 'var(--bg-elevated)', borderRadius: 12, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
@@ -121,7 +121,7 @@ export default function ReportPage() {
             <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
                <Database size={24} style={{ color: 'var(--text-muted)' }} />
                <div style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: 300 }}>
-                  THIS DOCUMENT SERVES AS CRYPTOGRAPHIC PROOF OF PERFORMANCE. VALIDATED LOCALLY VIA HACKRORE KERNEL SYSTEM. NO DATA TRANSMITTED TO EXTERNAL SERVERS.
+                  THIS DOCUMENT SERVES AS AN OFFICIAL DIAGNOSTIC RECORD. VALIDATED LOCALLY VIA SYSTEM MICRO-KERNEL. NO DATA TRANSMITTED TO EXTERNAL SERVERS.
                </div>
             </div>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>

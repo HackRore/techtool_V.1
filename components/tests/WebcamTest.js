@@ -121,11 +121,11 @@ export default function WebcamTest({ onResult }) {
            </div>
          )}
 
-         {status === 'live' && (
+          {status === 'live' && (
            <>
               <div style={{ position: 'absolute', top: 20, left: 20, display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(0,0,0,0.6)', padding: '8px 16px', borderRadius: 6, backdropFilter: 'blur(4px)' }}>
-                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--status-fail)', animation: 'aura-pulse 1s infinite' }} />
-                 <span style={{ fontSize: 10, fontWeight: 900, color: '#fff', letterSpacing: 1.5 }}>LIVE_AUDIT_ON</span>
+                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--status-fail)', animation: 'hr-pulse 1s infinite' }} />
+                 <span style={{ fontSize: 10, fontWeight: 900, color: '#fff', letterSpacing: 1.5 }}>CAMERA LIVE</span>
               </div>
               {/* Focus Targets (Simulated grid for technician) */}
               <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(3, 1fr)' }}>
@@ -146,13 +146,13 @@ export default function WebcamTest({ onResult }) {
                 padding: '10px 16px', borderRadius: 8, outline: 'none'
               }}
             >
-              {devices.map(d => <option key={d.deviceId} value={d.deviceId}>{d.label || `Unit Audit ${d.deviceId.slice(0,4)}`}</option>)}
+              {devices.map(d => <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera Unit ${d.deviceId.slice(0,4)}`}</option>)}
             </select>
             <button onClick={status === 'live' ? stop : startCamera} className="btn-accent" style={{ background: status === 'live' ? 'transparent' : 'var(--accent)', border: `1px solid ${status === 'live' ? 'var(--status-fail)' : 'var(--accent)'}`, color: status === 'live' ? 'var(--status-fail)' : 'var(--bg-primary)' }}>
-               {status === 'live' ? 'STOP_AUDIT' : 'INITIALIZE_CAMERA'}
+               {status === 'live' ? 'STOP CAMERA' : 'START CAMERA'}
             </button>
          </div>
-         <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>V.2 OPTICS_KERNEL // {status.toUpperCase()}</div>
+         <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>STATUS // {status.toUpperCase()}</div>
       </div>
     </div>
   )

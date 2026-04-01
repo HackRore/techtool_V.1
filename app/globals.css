@@ -249,7 +249,7 @@ input:focus {
 .skip-nav:focus { top: 0; }
 
 /* ── Animations ────────────────────────────── */
-@keyframes aura-pulse {
+@keyframes hr-pulse {
   0%   { opacity: 0.4; filter: blur(10px); }
   50%  { opacity: 1; filter: blur(4px); }
   100% { opacity: 0.4; filter: blur(10px); }

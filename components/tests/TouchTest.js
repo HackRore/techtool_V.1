@@ -110,8 +110,8 @@ export default function TouchTest({ onResult }) {
 
          {points.length === 0 && (
            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-              <Activity size={48} style={{ color: 'var(--text-muted)', opacity: 0.1, animation: 'aura-pulse 2s infinite' }} />
-              <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 3 }}>DIAGNOSTIC_RESONANCE // WAITING_FOR_INPUT</div>
+              <Activity size={48} style={{ color: 'var(--text-muted)', opacity: 0.1, animation: 'hr-pulse 2s infinite' }} />
+              <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 3 }}>WAITING FOR TOUCH INPUT</div>
            </div>
          )}
       </div>
@@ -119,7 +119,7 @@ export default function TouchTest({ onResult }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <button onClick={clear} className="btn-accent" style={{ background: 'transparent', border: '1px solid var(--status-fail)', color: 'var(--status-fail)', fontSize: 11 }}>
-               PURGE_DIGITIZER_BUFFER
+               CLEAR TOUCH BUFFER
             </button>
          </div>
          <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 800 }}>

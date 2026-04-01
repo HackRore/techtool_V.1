@@ -14,7 +14,7 @@ export default function LiveHUD() {
              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
                 <Zap size={16} style={{ color: battery?.charging ? 'var(--status-pass)' : 'var(--accent)', filter: battery?.charging ? 'drop-shadow(0 0 8px var(--status-pass))' : 'none' }} />
              </div>
-             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2 }}>Battery Logic</div>
+             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2 }}>Battery Status</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
              <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: 'var(--text-primary)' }}>
@@ -30,9 +30,9 @@ export default function LiveHUD() {
        <div className="card-elevated" style={{ padding: '24px', transition: 'all var(--duration) var(--ease)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
-                <Wifi size={16} style={{ color: 'var(--accent)', animation: 'aura-pulse 2s infinite' }} />
+                <Wifi size={16} style={{ color: 'var(--accent)', animation: 'hr-pulse 2s infinite' }} />
              </div>
-             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2 }}>Sync Frequency</div>
+             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2 }}>Network Link</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
              <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: 'var(--text-primary)' }}>
@@ -50,7 +50,7 @@ export default function LiveHUD() {
              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
                 <Activity size={16} style={{ color: fps < 30 ? 'var(--status-warn)' : 'var(--status-pass)', filter: fps >= 50 ? 'drop-shadow(0 0 8px var(--status-pass))' : 'none' }} />
              </div>
-             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2 }}>Core Latency</div>
+             <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 2 }}>System Performance</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
              <div className="text-mono" style={{ fontSize: 32, fontWeight: 900, color: 'var(--text-primary)' }}>

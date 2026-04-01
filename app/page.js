@@ -110,11 +110,11 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 56 }}>
              {[
                { id: 'keyboard', name: 'Keyboard', icon: '⌨️', category: 'HID' },
-               { id: 'display',  name: 'Display',  icon: '🖥️', category: 'VISUAL' },
-               { id: 'audio',    name: 'Audio',    icon: '🔊', category: 'OUTPUT' },
+               { id: 'screen',   name: 'Display',  icon: '🖥️', category: 'VISUAL' },
+               { id: 'speaker',  name: 'Audio',    icon: '🔊', category: 'OUTPUT' },
                { id: 'gpu',      name: 'GPU',      icon: '💎', category: 'STRESS' },
-               { id: 'cpu',      name: 'CPU',      icon: '⚙️', category: 'LOGIC' },
-               { id: 'ram',      name: 'Memory',   icon: '🧠', category: 'MEM' },
+               { id: 'battery',  name: 'Battery',  icon: '🔋', category: 'POWER' },
+               { id: 'webcam',   name: 'Webcam',   icon: '📷', category: 'MEDIA' },
              ].map(t => (
                <Link key={t.id} href={`/tools/${t.id}`} className="card" style={{ 
                  textAlign: 'center', padding: '32px 20px', cursor: 'pointer', textDecoration: 'none'

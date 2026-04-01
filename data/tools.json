@@ -1,97 +1,96 @@
 [
   {
     "id": "keyboard",
-    "slug": "keyboard-test",
+    "slug": "keyboard",
     "name": "Keyboard Test",
     "icon": "⌨️",
     "category": "Input Devices",
-    "description": "Press every key and track coverage percentage in real time.",
-    "tags": ["Hardware", "Input", "Diagnostics"],
+    "description": "Professional 104-key diagnostic with real-time latency monitoring.",
+    "tags": ["Hardware", "Input", "Latency"],
     "difficulty": "Easy",
-    "relatedGuides": ["keyboard-not-working"],
-    "featured": true,
-    "popular": true
+    "featured": true
   },
   {
     "id": "screen",
-    "slug": "screen-test",
+    "slug": "screen",
     "name": "Screen Test",
     "icon": "🖥",
     "category": "Display",
-    "description": "Full-screen dead pixel and colour uniformity test.",
+    "description": "Full-screen dead pixel and colour uniformity diagnostic.",
     "tags": ["Hardware", "Display", "Visual"],
     "difficulty": "Easy",
-    "relatedGuides": ["screen-flickering"],
-    "featured": true,
-    "recommended": true
+    "featured": true
   },
   {
     "id": "webcam",
-    "slug": "webcam-test",
+    "slug": "webcam",
     "name": "Webcam Test",
     "icon": "📷",
     "category": "Media",
     "description": "Live camera preview with resolution and FPS detection.",
     "tags": ["Hardware", "Camera", "Video"],
-    "difficulty": "Easy",
-    "relatedGuides": ["webcam-not-detected"]
+    "difficulty": "Easy"
   },
   {
     "id": "mic",
-    "slug": "microphone-test",
+    "slug": "mic",
     "name": "Microphone Test",
     "icon": "🎤",
     "category": "Audio",
-    "description": "Waveform visualiser, RMS level meter and playback test.",
+    "description": "Waveform visualiser and RMS level monitor for audio input.",
     "tags": ["Hardware", "Audio", "Recording"],
-    "difficulty": "Easy",
-    "relatedGuides": ["no-sound-from-mic"]
+    "difficulty": "Easy"
   },
   {
     "id": "speaker",
-    "slug": "speaker-test",
+    "slug": "speaker",
     "name": "Speaker Test",
     "icon": "🔊",
     "category": "Audio",
-    "description": "Left/right channel test, tones and frequency sweep.",
+    "description": "Frequency sweep and L/R channel parity validation.",
     "tags": ["Hardware", "Audio", "Output"],
-    "difficulty": "Easy",
-    "relatedGuides": ["no-sound-from-speakers"],
-    "popular": true
+    "difficulty": "Easy"
   },
   {
     "id": "mouse",
-    "slug": "mouse-test",
+    "slug": "mouse",
     "name": "Mouse Test",
     "icon": "🖱",
     "category": "Input Devices",
-    "description": "Track pointer movement, clicks and scroll delta.",
+    "description": "Track pointer movement, clicks and scroll delta accuracy.",
     "tags": ["Hardware", "Input", "Peripherals"],
-    "difficulty": "Easy",
-    "relatedGuides": ["mouse-not-responding"]
+    "difficulty": "Easy"
   },
   {
     "id": "touch",
-    "slug": "touchscreen-test",
+    "slug": "touch",
     "name": "Touchscreen Test",
     "icon": "👆",
     "category": "Display",
-    "description": "Multi-touch point detection with visual feedback.",
+    "description": "Multi-touch coordinate accuracy and digitizer audit.",
     "tags": ["Hardware", "Display", "Input"],
-    "difficulty": "Easy",
-    "relatedGuides": ["touchscreen-not-syncing"]
+    "difficulty": "Easy"
   },
   {
-    "id": "network-pulse",
-    "slug": "network-test",
-    "name": "Network Pulse",
-    "icon": "🌐",
-    "category": "Network",
-    "description": "Real-time latency, jitter, and DNS resolution diagnostics.",
-    "tags": ["Software", "Network", "Connectivity"],
+    "id": "battery",
+    "slug": "battery",
+    "name": "Battery Health",
+    "icon": "🔋",
+    "category": "System",
+    "description": "Charge capacity, discharge rate and cycle wear metrics.",
+    "tags": ["Hardware", "System", "Power"],
     "difficulty": "Pro",
-    "relatedGuides": ["wifi-connects-no-internet"],
-    "featured": true,
-    "recommended": true
+    "featured": true
+  },
+  {
+    "id": "gpu",
+    "slug": "gpu",
+    "name": "GPU Stress",
+    "icon": "🔥",
+    "category": "Performance",
+    "description": "WebGL-based thermal stress test for graphics stability.",
+    "tags": ["Hardware", "Performance", "Gpu"],
+    "difficulty": "Pro",
+    "featured": true
   }
 ]

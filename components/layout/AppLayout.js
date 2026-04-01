@@ -125,7 +125,7 @@ function LayoutContent({ children }) {
 
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, fontWeight: 800, color: 'var(--text-muted)' }}>
                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-pass)', boxShadow: '0 0 10px var(--status-pass)' }}></div>
-               ONLINE · RAVINDRA @ HYNET
+               OPERATOR_STATUS :: ACTIVE // HYNET_DOMAIN
             </div>
 
             <button 
@@ -157,7 +157,7 @@ function LayoutContent({ children }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
              <span style={{ fontWeight: 900, fontSize: 20 }}>HackRore</span>
-             <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800 }}>TECHNICIAN_PORTAL</span>
+             <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 800 }}>DIAGNOSTIC_PORTAL</span>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'var(--bg-elevated)', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 8, borderRadius: 50 }}>
             <X size={20} />
@@ -194,8 +194,8 @@ function LayoutContent({ children }) {
                  <User size={20} style={{ color: 'var(--accent)' }} />
               </div>
               <div>
-                 <div style={{ fontSize: 14, fontWeight: 800 }}>Ravindra · Hynet</div>
-                 <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Technician Mode Active</div>
+                 <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: -0.2 }}>ADMINISTRATOR // HYNET</div>
+                 <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase' }}>Production Status: ACTIVE</div>
               </div>
            </div>
            

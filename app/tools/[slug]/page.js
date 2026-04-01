@@ -5,6 +5,7 @@ import AppLayout from '../../../components/layout/AppLayout'
 import { ChevronRight } from 'lucide-react'
 
 export async function generateStaticParams() {
+  console.log("DEBUG_TOOLS_BUILD:", tools.map(t => t.slug))
   return tools.map((tool) => ({
     slug: tool.slug,
   }))
@@ -31,7 +32,7 @@ export default function ToolPage({ params }) {
     <AppLayout>
       <div className="page-header animate-in">
         <div className="breadcrumb">
-          System / TestLab / {tool.name}
+          TestLab / {tool.name}
         </div>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 12, letterSpacing: -1.5 }}>
           <span style={{ fontSize: 44 }}>{tool.icon}</span>
