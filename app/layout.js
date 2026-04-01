@@ -4,29 +4,32 @@ import { Analytics } from '@vercel/analytics/react'
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-heading',
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-sans',
   display: 'swap',
 })
 
 const mono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-code',
+  weight: ['400', '500', '700', '800'],
+  variable: '--font-mono',
   display: 'swap',
 })
 
 export const metadata = {
-  title: "HackRore TechWorkbench | Advanced Hardware Diagnostics",
-  description: "The professional-grade companion for technicians. AI-powered hardware telemetry, precision testlab, and validated repair intelligence hub. Precision. Speed. Results.",
+  title: "Hachtool // Professional TechWorkbench v5.0",
+  description: "High-performance diagnostic portal for hardware technicians. Precision telemetry, real-time testing, and validated repair reference hub. Professional. Reliable. Fast.",
   openGraph: {
-    title: "HackRore TechWorkbench",
-    description: "AI-powered technician diagnostic platform",
+    title: "Hachtool // Professional TechWorkbench",
+    description: "Industrial hardware diagnostic and repair portal.",
     url: "https://hachtool.vercel.app",
-    siteName: "HackRore",
-    locale: "en_US",
+    siteName: "Hachtool",
+    locale: "en_IN",
     type: "website",
   },
+  icons: {
+    icon: '/favicon.ico',
+  }
 }
 
 import { Providers } from '../components/Providers'
@@ -34,7 +37,14 @@ import { Providers } from '../components/Providers'
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`}>
-      <body style={{ fontFamily: 'var(--font-heading), var(--font-ui)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <body style={{ 
+        fontFamily: 'var(--font-sans), var(--font-ui)', 
+        background: 'var(--bg-primary)', 
+        color: 'var(--text-primary)',
+        margin: 0,
+        minHeight: '100vh',
+        WebkitFontSmoothing: 'antialiased'
+      }}>
         <Providers>
           {children}
         </Providers>

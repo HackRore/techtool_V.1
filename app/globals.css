@@ -2,279 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design System: HackRore Hardened V.2 (Perfection) ────── */
+/* ── Design System: Hynet Industrial v5.0 DEFINITIVE ────── */
 :root {
   /* Core Palette (High-Contrast Industrial) */
-  --bg-primary:    #020205;   /* Absolute deep space */
-  --bg-secondary:  #0a0b12;   /* Standard card surfaces */
-  --bg-elevated:   #121420;   /* Inputs, active layers */
+  --bg-primary:    #09090B;   /* Zinc 950 */
+  --bg-secondary:  #18181B;   /* Zinc 900 */
+  --bg-elevated:   #27272A;   /* Zinc 800 */
   
-  --accent:        #00ffc3;   /* Neon 'Hyper-Teal' */
-  --accent-dim:    #00cc9c;   
-  --accent-glow:   rgba(0, 255, 195, 0.12);
+  --accent:        #00D4A0;   /* Hynet Professional Cyan */
+  --accent-dim:    #059669;   
+  --accent-glow:   rgba(0, 212, 160, 0.08);
   
-  --border:        rgba(30, 41, 59, 0.5);   
-  --border-bright: rgba(51, 65, 85, 0.8);   
+  --border:        #27272A;   /* Standard Zinc Border */
+  --border-bright: #3F3F46;   
   
-  /* Glassmorphism V.2 */
-  --glass-bg:      rgba(10, 11, 18, 0.8);
-  --glass-blur:    blur(20px);
-  --glass-border:  rgba(255, 255, 255, 0.05);
-  --glass-shadow:  0 10px 40px -10px rgba(0, 0, 0, 0.6);
-  
-  --text-primary:   #f8fafc;  /* Bright white-slate */
-  --text-secondary: #94a3b8;  
-  --text-muted:     #475569;  
+  --text-primary:   #FAFAFA;  
+  --text-secondary: #A1A1AA;  
+  --text-muted:     #52525B;  
   
   /* Status Semantics */
-  --status-pass:    #00ff9d;
-  --status-warn:    #ffb800;
-  --status-fail:    #ff3131;
-  --status-info:    #00e0ff;
+  --status-pass:    #10B981;
+  --status-warn:    #F59E0B;
+  --status-fail:    #EF4444;
+  --status-info:    #3B82F6;
 
   /* Typography & Layout */
   --font-ui:   'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --max-width: 1400px;
-  --sidebar-w: 300px;
-  --header-h:  72px;
+  --font-mono: 'JetBrains Mono', monospace;
+  --max-width: 1440px;
+  --header-h:  64px;
   
-  /* Motion Engine */
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration: 0.4s;
-}
-
-[data-theme='light'] {
-  --bg-primary:    #f1f5f9;
-  --bg-secondary:  #ffffff;
-  --bg-elevated:   #f8fafc;
-  
-  --accent:        #0d9488;
-  --accent-dim:    #0f766e;
-  --accent-glow:   rgba(13, 148, 136, 0.05);
-  
-  --border:        rgba(0, 0, 0, 0.08);
-  --border-bright: rgba(0, 0, 0, 0.12);
-  
-  --text-primary:   #0f172a;
-  --text-secondary: #475569;
-  --text-muted:     #94a3b8;
-  
-  --glass-bg:      rgba(255, 255, 255, 0.85);
-  --glass-shadow:  0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration: 0.3s;
 }
 
 /* ── Reset & Core ──────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
+html { scroll-behavior: smooth; font-size: 16px; background: var(--bg-primary); }
 
 body {
   font-family: var(--font-ui);
   background: var(--bg-primary);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
-/* ── Typography V2 ─────────────────────────── */
-h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--text-primary); }
-h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); }
-h3 { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-
-.text-mono { font-family: var(--font-mono); }
-.glow-text { text-shadow: 0 0 12px var(--accent); }
-.glow-border { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-
-/* ── Layout Shell ──────────────────────────── */
-.app-shell {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: var(--bg-primary);
-}
-
-.main-content {
-  flex: 1;
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: clamp(16px, 5vw, 48px);
-  min-width: 0;
-}
-
-.dashboard-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-  align-items: start;
-}
-
-@media (min-width: 1025px) {
-  .dashboard-layout {
-    grid-template-columns: 1fr var(--sidebar-w);
-  }
-}
-
-/* ── UI Components ─────────────────────────── */
+/* ── Industrial Components ─────────────────── */
 .card {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-  position: relative;
-  overflow: hidden;
+  border-radius: 12px;
   transition: all var(--duration) var(--ease);
-  box-shadow: var(--glass-shadow);
 }
 
 .card:hover {
-  transform: translateY(-8px);
   border-color: var(--accent);
   background: var(--bg-elevated);
-  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.8), 0 0 30px var(--accent-glow);
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
 }
 
 .card-elevated {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-bright);
-  border-radius: 24px;
-  padding: 32px;
-  box-shadow: 0 30px 100px rgba(0,0,0,0.6);
+  border-radius: 16px;
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
 }
 
-.diagnostic-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-  width: 100%;
-}
-
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-}
-
-/* ── Status Badges ────────────────────────── */
-.badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 14px; border-radius: 8px;
-  font-size: 11px; font-weight: 800; font-family: var(--font-mono);
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  text-transform: uppercase; letter-spacing: 1px;
-}
-
-.badge-ready { color: var(--status-info); border-color: var(--status-info); }
-.badge-pass  { color: var(--status-pass); border-color: var(--status-pass); }
-.badge-warn  { color: var(--status-warn); border-color: var(--status-warn); }
-.badge-fail  { color: var(--status-fail); border-color: var(--status-fail); }
-
-/* ── Buttons ───────────────────────────────── */
-.btn-accent, .btn-primary {
-  background: var(--accent); color: #000;
-  border: none; border-radius: 10px; padding: 12px 24px;
-  font-weight: 800; cursor: pointer; transition: all 0.2s;
-  text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   text-decoration: none;
 }
 
-.btn-accent:hover, .btn-primary:hover { 
-  transform: translateY(-2px); 
-  filter: brightness(1.1); 
-  box-shadow: 0 0 20px var(--accent-glow); 
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .btn-outline {
-  background: transparent; color: var(--text-primary);
-  border: 1px solid var(--border-bright); border-radius: 10px; padding: 12px 24px;
-  font-weight: 800; cursor: pointer; transition: all 0.2s;
-  text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-bright);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   text-decoration: none;
 }
 
-.btn-outline:hover { 
+.btn-outline:hover {
   border-color: var(--accent);
   background: var(--accent-glow);
 }
 
 input, select, textarea {
-  background: var(--bg-elevated);
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 16px;
+  border-radius: 8px;
+  padding: 12px 14px;
   font-size: 14px;
   color: var(--text-primary);
   outline: none;
-  transition: all 0.2s;
+  transition: border-color 0.2s;
 }
 
 input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 10px var(--accent-glow);
 }
 
-/* ── Components: Shell ─────────────────────── */
-.top-nav {
-  height: var(--header-h);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px; position: sticky; top: 0; z-index: 1500;
-}
-
-.nav-link {
-  color: var(--text-secondary); text-decoration: none;
-  font-weight: 700; font-size: 13px; padding: 10px 20px;
-  border-radius: 10px; transition: all var(--duration) var(--ease);
-  text-transform: uppercase; letter-spacing: 0.5px;
-}
-
-.nav-link:hover { color: var(--text-primary); background: var(--bg-elevated); }
-.nav-link.active { color: var(--accent); background: var(--accent-glow); border: 1px solid var(--accent); }
-
-/* ── Shell Components ───────────────────────── */
-.skip-nav {
-  position: absolute; top: -100px; left: 0;
-  background: var(--accent); color: var(--bg-primary);
-  padding: 10px 20px; z-index: 2000; font-weight: 800;
-  transition: top 0.2s;
-}
-.skip-nav:focus { top: 0; }
+/* ── Typography Utilities ──────────────────── */
+.text-accent { color: var(--accent); }
+.font-mono { font-family: var(--font-mono); }
 
 /* ── Animations ────────────────────────────── */
-@keyframes hr-pulse {
-  0%   { opacity: 0.4; filter: blur(10px); }
-  50%  { opacity: 1; filter: blur(4px); }
-  100% { opacity: 0.4; filter: blur(10px); }
-}
-
-@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
 .animate-in {
-  animation: fade-up var(--duration) var(--ease) forwards;
+  animation: fade-in-up 0.4s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(20px); }
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Utilities ─────────────────────────────── */
-.desktop-only { display: none; }
-@media (min-width: 1025px) { .desktop-only { display: flex; } }
-
-.mobile-only { display: flex; }
-@media (min-width: 1025px) { .mobile-only { display: none !important; } }
-
 /* ── Scrollbars ────────────────────────────── */
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
