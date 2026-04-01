@@ -2,11 +2,12 @@
 import { useState, useMemo } from 'react'
 import AppLayout from '../../../components/layout/AppLayout'
 import bData from '../../../data/bsodCodes.json'
-import { Search, Terminal, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Search, Terminal, AlertCircle, CheckCircle2, ChevronLeft, Printer, Copy } from 'lucide-react'
 
 export default function BSODDecoder() {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(null)
+  const [copied, setCopied] = useState(false)
 
   const filtered = useMemo(() => {
     if (!query) return []
@@ -17,100 +18,139 @@ export default function BSODDecoder() {
     )
   }, [query])
 
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <AppLayout>
-      <main style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1.5rem' }}>
+      <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
         
-        <div style={{ marginBottom: '40px', borderBottom: '1px solid var(--border)', paddingBottom: '32px' }}>
-           <h1 style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '32px', marginBottom: '8px', letterSpacing: '-1px' }}>System StopCode Repository</h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '600px', lineHeight: 1.6 }}>
-             Official technical reference for Windows NT Kernel StopCodes (BSOD). 
-             Enter the error string to retrieve validated diagnostic protocols.
+        <div style={{ marginBottom: '48px' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+              <div style={{ padding: '6px 10px', background: 'var(--accent-glow)', borderRadius: 6, fontSize: 10, fontWeight: 900, color: 'var(--accent)', letterSpacing: 1 }}>REF_LIB // BSOD</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800 }}>v5.0_DEFINITIVE</div>
+           </div>
+           <h1 style={{ fontSize: '40px', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: '12px' }}>System StopCode Repository</h1>
+           <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: '700px', lineHeight: 1.6 }}>
+             Professional technical reference for Windows NT Kernel StopCodes. 
+             Search by error string to retrieve validated diagnostic protocols and repair guidance.
            </p>
         </div>
 
-        {/* Search Input */}
-        <div style={{ position: 'relative', marginBottom: '24px' }}>
-          <Search size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+        {/* Search Input Container */}
+        <div style={{ position: 'relative', marginBottom: '32px' }}>
+          <Search size={20} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
             placeholder="Search code (e.g. CRITICAL_PROCESS_DIED)..."
             value={query}
             onChange={e => {setQuery(e.target.value); setSelected(null)}}
-            style={{ width: '100%', padding: '12px 16px 12px 42px', fontSize: '14px' }}
+            style={{ 
+              width: '100%', padding: '16px 16px 16px 52px', fontSize: '16px', 
+              borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border)'
+            }}
           />
         </div>
 
         {/* Results List */}
         {query && !selected && (
-          <div style={{display:'flex', flexDirection:'column', gap:'8px', marginBottom:'24px'}}>
+          <div className="animate-in" style={{display:'flex', flexDirection:'column', gap:'10px', marginBottom:'40px'}}>
             {filtered.map(b => (
               <div 
                 key={b.code} 
                 onClick={() => setSelected(b)}
                 className="card hover:glow-border" 
-                style={{padding:'14px 20px', cursor:'pointer', display:'flex', justifyContent:'space-between', alignItems:'center'}}
+                style={{padding:'20px 24px', cursor:'pointer', display:'flex', justifyContent:'space-between', alignItems:'center'}}
               >
-                <div style={{fontWeight:700, fontSize:'14px'}}>{b.code}</div>
-                <div style={{fontSize:'12px', color:'var(--text-muted)'}}>{b.meaning.slice(0, 40)}...</div>
+                <div>
+                   <div style={{fontWeight:800, fontSize:'15px', marginBottom: 4}}>{b.code}</div>
+                   <div style={{fontSize:'12px', color:'var(--text-muted)'}}>{b.meaning}</div>
+                </div>
+                <ChevronLeft size={16} style={{transform:'rotate(180deg)', color:'var(--accent)'}} />
               </div>
             ))}
             {filtered.length === 0 && (
-              <div style={{textAlign:'center', padding:'2rem', color:'var(--text-muted)'}}>No codes matched your search.</div>
+              <div style={{textAlign:'center', padding:'4rem', color:'var(--text-muted)', background:'var(--bg-secondary)', borderRadius:12}}>
+                 No StopCodes matched your criteria. Ensure spelling matches Windows Event Viewer output.
+              </div>
             )}
           </div>
         )}
 
-        {/* Selected View */}
+        {/* Selected View (Professional Diagnostic Card) */}
         {selected && (
           <div className="animate-in">
-            <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'24px'}}>
-              <button onClick={() => setSelected(null)} className="btn-outline" style={{padding:'4px 12px', fontSize:'11px'}}>← Back</button>
-              <div style={{fontSize:'12px', color:'var(--text-muted)'}}>Stop Code Details</div>
-            </div>
+            <button 
+              onClick={() => setSelected(null)} 
+              style={{ 
+                display:'flex', alignItems:'center', gap:'8px', background:'none', border:'none', 
+                color:'var(--text-muted)', cursor:'pointer', marginBottom:'32px', fontSize:'11px', fontWeight:800, letterSpacing:1
+              }}
+            >
+              <ChevronLeft size={14} /> BACK TO REPOSITORY
+            </button>
 
-            <div className="card-elevated" style={{padding:'40px', borderLeft:'4px solid var(--accent)'}}>
-              <h2 style={{fontFamily:'JetBrains Mono,monospace', color:'var(--accent)', marginBottom:'16px'}}>{selected.code}</h2>
-              <div style={{marginBottom:'32px', fontSize:'16px', lineHeight:1.6}}>{selected.meaning}</div>
+            <div className="card" style={{ padding: 0, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)' }}>
+              <div style={{ background: 'var(--bg-secondary)', padding: '40px', borderBottom: '1px solid var(--border)' }}>
+                 <div style={{ fontSize: 11, fontWeight: 900, color: 'var(--accent)', letterSpacing: 2, marginBottom: 12 }}>STOP_CODE // ERROR_DETAIL</div>
+                 <h2 style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 900, color: '#fff', marginBottom: 16 }}>{selected.code}</h2>
+                 <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--text-primary)', margin: 0 }}>{selected.meaning}</p>
+              </div>
 
-              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'32px'}}>
+              <div style={{ padding: '40px', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)', gap: '48px' }}>
                 <section>
-                  <div style={{display:'flex', alignItems:'center', gap:'8px', fontSize:'11px', fontWeight:700, textTransform:'uppercase', color:'var(--text-muted)', marginBottom:'12px'}}>
-                    <AlertCircle size={14} /> Common Causes
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 20, letterSpacing: 1 }}>
+                    <AlertCircle size={16} /> PRIMARY_CAUSES
                   </div>
-                  <ul style={{fontSize:'14px', color:'var(--text-secondary)', paddingLeft:'18px'}}>
-                    {selected.causes.map((c, i) => <li key={i} style={{marginBottom:'6px'}}>{c}</li>)}
-                  </ul>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {selected.causes.map((c, i) => (
+                       <div key={i} style={{ display: 'flex', gap: 12, fontSize: 14, color: 'var(--text-secondary)' }}>
+                          <span style={{ color: 'var(--accent)', fontWeight: 900 }}>•</span>
+                          <span>{c}</span>
+                       </div>
+                    ))}
+                  </div>
                 </section>
 
                 <section>
-                  <div style={{display:'flex', alignItems:'center', gap:'8px', fontSize:'11px', fontWeight:700, textTransform:'uppercase', color:'var(--text-muted)', marginBottom:'12px'}}>
-                    <Terminal size={14} /> Fix Protocol
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 20, letterSpacing: 1 }}>
+                    <Terminal size={16} /> REPAIR_PROTOCOL
                   </div>
                   <div style={{
-                    padding:'16px', borderRadius:'8px', background:'var(--bg-secondary)', border:'1px solid var(--border)',
-                    fontSize:'13px', lineHeight:1.6, color:'var(--text-primary)'
+                    padding: '24px', borderRadius: '12px', background: '#09090B', border: '1px solid var(--border)',
+                    fontSize: '14px', lineHeight: 1.6, color: '#7ee787', fontFamily: 'var(--font-mono)'
                   }}>
                     {selected.fix}
                   </div>
                 </section>
               </div>
 
-              <div style={{marginTop:'40px', paddingTop:'20px', borderTop:'1px solid var(--border)', display:'flex', gap:'12px'}}>
-                <button className="btn-primary" onClick={() => window.print()}>Print Protocol</button>
-                <button className="btn-outline" onClick={() => { navigator.clipboard.writeText(selected.fix); alert('Fix protocol copied to clipboard') }}>Copy Fix</button>
+              <div style={{ padding: '24px 40px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <button onClick={() => window.print()} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Printer size={16} /> Print Protocol
+                  </button>
+                  <button onClick={() => handleCopy(selected.fix)} className="btn-outline" style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 140 }}>
+                    {copied ? <CheckCircle2 size={16} color="var(--accent)" /> : <Copy size={16} />}
+                    {copied ? 'Copied' : 'Copy Fix Protocol'}
+                  </button>
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 800 }}>HYNET // TECH_WORKBENCH</div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Empty State / Suggestions */}
+        {/* Home View / Guidance */}
         {!query && !selected && (
-          <div className="card" style={{padding:'32px', textAlign:'center', background:'var(--bg-secondary)'}}>
-             <AlertCircle size={32} style={{color:'var(--text-muted)', marginBottom:'16px'}} />
-             <h3 style={{marginBottom:'8px'}}>No code entered</h3>
-             <p style={{fontSize:'13px', color:'var(--text-secondary)', margin:0}}>
-               Search for common stop codes like <strong>MEMORY_MANAGEMENT</strong> or <strong>DPC_WATCHDOG_VIOLATION</strong> to see how it works.
+          <div className="card" style={{ padding: '48px', textAlign: 'center', background: 'var(--bg-secondary)', borderRadius: 16 }}>
+             <Terminal size={40} style={{ color: 'var(--accent)', marginBottom: '24px', opacity: 0.5 }} />
+             <h3 style={{ fontSize: 20, fontWeight: 900, marginBottom: '12px' }}>Awaiting Input...</h3>
+             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: 460, margin: '0 auto', lineHeight: 1.6 }}>
+               Search for critical stop codes to access validated field repair procedures. Common codes: <strong>WHEA_UNCORRECTABLE_ERROR</strong>, <strong>DPC_WATCHDOG_VIOLATION</strong>.
              </p>
           </div>
         )}

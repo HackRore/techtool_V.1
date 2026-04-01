@@ -19,8 +19,8 @@
   },
   {
     "code": "WHEA_UNCORRECTABLE_ERROR",
-    "meaning": "Hard hardware error detected.",
-    "causes": ["CPU over-voltage/heat", "Failing SSD/HDD", "Dying motherboard"],
+    "meaning": "Hardware error detected via Windows Hardware Error Architecture.",
+    "causes": ["CPU over-voltage/heat", "Failing SSD/HDD", "Motherboard failure"],
     "fix": "Check thermals. Verify drive health with CrystalDiskInfo. If undervolting, revert to stock."
   },
   {
@@ -32,7 +32,7 @@
   {
     "code": "DPC_WATCHDOG_VIOLATION",
     "meaning": "DPC watchdog timer was triggered due to a long-running DPC.",
-    "causes": ["Incompatible SATA AHCI driver", "Solid state drive firmware issues"],
+    "causes": ["Incompatible SATA AHCI driver", "SSD firmware issues"],
     "fix": "Update SSD firmware. Update SATA AHCI controller driver in Device Manager."
   },
   {
@@ -48,15 +48,51 @@
     "fix": "Check RAM. Set 'Automatically manage paging file size' in System Properties."
   },
   {
-    "code": "BAD_POOL_HEADER",
-    "meaning": "Error in memory pool header.",
-    "causes": ["Incompatible drivers", "RAM issues", "Incompatible anti-malware"],
-    "fix": "Perform a Clean Boot. Update all network and printer drivers."
-  },
-  {
     "code": "INACCESSIBLE_BOOT_DEVICE",
     "meaning": "Windows lost access to the system partition during startup.",
     "causes": ["Corrupt boot configuration", "Faulty SATA cable/SSD", "BIOS mode change (IDE to AHCI)"],
     "fix": "Check BIOS storage settings. Run Startup Repair from Windows Recovery."
+  },
+  {
+    "code": "KMODE_EXCEPTION_NOT_HANDLED",
+    "meaning": "Kernel-mode program generated an exception which the error handler didn't catch.",
+    "causes": ["Incompatible hardware", "Faulty device driver", "System service error"],
+    "fix": "Disable recently installed drivers. Check for BIOS updates. Run sfc /scannow."
+  },
+  {
+    "code": "VIDEO_TDR_FAILURE",
+    "meaning": "Video card was not responding and Windows restarted the driver.",
+    "causes": ["Faulty GPU driver", "Overheating GPU", "Failing graphics card hardware"],
+    "fix": "Reinstall GPU drivers using DDU. Check GPU temperatures and clock speeds."
+  },
+  {
+    "code": "DRIVER_POWER_STATE_FAILURE",
+    "meaning": "Driver is in an inconsistent or invalid power state.",
+    "causes": ["Power management settings", "Driver sleep/wake issues"],
+    "fix": "Disable Fast Startup. Update chipset and BIOS drivers. Set Power Plan to High Performance."
+  },
+  {
+    "code": "KERNEL_SECURITY_CHECK_FAILURE",
+    "meaning": "Kernel detected corruption of a critical data structure.",
+    "causes": ["Memory corruption", "Malware", "Faulty RAM"],
+    "fix": "Run Windows Memory Diagnostic. Full malware scan. Run sfc /scannow."
+  },
+  {
+    "code": "CRITICAL_STRUCTURE_CORRUPTION",
+    "meaning": "Kernel detected critical kernel code or data corruption.",
+    "causes": ["Faulty RAM", "Drivers modifying kernel code", "Hardware failure"],
+    "fix": "Check for driver updates. Run MemTest86 for at least 4 passes."
+  },
+  {
+    "code": "THREAD_STUCK_IN_DEVICE_DRIVER",
+    "meaning": "Device driver is spinning in an infinite loop.",
+    "causes": ["Video card driver issues", "Incompatible motherboard BIOS"],
+    "fix": "Update video driver. Check for BIOS update for the motherboard."
+  },
+  {
+    "code": "BAD_POOL_HEADER",
+    "meaning": "Memory pool header is corrupt.",
+    "causes": ["Antivirus conflicts", "Faulty RAM", "Driver issues"],
+    "fix": "Uninstall recently added antivirus. Update all system drivers."
   }
 ]
