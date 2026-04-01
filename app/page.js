@@ -4,7 +4,7 @@ import Link from 'next/link'
 import AppLayout from '../components/layout/AppLayout'
 import { 
   Zap, Activity, Shield, Clock, 
-  FileCode, Hammer
+  FileCode, Hammer, Smartphone, MousePointer2, ChevronRight
 } from 'lucide-react'
 
 import JobBoard from '../components/dashboard/JobBoard'
@@ -27,7 +27,6 @@ function StatCard({ label, value, live }) {
 
 export default function Dashboard() {
   const [sessionTime, setSessionTime] = useState('00:00')
-
   useEffect(() => {
     const start = Date.now()
     const iv = setInterval(() => {
@@ -72,7 +71,7 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 16 }}>
                    <span className="badge badge-ready" style={{ padding: '8px 16px', fontSize: 11 }}>SYSTEM ONLINE</span>
                    <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', letterSpacing: 1 }}>
-                     v7.0_STABLE // PROD
+                     v5.0_DEFINITIVE // PROD
                    </span>
                 </div>
              </div>
@@ -88,8 +87,8 @@ export default function Dashboard() {
 
           {/* Quick Access Tools */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 56 }}>
-             <Link href="/fixlab/bsod" className="card-elevated hover:glow-border" style={{ padding: 32, display: 'flex', gap: 24, alignItems: 'center', textDecoration: 'none' }}>
-                <div style={{ width: 48, height: 48, background: 'var(--status-fail)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+             <Link href="/quickref/bsod" className="card-elevated hover:glow-border" style={{ padding: 32, display: 'flex', gap: 24, alignItems: 'center', textDecoration: 'none' }}>
+                <div style={{ width: 48, height: 48, background: 'var(--red)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                    <Zap size={24} color="#000" />
                 </div>
                 <div>
@@ -97,13 +96,13 @@ export default function Dashboard() {
                    <div style={{ fontSize: 16, fontWeight: 900, color: '#fff' }}>BSOD Decoder</div>
                 </div>
              </Link>
-             <Link href="/fixlab/commands" className="card-elevated hover:glow-border" style={{ padding: 32, display: 'flex', gap: 24, alignItems: 'center', textDecoration: 'none' }}>
+             <Link href="/resources" className="card-elevated hover:glow-border" style={{ padding: 32, display: 'flex', gap: 24, alignItems: 'center', textDecoration: 'none' }}>
                 <div style={{ width: 48, height: 48, background: 'var(--accent)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                    <FileCode size={24} color="#000" />
                 </div>
                 <div>
                    <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 4 }}>TOOLBOX</div>
-                   <div style={{ fontSize: 16, fontWeight: 900, color: '#fff' }}>Command Forge</div>
+                   <div style={{ fontSize: 16, fontWeight: 900, color: '#fff' }}>Command Toolbox</div>
                 </div>
              </Link>
           </div>
@@ -114,11 +113,11 @@ export default function Dashboard() {
                { id: 'keyboard', name: 'Keyboard', icon: '⌨️', category: 'HID' },
                { id: 'screen',   name: 'Display',  icon: '🖥️', category: 'VISUAL' },
                { id: 'speaker',  name: 'Audio',    icon: '🔊', category: 'OUTPUT' },
-               { id: 'gpu',      name: 'GPU',      icon: '💎', category: 'STRESS' },
-               { id: 'battery',  name: 'Battery',  icon: '🔋', category: 'POWER' },
                { id: 'webcam',   name: 'Webcam',   icon: '📷', category: 'MEDIA' },
+               { id: 'battery',  name: 'Battery',  icon: '🔋', category: 'POWER' },
+               { id: 'mouse',    name: 'Mouse',    icon: '🖱️', category: 'INPUT' },
              ].map(t => (
-               <Link key={t.id} href={`/tools/${t.id}`} className="card" style={{ 
+               <Link key={t.id} href="/tools" className="card" style={{ 
                  textAlign: 'center', padding: '32px 20px', cursor: 'pointer', textDecoration: 'none'
                }}>
                   <div style={{ fontSize: 40, marginBottom: 16 }}>{t.icon}</div>
@@ -140,7 +139,7 @@ export default function Dashboard() {
               </p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                 <Link href="/diagnostics" className="btn-accent" style={{ textDecoration: 'none', textAlign: 'center' }}>
+                 <Link href="/diagnostics" className="btn-primary" style={{ textDecoration: 'none', textAlign: 'center' }}>
                     Upload Scan Report →
                  </Link>
                  <Link href="/fixlab" style={{ 
