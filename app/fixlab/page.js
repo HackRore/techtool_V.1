@@ -1,12 +1,13 @@
 'use client'
 import { useState, useMemo, useEffect } from 'react'
+import Link from 'next/link'
 import AppLayout from '../../components/layout/AppLayout'
 import { KB, CATEGORIES } from '../../lib/knowledgeBase'
 import { 
   Search, ChevronDown, 
   ChevronRight, Star, 
   Terminal, AlertCircle, Printer,
-  Filter
+  Filter, Activity
 } from 'lucide-react'
 
 export default function FixLab() {
