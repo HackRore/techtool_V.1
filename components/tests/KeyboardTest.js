@@ -1,16 +1,50 @@
 'use client'
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 
-const KEYS = [
-  ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Prt', 'ScL', 'Pau'],
+const MAIN_BLOCK = [
+  ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'],
   ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
   ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\'],
   ['Caps', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", 'Enter'],
-  ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift', '↑'],
-  ['Ctrl', 'Win', 'Alt', 'Space', 'Alt', 'Fn', 'Ctx', 'Ctrl', '←', '↓', '→']
+  ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift'],
+  ['Ctrl', 'Win', 'Alt', 'Space', 'Alt', 'Fn', 'Ctx', 'Ctrl']
 ]
 
-// Flatten keys for coverage calculation (approx 104 keys)
+const NAV_CLUSTER = [
+  ['Prt', 'ScL', 'Pau'],
+  ['Ins', 'Hm', 'Pu'],
+  ['Del', 'End', 'Pd'],
+  ['↑'],
+  ['←', '↓', '→']
+]
+
+const NUMPAD = [
+  ['NL', '/', '*', '-'],
+  ['7', '8', '9', '+'],
+  ['4', '5', '6', ' '],
+  ['1', '2', '3', 'En'],
+  ['0', ' ', '.', ' ']
+]
+
+// Map generic labels to standard event.code values
+const getBinding = (label) => {
+  const map = {
+    'Esc': 'Escape', 'Prt': 'PrintScreen', 'ScL': 'ScrollLock', 'Pau': 'Pause',
+    'Backspace': 'Backspace', 'Tab': 'Tab', 'Caps': 'CapsLock', 'Enter': 'Enter',
+    'Shift': 'ShiftLeft', 'Ctrl': 'ControlLeft', 'Win': 'MetaLeft', 'Alt': 'AltLeft',
+    'Space': 'Space', 'Fn': 'Fn', 'Ctx': 'ContextMenu',
+    'Ins': 'Insert', 'Hm': 'Home', 'Pu': 'PageUp', 'Del': 'Delete', 'End': 'End', 'Pd': 'PageDown',
+    '↑': 'ArrowUp', '↓': 'ArrowDown', '←': 'ArrowLeft', '→': 'ArrowRight',
+    'NL': 'NumLock', '/': 'NumpadDivide', '*': 'NumpadMultiply', '-': 'NumpadSubtract',
+    '+': 'NumpadAdd', 'En': 'NumpadEnter', '.': 'NumpadDecimal',
+    '0': 'Numpad0', '1': 'Numpad1', '2': 'Numpad2', '3': 'Numpad3', '4': 'Numpad4', 
+    '5': 'Numpad5', '6': 'Numpad6', '7': 'Numpad7', '8': 'Numpad8', '9': 'Numpad9'
+  }
+  if (label.startsWith('F') && label.length > 1) return `F${label.slice(1)}`
+  return map[label] || `Key${label}`
+}
+
+// Flatten for coverage (Estimated 104 keys)
 const TOTAL_PHYSICAL_KEYS = 104 
 
 export default function KeyboardTest({ onComplete }) {
@@ -67,7 +101,6 @@ export default function KeyboardTest({ onComplete }) {
       playClick()
       if (navigator.vibrate) navigator.vibrate(5)
 
-      // Stuck key detection (2000ms)
       if (!stuckTimers.current.has(code)) {
         const timer = setTimeout(() => {
           setStuckKeys(prev => Array.from(new Set([...prev, e.key.toUpperCase()])))
@@ -89,8 +122,6 @@ export default function KeyboardTest({ onComplete }) {
 
     const handleKeyUp = (e) => {
       const code = e.code
-      
-      // Clear stuck timer
       if (stuckTimers.current.has(code)) {
         clearTimeout(stuckTimers.current.get(code))
         stuckTimers.current.delete(code)
@@ -133,15 +164,26 @@ export default function KeyboardTest({ onComplete }) {
     stuckTimers.current.clear()
   }
 
-  const getBinding = (label) => {
-    const map = {
-      'Esc': 'Escape', 'Prt': 'PrintScreen', 'ScL': 'ScrollLock', 'Pau': 'Pause',
-      'Backspace': 'Backspace', 'Tab': 'Tab', 'Caps': 'CapsLock', 'Enter': 'Enter',
-      'Shift': 'ShiftLeft', 'Ctrl': 'ControlLeft', 'Win': 'MetaLeft', 'Alt': 'AltLeft',
-      'Space': 'Space', 'Fn': 'Fn', 'Ctx': 'ContextMenu',
-      '↑': 'ArrowUp', '↓': 'ArrowDown', '←': 'ArrowLeft', '→': 'ArrowRight'
-    }
-    return map[label] || `Key${label}`
+  const Key = ({ label, flex = 1, minWidth = 32 }) => {
+    const binding = getBinding(label)
+    const isPressed = pressed.has(binding) || (label === 'Shift' && (pressed.has('ShiftRight') || pressed.has('ShiftLeft'))) || (label === 'Ctrl' && (pressed.has('ControlRight') || pressed.has('ControlLeft'))) || (label === 'Alt' && (pressed.has('AltRight') || pressed.has('AltLeft')))
+    const isHistory = history.has(binding) || (label === 'Shift' && (history.has('ShiftRight') || history.has('ShiftLeft'))) || (label === 'Ctrl' && (history.has('ControlRight') || history.has('ControlLeft'))) || (label === 'Alt' && (history.has('AltRight') || history.has('AltLeft')))
+
+    return (
+      <div 
+        role="img"
+        aria-label={`Key ${label}`}
+        style={{ 
+          flex, height: 40, minWidth, borderRadius: 6,
+          background: isPressed ? 'var(--accent)' : isHistory ? 'var(--accent-glow)' : 'var(--bg-elevated)',
+          border: `1px solid ${isPressed ? 'var(--accent)' : isHistory ? 'var(--accent)' : 'var(--border)'}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 9, fontWeight: 700, transition: 'all 0.05s linear',
+          color: isPressed ? '#000' : isHistory ? 'var(--accent)' : 'var(--text-muted)'
+        }}>
+        {label}
+      </div>
+    )
   }
 
   return (
@@ -168,38 +210,51 @@ export default function KeyboardTest({ onComplete }) {
 
       <div style={{ padding: '16px 20px', borderRadius: 12, background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
         <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>
-          Click anywhere in the keyboard area below, then press each physical key.
+          Professional Hardware Validation Cluster (104-Key NKRO Protocol). Press each physical key to verify controller response.
         </p>
+      </div>
+
+      <div className="mobile-only" style={{ padding: '8px 12px', background: 'var(--bg-secondary)', borderRadius: 8, fontSize: 10, fontWeight: 800, color: 'var(--accent)', textAlign: 'center', border: '1px solid var(--border)' }}>
+         ← SWIPE HORIZONTALLY TO TEST NUMPAD →
       </div>
 
       <div style={{ 
         overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%',
-        padding: '24px 0', borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border)'
+        padding: '32px 0', borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border)'
       }}>
-         <div style={{ minWidth: 720, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {KEYS.map((row, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, justifyContent: 'center', padding: '0 20px' }}>
-                 {row.map((key, j) => {
-                   const binding = getBinding(key)
-                   const isPressed = pressed.has(binding) || (key === 'Shift' && pressed.has('ShiftRight')) || (key === 'Ctrl' && pressed.has('ControlRight')) || (key === 'Alt' && pressed.has('AltRight'))
-                   const isHistory = history.has(binding) || (key === 'Shift' && history.has('ShiftRight')) || (key === 'Ctrl' && history.has('ControlRight')) || (key === 'Alt' && history.has('AltRight'))
-                   
-                   return (
-                     <div key={j} style={{ 
-                        flex: key === 'Space' ? 5 : (key === 'Backspace' || key === 'Enter' || key === 'Shift' || key === 'Caps' || key === 'Tab') ? 2 : 1,
-                        height: 44, minWidth: 32, borderRadius: 6,
-                        background: isPressed ? 'var(--accent)' : isHistory ? 'var(--accent-glow)' : 'var(--bg-elevated)',
-                        border: `1px solid ${isPressed ? 'var(--accent)' : isHistory ? 'var(--accent)' : 'var(--border)'}`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 9, fontWeight: 700, transition: 'all 0.05s linear',
-                        color: isPressed ? '#000' : isHistory ? 'var(--accent)' : 'var(--text-muted)'
-                      }}>
-                         {key.toUpperCase()}
-                      </div>
-                   )
-                 })}
-              </div>
-            ))}
+         <div style={{ minWidth: 1000, display: 'flex', gap: 32, justifyContent: 'center', padding: '0 32px' }}>
+            
+            {/* Main Block */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 15 }}>
+               {MAIN_BLOCK.map((row, i) => (
+                 <div key={i} style={{ display: 'flex', gap: 6 }}>
+                    {row.map((k, j) => (
+                      <Key key={j} label={k} flex={k === 'Space' ? 5 : (k === 'Backspace' || k === 'Enter' || k === 'Shift' || k === 'Caps' || k === 'Tab') ? 2 : 1} />
+                    ))}
+                 </div>
+               ))}
+            </div>
+
+            {/* Nav & Arrows Block */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 3 }}>
+               <div style={{ display: 'flex', gap: 6 }}>{NAV_CLUSTER[0].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ padding: '12px 0' }} />
+               <div style={{ display: 'flex', gap: 6 }}>{NAV_CLUSTER[1].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ display: 'flex', gap: 6 }}>{NAV_CLUSTER[2].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ padding: '12px 0' }} />
+               <div style={{ display: 'flex', justifyContent: 'center' }}>{NAV_CLUSTER[3].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ display: 'flex', gap: 6 }}>{NAV_CLUSTER[4].map(k => <Key key={k} label={k} />)}</div>
+            </div>
+
+            {/* Numpad Block */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 4 }}>
+               <div style={{ display: 'flex', gap: 6 }}>{NUMPAD[0].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ display: 'flex', gap: 6 }}>{NUMPAD[1].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ display: 'flex', gap: 6 }}>{NUMPAD[2].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ display: 'flex', gap: 6 }}>{NUMPAD[3].map(k => <Key key={k} label={k} />)}</div>
+               <div style={{ display: 'flex', gap: 6 }}>{NUMPAD[4].map(k => <Key key={k} label={k} flex={k === '0' ? 2 : 1} />)}</div>
+            </div>
+
          </div>
       </div>
 

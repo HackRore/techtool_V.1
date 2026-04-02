@@ -1,14 +1,21 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
+import { mapPoshToUI } from '../../lib/engine/poshMapper'
 import AppLayout from '../../components/layout/AppLayout'
 import { 
   Cpu, FileJson, PlayCircle, Clipboard, AlertCircle, 
-  CheckCircle2, Download, Upload, ArrowRight, Activity, Zap, ShieldCheck
+  CheckCircle2, Download, Upload, ArrowRight, Activity, Zap, ShieldCheck,
+  FileCode
 } from 'lucide-react'
 
+export const metadata = {
+  title: 'System Reports | Hachtool Analytics',
+  description: 'Industrial-grade system telemetry and hardware health reports.'
+}
+
 export default function SystemReportsPage() {
-  const router = useRouter()
+  const searchParams = useSearchParams()
   const [ready, setReady] = useState(false)
   const [isWindows, setIsWindows] = useState(true)
   const [dragging, setDragging] = useState(false)
@@ -20,8 +27,23 @@ export default function SystemReportsPage() {
   useEffect(() => {
     const platform = navigator.userAgentData?.platform || navigator.platform || ''
     setIsWindows(platform.toLowerCase().includes('win'))
+
+    // fix(12C): Live Telemetry Ingestion
+    const importPayload = searchParams.get('import')
+    if (importPayload) {
+      try {
+        const decoded = atob(importPayload)
+        const parsed = JSON.parse(decoded)
+        const mapped = mapPoshToUI(parsed)
+        setScanData(mapped)
+      } catch (err) {
+        console.error("INGESTION_ERROR:", err)
+        setFileError("PAYLOAD_MISMATCH: Live import corrupted.")
+      }
+    }
+
     setReady(true)
-  }, [])
+  }, [searchParams])
 
   const handleFile = (file) => {
     if (!file) return
@@ -67,40 +89,56 @@ export default function SystemReportsPage() {
     <AppLayout>
       <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
         
-        {/* Phase Header: v7.0 Guided Workflow */}
-        <div>
-           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <div style={{ background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 10, fontWeight: 900, padding: '4px 12px', borderRadius: 50, letterSpacing: 1 }}>STEP_02 // SYSTEM_SCANS</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>MODULE: SYSTEM_REPORTS</div>
-           </div>
-           <h1 style={{ fontSize: 40, fontWeight: 900, marginBottom: 12 }}>System Reports & Analytics</h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 640 }}>
-             Analyze deep hardware telemetry from external PowerShell scans. Generate professional health dashboards and refurbishment reports.
-           </p>
-        </div>
+         {/* Phase Header: v10.0 Strategic CTA Promotion */}
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 48, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 320 }}>
+               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                  <div style={{ background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 10, fontWeight: 900, padding: '4px 12px', borderRadius: 50, letterSpacing: 1 }}>STABLE // v9.0_PROD</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>{isWindows ? 'OS: WINDOWS_DETECTED' : 'OS: POSIX_GENERIC'}</div>
+               </div>
+                <h1 style={{ fontSize: 48, fontWeight: 900, marginBottom: 16, letterSpacing: '-1.5px', color: 'var(--text-primary)' }}>System Reports & Analytics</h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 18, maxWidth: 600, lineHeight: 1.6, marginBottom: 32 }}>
+                  Analyze deep hardware telemetry from external PowerShell scans. Generate professional health dashboards and refurbishment reports instantly.
+                </p>
+                <div style={{ display: 'flex', gap: 16 }}>
+                   <button className="btn-primary" onClick={loadDemo} style={{ padding: '16px 32px', fontSize: 13 }}>Load Technical Demo</button>
+                   <a href="/scripts/Hachtool_Master.ps1" download className="btn-outline" style={{ border: '1px solid var(--accent)', color: 'var(--accent)', background: '#FFF' }}>
+                      <FileCode size={14} style={{ marginRight: 8 }} />
+                      Download Master Script
+                   </a>
+                  <button className="btn-outline" onClick={() => fileRef.current?.click()}>Browse JSON Report</button>
+               </div>
+            </div>
+         </div>
 
         {!scanData ? (
           /* Guided Action Grid: thetest.com style */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginBottom: 64 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24, marginBottom: 64 }}>
              
-             {/* Step 1: PowerShell Command */}
-             <div className="card" style={{ padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ width: 48, height: 48, background: 'var(--bg-elevated)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', marginBottom: 24 }}>
+             {/* Step 1: PowerShell Command (v9.0 Windows Warning) */}
+             <div className="card" style={{ padding: '40px 32px', display: 'flex', flexDirection: 'column', opacity: isWindows ? 1 : 0.6 }}>
+                <div style={{ width: 48, height: 48, background: isWindows ? 'var(--bg-elevated)' : 'var(--bg-secondary)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isWindows ? 'var(--accent)' : 'var(--text-muted)', marginBottom: 24 }}>
                    <Activity size={24} />
                 </div>
-                <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 8 }}>METHOD_01</div>
-                <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', marginBottom: 12 }}>Run Live Scanner</h3>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>
-                   Execute the Hachtool utility on any Windows machine to generate a technical report.
-                </p>
-                <div style={{ background: '#09090B', padding: '12px 14px', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border)', marginBottom: 16 }}>
-                   <code style={{ fontSize: 11, color: '#7ee787', fontFamily: 'var(--font-mono)' }}>.\Hachtool_Master.ps1</code>
-                   <button onClick={handleCopy} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                      {copied ? <CheckCircle2 size={14} color="var(--accent)" /> : <Clipboard size={14} />}
-                   </button>
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', display: 'flex', gap: 6, alignItems: 'center' }}>
-                   <AlertCircle size={10} /> Requires PowerShell Admin
+                 <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 8 }}>METHOD_01 // {isWindows ? 'WIN_PROTOCOL' : 'POSIX_UNSUPPORTED'}</div>
+                 <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>Run Live Scanner</h3>
+                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>
+                    {isWindows 
+                      ? 'Execute the Hachtool utility on this machine to generate a technical report.' 
+                      : 'PowerShell scanners are currently Windows-exclusive. Download the scanner to run on a target PC.'}
+                 </p>
+                 
+                 {isWindows && (
+                   <div style={{ background: 'var(--bg-secondary)', padding: '12px 14px', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border)', marginBottom: 16 }}>
+                     <code style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>.\Hachtool_Master.ps1</code>
+                     <button onClick={handleCopy} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                         {copied ? <CheckCircle2 size={14} color="var(--accent)" /> : <Clipboard size={14} />}
+                     </button>
+                   </div>
+                 )}
+
+                <div style={{ fontSize: 10, color: isWindows ? 'var(--text-muted)' : 'var(--status-fail)', display: 'flex', gap: 6, alignItems: 'center', fontWeight: isWindows ? 500 : 800 }}>
+                   <AlertCircle size={10} /> {isWindows ? 'Requires PowerShell Admin' : 'PLATFORM_MISMATCH_DETECTED'}
                 </div>
              </div>
 
@@ -113,30 +151,17 @@ export default function SystemReportsPage() {
                 style={{ padding: '40px 32px', display: 'flex', flexDirection: 'column', border: dragging ? '2px dashed var(--accent)' : '1px solid var(--border)', background: dragging ? 'var(--accent-soft)' : 'var(--bg-secondary)', cursor: 'pointer', transition: '0.2s' }}
                 onClick={() => fileRef.current?.click()}
              >
-                <div style={{ width: 48, height: 48, background: 'var(--bg-elevated)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', marginBottom: 24 }}>
-                   <Upload size={24} />
-                </div>
-                <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 8 }}>METHOD_02</div>
-                <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', marginBottom: 12 }}>Upload System Report</h3>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>
-                   Drop the generated JSON file here to visualize system health and driver status.
-                </p>
-                <button className="btn-outline">Browse Report</button>
+                 <div style={{ width: 48, height: 48, background: 'var(--bg-secondary)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', marginBottom: 24 }}>
+                    <Upload size={24} />
+                 </div>
+                 <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 8 }}>METHOD_02 // MANUAL_INGEST</div>
+                 <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>Upload System Report</h3>
+                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>
+                    Drop the generated JSON file here to visualize system health and driver status. Support for .JSON and .HTL formats.
+                 </p>
+                 <button className="btn-outline" style={{ background: '#FFF' }}>Manual File Import</button>
                 {fileError && <div style={{ color: 'var(--status-fail)', fontSize: 10, fontWeight: 800, marginTop: 12 }}>{fileError}</div>}
                 <input ref={fileRef} type="file" accept=".json" style={{ display: 'none' }} onChange={(e) => handleFile(e.target.files[0])} />
-             </div>
-
-             {/* Step 3: Technical Demo */}
-             <div className="card" style={{ padding: '40px 32px', display: 'flex', flexDirection: 'column', border: '1px solid var(--accent)' }}>
-                <div style={{ width: 48, height: 48, background: 'var(--bg-elevated)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', marginBottom: 24 }}>
-                   <PlayCircle size={24} />
-                </div>
-                <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--accent)', marginBottom: 8 }}>METHOD_03</div>
-                <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', marginBottom: 12 }}>Technical Demo</h3>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>
-                   Preview the full analytics dashboard with a pre-validated system report sample.
-                </p>
-                <button className="btn-primary" onClick={loadDemo}>Load Demo Analytics</button>
              </div>
 
           </div>

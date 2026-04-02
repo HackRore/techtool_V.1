@@ -4,6 +4,14 @@ import ToolClient from './ToolClient'
 import AppLayout from '../../../components/layout/AppLayout'
 import { ChevronRight } from 'lucide-react'
 
+export async function generateMetadata({ params }) {
+  const tool = tools.find(t => t.slug === params.slug)
+  return {
+    title: tool ? `${tool.name} | Hachtool Diagnostics` : 'Tool Not Found | Hachtool',
+    description: tool ? tool.description : 'Professional hardware diagnostic tool.'
+  }
+}
+
 export async function generateStaticParams() {
   console.log("DEBUG_TOOLS_BUILD:", tools.map(t => t.slug))
   return tools.map((tool) => ({

@@ -4,10 +4,9 @@ import Link from 'next/link'
 import AppLayout from '../../components/layout/AppLayout'
 import { KB, CATEGORIES } from '../../lib/knowledgeBase'
 import { 
-  Search, ChevronDown, 
-  ChevronRight, Star, 
-  Terminal, AlertCircle, Printer,
-  Filter, Activity
+  Search, ChevronDown, ChevronRight, Star, 
+  Terminal, AlertCircle, Printer, Clock, Tool,
+  Filter, Activity, Cpu, Zap, BookOpen, ExternalLink
 } from 'lucide-react'
 
 export default function FixLab() {
@@ -59,194 +58,156 @@ export default function FixLab() {
 
   return (
     <AppLayout>
-      <div className="animate-in">
+      <div className="animate-in" style={{ minWidth: 0 }}>
         
-        {/* Hub Header: v8.0 Professional Search */}
-        <header style={{ marginBottom: 40 }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <div style={{ background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 10, fontWeight: 900, padding: '4px 12px', borderRadius: 50, letterSpacing: 1 }}>STEP_03 // REPAIR_GUIDES</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>MODULE: FIXLAB_PROTOCOLS</div>
-           </div>
-           <h1 style={{ fontSize: 40, fontWeight: 900, marginBottom: 12 }}>Repair Guides & Protocols</h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 640, marginBottom: 32 }}>
-             Detailed troubleshooting guides and validated repair protocols for hardware technicians.
-           </p>
+        {/* GFG-Style Breadcrumbs */}
+        <div style={{ display: 'flex', gap: 8, fontSize: 12, color: 'var(--text-muted)', marginBottom: 24, alignItems: 'center' }}>
+          <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>Hachtool</Link>
+          <ChevronRight size={12} />
+          <span style={{ color: 'var(--accent)', fontWeight: 700 }}>Repair Protocols</span>
+        </div>
 
-           <div style={{ position: 'relative', maxWidth: '800px' }}>
-              <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-              <input
-                type="text"
-                placeholder="Search symptom, error code, or fix protocol..."
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                style={{ width: '100%', padding: '14px 16px 14px 48px', fontSize: '15px' }}
-              />
-           </div>
-        </header>
+        {/* GFG-Style Article Header */}
+        <div style={{ marginBottom: 40, borderBottom: '1px solid var(--border)', paddingBottom: 32 }}>
+          <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--accent)', letterSpacing: 1.5, marginBottom: 12 }}>FIXLAB // TECHNICIAN_LIBRARY</div>
+          <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: -1.5, marginBottom: 16 }}>Technical Repair Protocols</h1>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontSize: 13, color: 'var(--text-secondary)', alignItems: 'center' }}>
+             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={16} /> Updated: March 2026</span>
+             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Tool size={16} /> 412+ Validated Procedures</span>
+             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><BookOpen size={16} /> Peer-Reviewed</span>
+          </div>
+        </div>
 
-        <div className="dashboard-layout">
-          
-          {/* Main Content: Fix Entries */}
-          <div style={{ minWidth: 0 }}>
-             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 60 }}>
-                {filtered.map(entry => {
-                  const isExpanded = expandedId === entry.id
-                  const isBookmarked = bookmarks.includes(entry.id)
-                  const isDone = doneList.includes(entry.id)
+        {/* GFG-Style Horizontal Sub-Nav (Filter Bar) */}
+        <div style={{ 
+          display: 'flex', gap: 8, marginBottom: 48, overflowX: 'auto', paddingBottom: 16,
+          borderBottom: '1px solid var(--border)', position: 'sticky', top: 80, background: '#FFF', zIndex: 10
+        }}>
+          {['All', ...CATEGORIES].map(cat => (
+            <button 
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              style={{ 
+                padding: '8px 20px', borderRadius: 100, border: '1px solid var(--border)',
+                background: activeCategory === cat ? 'var(--accent)' : '#FFF',
+                color: activeCategory === cat ? '#FFF' : 'var(--text-primary)',
+                fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
+                transition: '0.2s', boxShadow: activeCategory === cat ? '0 4px 12px var(--accent-soft)' : 'none'
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+          <div style={{ flex: 1 }} />
+          <button 
+            onClick={() => setShowBookmarks(!showBookmarks)}
+            style={{ 
+              padding: '8px 20px', borderRadius: 100, border: '1px solid var(--border)',
+              background: showBookmarks ? 'var(--status-warn)' : '#FFF',
+              color: showBookmarks ? '#FFF' : 'var(--text-primary)',
+              fontSize: 12, fontWeight: 800, cursor: 'pointer'
+            }}
+          >
+            {showBookmarks ? 'Show All' : `Bookmarks (${bookmarks.length})`}
+          </button>
+        </div>
 
-                  return (
-                    <div 
-                      key={entry.id} 
-                      className="card" 
-                      onClick={() => setExpandedId(isExpanded ? null : entry.id)}
-                      style={{ 
-                        padding: 0, cursor: 'pointer',
-                        borderLeft: `4px solid ${severityColors[entry.severity] || 'var(--border)'}`,
-                        background: isExpanded ? 'var(--bg-elevated)' : 'var(--bg-secondary)',
-                        borderColor: isExpanded ? 'var(--accent)' : 'var(--border)',
-                      }}
-                    >
-                      {/* Entry Header */}
-                      <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                            <div onClick={(e) => toggleBookmark(entry.id, e)} style={{ padding: 4 }}>
-                               <Star size={16} style={{ 
-                                 color: isBookmarked ? 'var(--accent)' : 'var(--text-muted)', 
-                                 fill: isBookmarked ? 'var(--accent)' : 'none',
-                               }} />
-                            </div>
-                            <div>
-                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                                  <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{entry.category}</span>
-                                  {isDone && <span className="badge badge-pass" style={{ fontSize: 8 }}>FIXED</span>}
-                               </div>
-                               <h3 style={{ fontSize: 16, fontWeight: 700, textTransform: 'none', color: 'var(--text-primary)', margin:0 }}>{entry.title}</h3>
-                            </div>
-                         </div>
-                         <div style={{ color: 'var(--text-muted)' }}>
-                            {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                         </div>
-                      </div>
+        {/* Article Content / Guide List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 80 }}>
+          {filtered.length > 0 ? filtered.map((entry, idx) => {
+            const isExpanded = expandedId === entry.id
+            const isBookmarked = bookmarks.includes(entry.id)
+            const isDone = doneList.includes(entry.id)
+            
+            return (
+              <div key={entry.id} className="card" style={{ 
+                padding: 0, overflow: 'hidden', transition: '0.3s',
+                borderLeft: `6px solid ${isExpanded ? 'var(--accent)' : severityColors[entry.severity] || 'var(--border)'}`,
+                boxShadow: isExpanded ? '0 8px 32px rgba(0,0,0,0.08)' : '0 2px 4px rgba(0,0,0,0.02)'
+              }}>
+                <div 
+                  onClick={() => setExpandedId(isExpanded ? null : entry.id)}
+                  style={{ padding: '24px 32px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+                     <div onClick={(e) => toggleBookmark(entry.id, e)} style={{ color: isBookmarked ? 'var(--status-warn)' : '#DDD', cursor: 'pointer' }}>
+                        <Star size={18} fill={isBookmarked ? 'var(--status-warn)' : 'none'} />
+                     </div>
+                     <div>
+                        <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', marginBottom: 4, display: 'flex', gap: 8 }}>
+                           <span>{entry.category.toUpperCase()}</span>
+                           {isDone && <span style={{ color: 'var(--status-pass)' }}>● VERIFIED_FIX</span>}
+                        </div>
+                        <h3 style={{ fontSize: 20, fontWeight: 800, color: '#222' }}>{entry.title}</h3>
+                     </div>
+                  </div>
+                  <ChevronDown size={20} style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', transition: '0.3s', color: '#CCC' }} />
+                </div>
 
-                      {/* Expanded View */}
-                      {isExpanded && (
-                        <div className="animate-in" style={{ padding: '0 24px 32px 64px', borderTop: '1px solid var(--border)' }}>
-                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, marginTop: 24 }}>
-                              
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-                                 <section>
-                                    <h4 style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>Common Causes</h4>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                                       {entry.causes.map(c => (
-                                         <div key={c} style={{ fontSize: 12, color: 'var(--text-secondary)', background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: 6, border: '1px solid var(--border)' }}>
-                                            {c}
-                                         </div>
-                                       ))}
-                                    </div>
-                                 </section>
-
-                                 <section>
-                                    <h4 style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 16 }}>Repair Protocol</h4>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                       {entry.steps.map((step, i) => (
-                                         <div key={i} style={{ display: 'flex', gap: 16 }}>
-                                            <div className="text-mono" style={{ 
-                                              width: 24, height: 24, borderRadius: 6, background: 'var(--bg-primary)', 
-                                              border: '1px solid var(--accent)', display: 'flex', alignItems: 'center', 
-                                              justifyContent: 'center', fontSize: 11, fontWeight: 800, color: 'var(--accent)' 
-                                            }}>
-                                               {i + 1}
-                                            </div>
-                                            <div style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.6, paddingTop: 2 }}>{step}</div>
-                                         </div>
-                                       ))}
-                                    </div>
-                                 </section>
+                {isExpanded && (
+                  <div className="animate-in" style={{ padding: '0 32px 32px 74px', borderTop: '1px solid #F5F5F5' }}>
+                     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 48, marginTop: 32 }}>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+                           <section>
+                              <h4 style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 16 }}>SYMPTOM_MANIFEST</h4>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                 {entry.causes.map(c => (
+                                   <div key={c} style={{ fontSize: 13, background: '#F8F9FA', padding: '8px 16px', borderRadius: 8, border: '1px solid #EEE', color: '#555' }}>{c}</div>
+                                 ))}
                               </div>
+                           </section>
 
-                              {/* Sidebar Details */}
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                                 <div className="card" style={{ padding: 20, background: 'var(--bg-primary)' }}>
-                                    <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 16 }}>Required Tools</div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                                       {entry.tools.map(t => <span key={t} className="badge" style={{ fontSize: 9 }}>{t}</span>)}
-                                    </div>
-                                 </div>
-
-                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                                    <button onClick={(e) => toggleDone(entry.id, e)} className="btn-primary" style={{ width: '100%', height: 44 }}>
-                                       {isDone ? 'Re-open Case' : 'Mark as Fixed'}
-                                    </button>
-                                    <button className="btn-outline" style={{ width: '100%', height: 40 }} onClick={(e) => {e.stopPropagation(); window.print()}}>
-                                       <Printer size={14} /> Print Guide
-                                    </button>
-                                 </div>
+                           <section>
+                              <h4 style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20 }}>EXECUTION_PROTOCOL</h4>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                 {entry.steps.map((step, i) => (
+                                   <div key={i} style={{ display: 'flex', gap: 16 }}>
+                                      <div style={{ 
+                                        width: 24, height: 24, borderRadius: '50%', background: 'var(--accent)', 
+                                        color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                        fontSize: 11, fontWeight: 900, flexShrink: 0 
+                                      }}>{i + 1}</div>
+                                      <div style={{ fontSize: 15, lineHeight: 1.6, color: '#333' }}>{step}</div>
+                                   </div>
+                                 ))}
                               </div>
+                           </section>
+                        </div>
 
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                           <div style={{ padding: 20, background: '#F8F9FA', borderRadius: 12, border: '1px solid #EEE' }}>
+                              <h5 style={{ fontSize: 10, fontWeight: 900, marginBottom: 16, color: 'var(--text-muted)' }}>HARDWARE_SCHEMATIC</h5>
+                              <div style={{ height: 160, background: '#000', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                                 <Activity size={32} style={{ color: 'var(--accent)', opacity: 0.2 }} />
+                                 <span style={{ position: 'absolute', bottom: 12, fontSize: 8, color: '#444', fontWeight: 900 }}>REF_ASYNC_GRID</span>
+                              </div>
+                           </div>
+
+                           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                              <button onClick={(e) => toggleDone(entry.id, e)} className="btn-primary" style={{ width: '100%', height: 44 }}>
+                                 {isDone ? 'Re-open Ticket' : 'Mark as Resolved'}
+                              </button>
+                              <button className="btn-outline" style={{ width: '100%', height: 44 }} onClick={(e) => { e.stopPropagation(); window.print() }}>
+                                 <Printer size={16} style={{ marginRight: 8 }} /> Print Protocol
+                              </button>
                            </div>
                         </div>
-                      )}
-                    </div>
-                  )
-                })}
-             </div>
-          </div>
 
-          {/* Sidebar: Filters */}
-          <aside className="sidebar-panel">
-             
-             {/* Search */}
-             <div className="card" style={{ padding: 24, marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                   <Activity size={14} style={{ color: 'var(--accent)' }} />
-                   <h3 style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Analysis Tools</h3>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                   <Link href="/tools" className="btn-outline" style={{ justifyContent: 'flex-start', padding: '12px' }}>
-                      Open Diagnostics →
-                   </Link>
-                </div>
-             </div>
-
-             {/* Categories */}
-             <div className="card" style={{ padding: 24, marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-                   <Filter size={14} style={{ color: 'var(--text-muted)' }} />
-                   <h3 style={{ fontSize: 11 }}>Categories</h3>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                   {['All', ...CATEGORIES].map(cat => (
-                     <button 
-                       key={cat}
-                       onClick={() => setActiveCategory(cat)}
-                       style={{ 
-                         textAlign: 'left', padding: '10px 14px', borderRadius: 8,
-                         background: activeCategory === cat ? 'var(--accent-glow)' : 'var(--bg-elevated)',
-                         color: activeCategory === cat ? 'var(--accent)' : 'var(--text-secondary)',
-                         border: `1px solid ${activeCategory === cat ? 'var(--accent)' : 'transparent'}`,
-                         fontSize: 12, fontWeight: 700, cursor: 'pointer'
-                       }}
-                     >
-                        {cat}
-                     </button>
-                   ))}
-                </div>
-             </div>
-
-             {/* Bookmarks */}
-             <div className="card" style={{ padding: 24, borderTop: '4px solid var(--accent)' }}>
-                <button 
-                  onClick={() => setShowBookmarks(!showBookmarks)}
-                  className="btn-outline"
-                  style={{ width: '100%', color: showBookmarks ? 'var(--accent)' : 'var(--text-primary)', borderColor: showBookmarks ? 'var(--accent)' : 'var(--border)' }}
-                >
-                  {showBookmarks ? 'Show All' : `Bookmarks (${bookmarks.length})`}
-                </button>
-             </div>
-
-          </aside>
-
+                     </div>
+                  </div>
+                )}
+              </div>
+            )
+          }) : (
+            <div style={{ padding: 100, textAlign: 'center', background: 'var(--bg-secondary)', borderRadius: 12 }}>
+               <Search size={48} style={{ color: '#DDD', marginBottom: 24 }} />
+               <h3 style={{ color: '#999' }}>No repair protocols found.</h3>
+               <button onClick={() => {setQuery(''); setActiveCategory('All'); setShowBookmarks(false)}} style={{ color: 'var(--accent)', background: 'none', border: 'none', fontWeight: 800, marginTop: 12, cursor: 'pointer' }}>Clear Filters</button>
+            </div>
+          )}
         </div>
+
       </div>
     </AppLayout>
   )

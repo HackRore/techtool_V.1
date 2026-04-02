@@ -1,6 +1,6 @@
 {
-  "name": "hackrore-workbench",
-  "version": "1.0.0",
+  "name": "hachtool-diagnostics",
+  "version": "13.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -65,60 +65,138 @@ function LayoutContent({ children }) {
     <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <a href="#main" className="skip-nav" style={{ position: 'absolute', top: -100, left: 0, background: 'var(--accent)', color: '#000', padding: '10px 20px', zIndex: 10000 }}>Skip to main content</a>
 
-      {/* Top Navigation: Standardized Labels */}
-      <nav className="top-nav">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ 
-              width: 32, height: 32, background: 'var(--accent)', color: '#000',
-              borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 900, fontSize: 13
-            }}>HT</div>
-            <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column' }}>
-               <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.7px', color: 'var(--text-primary)' }}>Hachtool</span>
-               <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: 1.2, marginTop: -2, textTransform: 'uppercase' }}>Professional TechWorkbench</span>
-            </div>
-          </Link>
-        </div>
-
-        {/* Center: Desktop Nav (Aligned with v8.0 Labels) */}
-        <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          {navItems.slice(0, 5).map(item => {
-            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
-            return (
-              <Link key={item.href} href={item.href} className={`nav-link ${isActive ? 'active' : ''}`}>
-                {item.name}
-              </Link>
-            )
-          })}
-        </div>
-
-        {/* Right: Status Indicator (Clean) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>
-               <CheckCircle2 size={12} style={{ color: 'var(--status-pass)' }} />
-               SYSTEM_ONLINE
-            </div>
-
-            <button 
-              className="mobile-only"
-              onClick={() => setIsMobileMenuOpen(true)}
-              style={{ background: 'var(--bg-secondary)', border: `1px solid var(--border)`, color: 'var(--text-primary)', cursor: 'pointer', padding: '8px 16px', borderRadius: 8, fontWeight: 800, fontSize: 11 }}
-            >
-              MENU
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content Area: Added global padding-bottom for mobile nav clearance */}
-      <main id="main" style={{ 
-        flex: 1, width: '100%', maxWidth: 'var(--max-width)', 
-        margin: '0 auto', padding: '2rem 1.5rem 120px 1.5rem' 
+      {/* GFG-Style Sticky Header (fix 13B) */}
+      <header className="desktop-only" style={{ 
+        height: 80, background: '#FFF', borderBottom: '1px solid var(--border)', 
+        position: 'sticky', top: 0, zIndex: 2000, display: 'flex', alignItems: 'center', padding: '0 40px', gap: 48
       }}>
-        {children}
-      </main>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 34, height: 34, background: 'var(--accent)', color: '#FFF', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 14 }}>HT</div>
+          <span style={{ fontSize: 20, fontWeight: 900, color: '#222', letterSpacing: -0.5 }}>Hachtool</span>
+        </Link>
+        
+        {/* GFG-Style Search Bar (fix 13F) */}
+        <form 
+          style={{ flex: 1, position: 'relative', maxWidth: 600 }}
+          onSubmit={(e) => {
+            e.preventDefault()
+            const query = e.target.search.value
+            window.location.href = `/fixlab?query=${encodeURIComponent(query)}`
+          }}
+        >
+          <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#999' }} size={18} />
+          <input 
+            name="search"
+            type="text" 
+            placeholder="Search diagnostic protocols, repair guides, or hardware modules..." 
+            style={{ width: '100%', padding: '12px 16px 12px 48px', borderRadius: 100, border: '1px solid #E0E0E0', background: '#F8F9FA', fontSize: 14, outline: 'none' }}
+          />
+        </form>
+
+        <nav style={{ display: 'flex', gap: 24 }}>
+          {['Tutorials', 'Practice', 'Reports', 'Jobs'].map(item => (
+            <div key={item} style={{ fontSize: 14, fontWeight: 700, color: '#333', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+              {item} <ChevronDown size={14} />
+            </div>
+          ))}
+          <button className="btn-primary" style={{ background: '#2E3D49', color: '#FFF', padding: '10px 24px', borderRadius: 6, fontWeight: 700, border: 'none', cursor: 'pointer' }}>Sign In</button>
+        </nav>
+      </header>
+
+      {/* GFG 3-Column Layout Cluster */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'minmax(0, 260px) 1fr minmax(0, 320px)', 
+        maxWidth: 1600, margin: '0 auto', width: '100%',
+        minHeight: 'calc(100vh - 80px)'
+      }}>
+        
+        {/* Left Column: Fixed Tutorial Navigation */}
+        <aside className="desktop-only" style={{ 
+          borderRight: '1px solid var(--border)', background: 'var(--bg-secondary)', 
+          padding: '32px 24px', position: 'sticky', top: 80, height: 'calc(100vh - 80px)', overflowY: 'auto'
+        }}>
+          <h4 style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 20, textTransform: 'uppercase' }}>Diagnostic Suite</h4>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {navItems.map(item => {
+              const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  style={{ 
+                    padding: '10px 16px', borderRadius: 8, textDecoration: 'none',
+                    color: isActive ? 'var(--accent)' : 'var(--text-primary)',
+                    background: isActive ? 'var(--accent-soft)' : 'transparent',
+                    fontWeight: isActive ? 800 : 500, fontSize: 14,
+                    display: 'flex', alignItems: 'center', gap: 12, transition: '0.2s'
+                  }}
+                >
+                  <item.icon size={18} />
+                  {item.name}
+                </Link>
+              )
+            })}
+          </nav>
+        </aside>
+
+        {/* Middle Column: Main Content */}
+        <main id="main" style={{ padding: '40px 48px', background: '#FFF' }}>
+          {children}
+          
+          <footer style={{ marginTop: 80, borderTop: '1px solid #EEE', padding: '64px 0', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48 }}>
+             <div>
+                <h5 style={{ fontWeight: 900, marginBottom: 16 }}>Diagnostics</h5>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13, color: '#666' }}>
+                   <span>Hardware Tests</span>
+                   <span>Status Checks</span>
+                   <span>System Analytics</span>
+                </div>
+             </div>
+             <div>
+                <h5 style={{ fontWeight: 900, marginBottom: 16 }}>Learn</h5>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13, color: '#666' }}>
+                   <span>Repair Guides</span>
+                   <span>Knowledge Base</span>
+                   <span>Technician Wiki</span>
+                </div>
+             </div>
+             <div>
+                <h5 style={{ fontWeight: 900, marginBottom: 16 }}>Company</h5>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13, color: '#666' }}>
+                   <span>About Hachtool</span>
+                   <span>Privacy Policy</span>
+                   <span>Contact Support</span>
+                </div>
+             </div>
+          </footer>
+        </main>
+
+        {/* Right Column: Contextual Context Sidebar (thetest.com / GFG style) */}
+        <aside className="desktop-only" style={{ 
+          borderLeft: '1px solid var(--border)', background: 'var(--bg-secondary)', 
+          padding: '32px 24px', position: 'sticky', top: 80, height: 'calc(100vh - 80px)', overflowY: 'auto'
+        }}>
+           <div className="card" style={{ padding: 20, background: '#FFF', border: '1px solid var(--accent)', marginBottom: 24 }}>
+              <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--accent)', marginBottom: 8 }}>LIVE_TELEMETRY</div>
+              <h5 style={{ marginBottom: 12 }}>System Status</h5>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--status-pass)', fontWeight: 800 }}>
+                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--status-pass)', animation: 'hr-pulse 1s infinite' }} />
+                 ALL_SYSTEMS_OPTIMAL
+              </div>
+           </div>
+
+           <h4 style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 16, textTransform: 'uppercase' }}>Quick Actions</h4>
+           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {['Run Battery Sweep', 'Refresh GPU', 'Download Report', 'Contact Engineer'].map(act => (
+                <button key={act} style={{ textAlign: 'left', padding: '12px 16px', borderRadius: 8, border: '1px solid #E0E0E0', background: '#FFF', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                   {act}
+                </button>
+              ))}
+           </div>
+        </aside>
+
+      </div>
 
       {/* Mobile Drawer (v8.0 Sync) */}
       <div style={{ 

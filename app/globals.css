@@ -4,27 +4,27 @@
 
 /* ── Design System: Hynet Precision v6.0 INDUSTRIAL ────── */
 :root {
-  /* Core Palette (Clean Technician Professional) */
-  --bg-primary:    #09090B;   /* Zinc 950 */
-  --bg-secondary:  #18181B;   /* Zinc 900 */
-  --bg-elevated:   #27272A;   /* Zinc 800 */
+  /* Core Palette (GFG Technical Library) */
+  --bg-primary:    #FFFFFF;   /* Pure White Content */
+  --bg-secondary:  #F9F9F9;   /* Sidebar / Secondary Sections */
+  --bg-elevated:   #FFFFFF;   
   
-  --accent:        #00D4A0;   /* Hynet Professional Cyan */
-  --accent-dim:    #059669;   
-  --accent-soft:   rgba(0, 212, 160, 0.05);
+  --accent:        #2F8D46;   /* GFG Forest Green */
+  --accent-dim:    #246935;   
+  --accent-soft:   rgba(47, 141, 70, 0.08);
   
-  --border:        #27272A;   
-  --border-bright: #3F3F46;   
+  --border:        #E0E0E0;   /* GFG Section Separators */
+  --border-bright: #D1D1D1;   
   
-  --text-primary:   #FAFAFA;  
-  --text-secondary: #A1A1AA;  
-  --text-muted:     #52525B;  
+  --text-primary:   #222222;  /* High Contrast Readability */
+  --text-secondary: #555555;  
+  --text-muted:     #888888;  
   
-  /* Status Semantics (Neutral Industrial) */
-  --status-pass:    #10B981;
-  --status-warn:    #F59E0B;
-  --status-fail:    #EF4444;
-  --status-info:    #3B82F6;
+  /* Status Semantics (GFG Context) */
+  --status-pass:    #2F8D46;
+  --status-warn:    #F19C38;
+  --status-fail:    #E94D4D;
+  --status-info:    #3084C3;
 
   /* Typography & Layout */
   --font-ui:   'Inter', system-ui, -apple-system, sans-serif;
@@ -34,6 +34,22 @@
   
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --duration: 0.2s;
+}
+
+/* GFG Dark Mode Overrides (Audited) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary:    #0D1117;   /* GFG/GitHub Dark Style */
+    --bg-secondary:  #161B22;   
+    --bg-elevated:   #21262D;
+    
+    --border:        #30363D;
+    --border-bright: #484F58;
+    
+    --text-primary:   #E6EDF3;
+    --text-secondary: #8B949E;
+    --text-muted:     #6E7681;
+  }
 }
 
 /* ── Reset & Core ──────────────────────────── */
@@ -52,15 +68,17 @@ body {
 
 /* ── Industrial Components (v6.0 Minimalist) ── */
 .card {
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
   transition: all var(--duration) var(--ease);
 }
 
 .card:hover {
-  border-color: var(--border-bright);
-  background: var(--bg-elevated);
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
 }
 
 .card-elevated {
@@ -72,16 +90,14 @@ body {
 /* Primary CTA (thetest.com style) */
 .btn-primary {
   background: var(--accent);
-  color: #000;
+  color: #FFFFFF;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 800;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  border-radius: 4px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 13px;
   cursor: pointer;
-  transition: transform 0.1s, filter 0.1s;
+  transition: filter 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -132,15 +148,37 @@ body {
   padding: 0 40px; position: sticky; top: 0; z-index: 1000;
 }
 
-.nav-link {
-  color: var(--text-secondary); text-decoration: none;
-  font-weight: 700; font-size: 12px; padding: 10px 16px;
-  border-radius: 8px; transition: all 0.2s;
-  text-transform: uppercase; letter-spacing: 0.5px;
-}
-
 .nav-link:hover { color: var(--text-primary); background: var(--bg-secondary); }
 .nav-link.active { color: var(--accent); background: var(--accent-soft); }
+
+/* ── Mobile/Desktop Utilities (fix 10A) ────── */
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+}
+@media (min-width: 769px) {
+  .mobile-only { display: none !important; }
+}
+
+/* ── Accessibility (fix 10D) ───────────────── */
+.skip-nav {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  background: var(--accent);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  z-index: 2000;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-nav:focus {
+  top: 0;
+}
 
 /* ── Forms ──────────────────────────────────── */
 input, select, textarea {
@@ -183,5 +221,44 @@ html::before, html::after,
 main::before, main::after {
   display: none !important;
   content: none !important;
+}
+
+/* ── v9.0 FINAL_PRODUCTION: Print Protocol ────── */
+@media print {
+  .top-nav, .sidebar-panel, .mobile-only, .desktop-only, button, 
+  .breadcrumb, aside, .btn-primary, .btn-outline {
+    display: none !important;
+  }
+  
+  body, html {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .app-shell {
+    padding: 0 !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .card, .card-elevated {
+    border: 1px solid #ddd !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  h1, h2, h3, h4 {
+    color: #000 !important;
+  }
+
+  .animate-in {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
