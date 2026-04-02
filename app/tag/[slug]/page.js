@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation'
-import Sidebar from '../../../components/Sidebar'
+import AppLayout from '../../../components/layout/AppLayout'
 import { getByTag } from '../../../lib/engine/searchEngine'
 import Link from 'next/link'
 import { Tag } from 'lucide-react'
@@ -13,8 +13,7 @@ export default function TagPage() {
   const hasResults = results.tools.length > 0 || results.guides.length > 0 || results.resources.length > 0
 
   return (
-    <div className="app-shell">
-      <Sidebar />
+    <AppLayout>
       <main className="main-content">
         <div className="page-header">
           <div className="breadcrumb">System / Tags</div>
@@ -85,6 +84,6 @@ export default function TagPage() {
           </div>
         )}
       </main>
-    </div>
+    </AppLayout>
   )
 }

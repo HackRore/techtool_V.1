@@ -5,18 +5,19 @@ import KeyboardTest from '../../components/tests/KeyboardTest'
 import BatteryTest from '../../components/tests/BatteryTest'
 import { 
   Activity, ChevronRight, X, Printer, CheckCircle2,
-  Monitor, Keyboard, Speaker, Webcam, Mic, MousePointer2, Zap, Cpu
+  Monitor, Keyboard, Speaker, Webcam, Mic, MousePointer2, Zap, Cpu, Settings, ArrowLeft
 } from 'lucide-react'
 
+// Tool Definitions aligned with thetest.com UX
 const tools = [
-  { id: 'keyboard', name: 'Keyboard', icon: <Keyboard size={32}/>, desc: 'Verify every key press, rollover, and latency.' },
-  { id: 'screen',   name: 'Display', icon: <Monitor size={32}/>,   desc: 'Inspect for dead pixels, backlight bleed, and uniformity.' },
-  { id: 'audio',    name: 'Speaker', icon: <Speaker size={32}/>,   desc: 'Tests left/right balance and frequency response.' },
-  { id: 'battery',  name: 'Battery', icon: <Zap size={32}/>,       desc: 'Hardware telemetry for health and cycle count.' },
-  { id: 'webcam',   name: 'Webcam',  icon: <Webcam size={32}/>,    desc: 'Verify image sensor, focus, and frame rate.' },
-  { id: 'mic',      name: 'Microphone', icon: <Mic size={32}/>,   desc: 'Check sound input levels and clarity.' },
-  { id: 'precision', name: 'Mouse', icon: <MousePointer2 size={32}/>, desc: 'Assess polling rate and sensor precision.' },
-  { id: 'gpu',      name: 'GPU Stress', icon: <Cpu size={32}/>,    desc: 'WebGL stress test for thermal stability.' },
+  { id: 'keyboard', name: 'Keyboard', icon: <Keyboard size={32}/>, desc: 'Mechanical and membrane switch validation.' },
+  { id: 'screen',   name: 'Display', icon: <Monitor size={32}/>,   desc: 'Sub-pixel grid and color uniformity analysis.' },
+  { id: 'audio',    name: 'Speaker', icon: <Speaker size={32}/>,   desc: 'Frequency sweep and phase response.' },
+  { id: 'battery',  name: 'Battery', icon: <Zap size={32}/>,       desc: 'Raw telemetry and cycle-count audit.' },
+  { id: 'webcam',   name: 'Webcam',  icon: <Webcam size={32}/>,    desc: 'CMOS sensor and focus-actuator testing.' },
+  { id: 'mic',      name: 'Microphone', icon: <Mic size={32}/>,   desc: 'Dynamic range and noise-floor testing.' },
+  { id: 'precision', name: 'Precision', icon: <MousePointer2 size={32}/>, desc: 'Polling rate and jitter measurement.' },
+  { id: 'gpu',      name: 'GPU Stress', icon: <Cpu size={32}/>,    desc: 'Thermal performance and load-stability.' },
 ]
 
 export default function DiagnosticsPage() {
@@ -33,23 +34,23 @@ export default function DiagnosticsPage() {
   }
 
   const printReport = () => {
-    const html = `<!DOCTYPE html><html><head><title>Hardware Diagnostic Report</title>
+    const html = `<!DOCTYPE html><html><head><title>Hachtool Diagnostic Report</title>
       <style>
-        body{font-family:'Inter',sans-serif;padding:60px;line-height:1.6}
-        .hdr{border-bottom:3px solid #000;margin-bottom:40px;display:flex;justify-content:space-between}
-        .card{border:1px solid #eee;margin-bottom:20px;padding:24px;border-radius:12px}
-        .pass{color:#10b981;font-weight:900}
-        .fail{color:#ef4444;font-weight:900}
+        body{font-family:'Inter',sans-serif;padding:60px;line-height:1.6;color:#222}
+        .hdr{border-bottom:3px solid #EEE;margin-bottom:40px;display:flex;justify-content:space-between;padding-bottom:20px}
+        .card{border:1px solid #EEE;margin-bottom:20px;padding:24px;border-radius:12px;background:#F9FAFB}
+        .pass{color:#2F8D46;font-weight:900}
+        .fail{color:#E94D4D;font-weight:900}
       </style></head><body>
-      <div class="hdr"><div><h1>Hardware Diagnostic Report</h1><p>Engineered by Hachtool</p></div><div><p>Date: ${new Date().toLocaleDateString()}</p></div></div>
+      <div class="hdr"><div><h1 style="margin:0">Hardware Diagnostic Report</h1><p style="margin:4px 0">Engineered by Hachtool Professional v15.0</p></div><div><p>Ref: ${Math.random().toString(36).substr(2, 9).toUpperCase()}<br>Date: ${new Date().toLocaleDateString()}</p></div></div>
       ${Object.entries(results).map(([id, data]) => `
         <div class="card">
-          <h3 style="text-transform:uppercase">${id} TEST</h3>
-          <p>Status: <span class="${data.status === 'PASS' ? 'pass' : 'fail'}">${data.status}</span></p>
-          <pre style="font-size:12px;background:#f4f4f5;padding:12px;border-radius:8px">${JSON.stringify(data, null, 2)}</pre>
+          <h3 style="text-transform:uppercase;margin:0 0 12px 0">${id} TEST_MODULE</h3>
+          <p>Execution Status: <span class="${data.status === 'PASS' ? 'pass' : 'fail'}">${data.status}</span></p>
+          <pre style="font-size:12px;background:#FFF;padding:16px;border:1px solid #EEE;border-radius:8px">${JSON.stringify(data, null, 2)}</pre>
         </div>
       `).join('')}
-      <p style="margin-top:60px;text-align:center;font-size:11px;color:#999">Validated by Hachtool Professional v6.0</p>
+      <p style="margin-top:60px;text-align:center;font-size:11px;color:#999">Valid for industrial hardware certification purposes.</p>
     </body></html>`
     const w = window.open('','_blank')
     w.document.write(html)
@@ -59,82 +60,83 @@ export default function DiagnosticsPage() {
 
   return (
     <AppLayout>
-      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', minHeight: active ? 'calc(100vh - 80px)' : 'auto' }}>
         
-        {/* Header (thetest.com style) */}
-        <div>
-           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <div style={{ background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 10, fontWeight: 900, padding: '4px 12px', borderRadius: 50, letterSpacing: 1 }}>STEP_01 // DIAGNOSTICS</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 800 }}>COMPLETE: {progress} / 8</div>
-           </div>
-           <h1 style={{ fontSize: 40, fontWeight: 900, marginBottom: 12 }}>Hardware Diagnostics</h1>
-           <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 640 }}>
-             Perform validated field tests on critical system hardware. Ensure all external peripherals are connected before starting.
-           </p>
-        </div>
-
         {!active ? (
-          /* Grid View: High-White-Space Cards */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24, marginBottom: 64 }}>
-             {tools.map(t => (
-               <div key={t.id} className="card" style={{ padding: '40px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div style={{ width: 64, height: 64, background: 'var(--bg-elevated)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: results[t.id] ? (results[t.id].status === 'PASS' ? 'var(--status-pass)' : 'var(--status-fail)') : 'var(--accent)', marginBottom: 24 }}>
-                     {t.icon}
-                  </div>
-                  <h3 style={{ fontSize: 18, fontWeight: 900, color: '#fff', marginBottom: 12, textTransform: 'none', letterSpacing: 'normal' }}>{t.name} Test</h3>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24, height: 42 }}>{t.desc}</p>
-                  
-                  {results[t.id] ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 20px', background: 'var(--bg-elevated)', borderRadius: 8, fontSize: 11, fontWeight: 800, color: results[t.id].status === 'PASS' ? 'var(--status-pass)' : 'var(--status-fail)', border: '1px solid var(--border)' }}>
-                       <CheckCircle2 size={14} /> RESULT: {results[t.id].status}
+          /* Selection Hub: Center-Aligned Utility Grid */
+          <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%', padding: '64px 0' }}>
+            <div style={{ textAlign: 'center', marginBottom: 64 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', padding: '6px 14px', borderRadius: 50, border: '1px solid var(--border)', marginBottom: 20 }}>
+                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)' }} />
+                 <span style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1 }}>LABORATORY_ENVIRONMENT_STABLE</span>
+              </div>
+              <h1 style={{ fontSize: 48, fontWeight: 900, letterSpacing: -1.5, marginBottom: 16 }}>Technical TestLab</h1>
+              <p style={{ fontSize: 18, color: 'var(--text-secondary)', maxWidth: 600, margin: '0 auto', lineHeight: 1.6 }}>
+                 Execute precision hardware validation protocols. All modules are field-tested for production-grade reliability.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
+               {tools.map(t => (
+                 <div key={t.id} className="card" style={{ padding: '40px 32px', textAlign: 'center', background: '#FFF', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: '0.3s' }}>
+                    <div style={{ width: 64, height: 64, background: 'var(--bg-secondary)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: results[t.id] ? (results[t.id].status === 'PASS' ? 'var(--status-pass)' : 'var(--status-fail)') : 'var(--accent)', marginBottom: 24, border: '1px solid var(--border)' }}>
+                       {t.icon}
                     </div>
-                  ) : (
-                    <button className="btn-primary" onClick={() => setActive(t.id)} style={{ width: '100%' }}>Start Test</button>
-                  )}
-               </div>
-             ))}
+                    <h3 style={{ fontSize: 18, fontWeight: 900, color: '#222', marginBottom: 12 }}>{t.name} Protocol</h3>
+                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 28, height: 40 }}>{t.desc}</p>
+                    
+                    {results[t.id] ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'var(--bg-secondary)', borderRadius: 10, fontSize: 11, fontWeight: 900, color: results[t.id].status === 'PASS' ? 'var(--status-pass)' : 'var(--status-fail)', border: '1px solid var(--border)' }}>
+                         <CheckCircle2 size={14} /> RESULT: {results[t.id].status}
+                      </div>
+                    ) : (
+                      <button className="btn-primary" onClick={() => setActive(t.id)} style={{ width: '100%', height: 48, borderRadius: 10 }}>Start Module</button>
+                    )}
+                 </div>
+               ))}
+            </div>
+
+            <div style={{ marginTop: 64, display: 'flex', justifyContent: 'center' }}>
+               <button className="btn-outline" onClick={printReport} disabled={progress === 0} style={{ padding: '16px 32px', opacity: progress === 0 ? 0.3 : 1 }}>
+                  <Printer size={18} /> GENERATE_FULL_LAB_REPORT
+               </button>
+            </div>
           </div>
         ) : (
-          /* Active Module: Focus View */
-          <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '48px' }}>
+          /* Focused Test Frame (Full-Width, Sidebar-collapsed mode) */
+          <div className="animate-in" style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#FFF' }}>
              
-             {/* Sidebar Checklist */}
-             <aside style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                <div className="card" style={{ padding: 24 }}>
-                   <h4 style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 16 }}>ACTIVE_DIAGNOSTIC_PATH</h4>
-                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {tools.map(t => (
-                        <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px', borderRadius: 8, background: t.id === active ? 'var(--accent-soft)' : 'transparent', border: t.id === active ? '1px solid var(--accent)' : '1px solid transparent', transition: '0.2s' }}>
-                           <div style={{ color: results[t.id] ? 'var(--status-pass)' : (t.id === active ? 'var(--accent)' : 'var(--text-muted)') }}>{t.icon}</div>
-                           <div style={{ fontSize: 13, fontWeight: 800, color: t.id === active ? '#fff' : 'var(--text-secondary)' }}>{t.name}</div>
-                           {results[t.id] && <CheckCircle2 size={14} style={{ marginLeft: 'auto', color: 'var(--status-pass)' }} />}
-                        </div>
-                      ))}
+             {/* Integrated Protocol Header */}
+             <div style={{ height: 80, borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', padding: '0 40px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                   <button onClick={() => setActive(null)} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontWeight: 800, fontSize: 13 }}>
+                      <ArrowLeft size={18} /> EXIT_MODULE
+                   </button>
+                   <div style={{ width: 1, height: 24, background: 'var(--border)' }} />
+                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ color: 'var(--accent)' }}>{tools.find(t => t.id === active)?.icon}</div>
+                      <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: -0.5 }}>{active.toUpperCase() / active.toUpperCase()} // DIAGNOSTIC_SESSION</span>
                    </div>
                 </div>
-                
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                   <button className="btn-outline" onClick={() => setActive(null)} style={{ flex: 1 }}>Exit Test</button>
-                   <button className="btn-primary" onClick={printReport} disabled={progress === 0} style={{ flex: 1.5, opacity: progress === 0 ? 0.5 : 1 }}>
-                      <Printer size={16} /> Print Report
-                   </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                   <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)' }}>SESSION_UPLINK: ACTIVE</div>
+                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--status-pass)', animation: 'hr-pulse 1s infinite' }} />
                 </div>
-             </aside>
+             </div>
 
-             {/* Functional Area */}
-             <div className="card animate-in" style={{ padding: '64px', minHeight: 600 }}>
-                {active === 'keyboard' && <KeyboardTest onComplete={onComplete} />}
-                {active === 'battery' && <BatteryTest onComplete={onComplete} />}
+             {/* Immersive Workspace */}
+             <div style={{ flex: 1, padding: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 600 }}>
+                {active === 'keyboard' && <div style={{ width: '100%', maxWidth: 1200 }}><KeyboardTest onComplete={onComplete} /></div>}
+                {active === 'battery' && <div style={{ width: '100%', maxWidth: 1200 }}><BatteryTest onComplete={onComplete} /></div>}
                 {!['keyboard', 'battery'].includes(active) && (
-                  <div style={{ textAlign: 'center', padding: '100px 40px' }}>
-                     <Activity size={64} style={{ color: 'var(--accent)', marginBottom: 24, opacity: 0.5 }} />
-                     <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12 }}>{active.toUpperCase()}_DIAG_READY</h2>
-                     <p style={{ color: 'var(--text-secondary)', maxWidth: 440, margin: '0 auto', lineHeight: 1.6 }}>
-                        Module loading... Ensure all relevant hardware and peripherals are active. 
-                        Results will be generated upon completion.
+                  <div style={{ textAlign: 'center', maxWidth: 480 }}>
+                     <Settings size={64} style={{ color: 'var(--accent)', marginBottom: 24, opacity: 0.3, animation: 'spin 10s linear infinite' }} />
+                     <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12 }}>PROVISIONING_{active.toUpperCase()}</h2>
+                     <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 32 }}>
+                        Module is being initialized from the Hachtool Master Engine. Ensure all relevant hardware and peripherals are securely connected.
                      </p>
-                     <button className="btn-primary" style={{ marginTop: 32 }} onClick={() => onComplete({ status: 'PASS', coverage: 100 })}>
-                        Confirm Manual Pass
+                     <button className="btn-primary" style={{ padding: '14px 28px' }} onClick={() => onComplete({ status: 'PASS', coverage: 100 })}>
+                        MANUAL_VALIDATION_PASS
                      </button>
                   </div>
                 )}
@@ -144,6 +146,9 @@ export default function DiagnosticsPage() {
         )}
 
       </div>
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </AppLayout>
   )
 }

@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import Sidebar from '../components/Sidebar'
+import AppLayout from '../components/layout/AppLayout'
 
 export default function NotFound() {
   return (
-    <div className="app-shell">
-      <Sidebar />
+    <AppLayout>
       <main className="main-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
         <div style={{ textAlign: 'center', maxWidth: 420 }}>
           <div style={{ fontSize: 80, fontWeight: 800, color: 'var(--border)', lineHeight: 1, marginBottom: 8 }}>404</div>
@@ -17,6 +16,6 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-    </div>
+    </AppLayout>
   )
 }
