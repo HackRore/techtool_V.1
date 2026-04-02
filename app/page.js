@@ -46,20 +46,20 @@ export default function Dashboard() {
              Fast-track system validation with our library of industrial protocols, repair guides, and deep telemetry modules.
            </p>
            
-           <div style={{ position: 'relative', boxShadow: '0 20px 60px rgba(0,0,0,0.1)', borderRadius: 100, background: '#FFF' }}>
+           <div style={{ position: 'relative', boxShadow: '0 20px 60px rgba(0,0,0,0.08)', borderRadius: 100, background: '#FFF' }}>
               <Search style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', color: '#AAA' }} size={20} />
               <input 
                 type="text" 
-                placeholder="Search diagnostic protocols (e.g. 'Battery Wear', 'GPU Stress', 'SMPTE Screen')..." 
-                style={{ width: '100%', padding: '24px 32px 24px 64px', borderRadius: 100, border: '1px solid #E5E7EB', fontSize: 16, outline: 'none', background: 'transparent' }}
+                placeholder="Search diagnostic protocols (e.g. 'Battery Wear', 'GPU Stress', 'SMPTE Display')..." 
+                style={{ width: '100%', padding: '24px 32px 24px 64px', borderRadius: 100, border: '1px solid #EEE', fontSize: 16, outline: 'none', background: 'transparent', fontWeight: 500 }}
               />
-              <button className="btn-primary" style={{ position: 'absolute', right: 10, top: 10, bottom: 10, borderRadius: 100, padding: '0 40px', fontSize: 14 }}>Find Module</button>
+              <button className="btn-primary" style={{ position: 'absolute', right: 10, top: 10, bottom: 10, borderRadius: 100, padding: '0 40px', fontSize: 13, background: 'var(--text-primary)', color: '#FFF', fontWeight: 900 }}>FIND_PROTOCOL</button>
            </div>
 
            {/* Hardware Quick-Discovery Tags */}
            <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
-              {['Storage Health', 'Display Validation', 'LPDDR Latency', 'Battery Parity', 'FIRMWARE_AUDIT'].map(tag => (
-                <span key={tag} style={{ fontSize: 11, color: 'var(--text-secondary)', background: 'var(--bg-secondary)', padding: '8px 16px', borderRadius: 50, cursor: 'pointer', border: '1px solid var(--border)', fontWeight: 700, letterSpacing: 0.5 }}>{tag}</span>
+              {['SSD_SMART', 'Screen_Uniformity', 'LPDDR_Latency', 'Battery_Cap', 'FIRMWARE_AUDIT'].map(tag => (
+                <span key={tag} style={{ fontSize: 10, color: 'var(--text-secondary)', background: 'var(--bg-secondary)', padding: '8px 16px', borderRadius: 50, cursor: 'pointer', border: '1px solid var(--border)', fontWeight: 800, letterSpacing: 0.5, textTransform: 'uppercase' }}>{tag}</span>
               ))}
            </div>
         </section>

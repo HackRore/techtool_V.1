@@ -22,8 +22,8 @@ function LayoutContent({ children }) {
   const pathname = usePathname()
   const router = useRouter()
 
-  // focusMode: Hide sidebars during active tests (thetest.com style)
-  const isFocusMode = pathname.startsWith('/tools/') && pathname.length > 7
+  // focusMode: Robust detection for active tests (thetest.com style)
+  const isFocusMode = pathname.includes('/tools/') && pathname.split('/').filter(Boolean).length >= 2
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('hr_theme') === 'light'
@@ -49,7 +49,7 @@ function LayoutContent({ children }) {
     document.body.setAttribute('data-theme', next ? 'light' : 'dark')
   }
 
-  // Unified Nav Items (v15.0 Industrial Rebrand)
+  // Unified Nav Items (v15.1 Industrial Rebrand)
   const navItems = [
     { name: 'Dashboard',    mobile: 'Home',    href: '/', icon: Monitor },
     { name: 'Diagnostics',   mobile: 'Tests',   href: '/tools', icon: Activity },
@@ -65,10 +65,10 @@ function LayoutContent({ children }) {
   }, [isMobileMenuOpen])
 
   return (
-    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#F9FAFB' }}>
       <a href="#main" className="skip-nav" style={{ position: 'absolute', top: -100, left: 0, background: 'var(--accent)', color: '#000', padding: '10px 20px', zIndex: 10000 }}>Skip to main content</a>
 
-      {/* Industrial Header (v15.0 Rebrand) */}
+      {/* Industrial Header (v15.1 Rebrand) */}
       <header className="desktop-only" style={{ 
         height: 80, background: '#FFF', borderBottom: '1px solid var(--border)', 
         position: 'sticky', top: 0, zIndex: 2000, display: 'flex', alignItems: 'center', padding: '0 40px', gap: 48
@@ -97,7 +97,7 @@ function LayoutContent({ children }) {
         </form>
 
         <nav style={{ display: 'flex', gap: 28 }}>
-          {['Diagnostics', 'Pro_Wiki', 'Reports'].map(item => (
+          {['Diagnostics', 'Library', 'Reports', 'Jobs'].map(item => (
             <div key={item} style={{ fontSize: 13, fontWeight: 800, color: '#444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, textTransform: 'uppercase', letterSpacing: 0.5 }}>
               {item} <ChevronDown size={12} opacity={0.5} />
             </div>
@@ -112,13 +112,14 @@ function LayoutContent({ children }) {
         gridTemplateColumns: isFocusMode ? '1fr' : 'minmax(0, 260px) 1fr minmax(0, 320px)', 
         maxWidth: 1600, margin: '0 auto', width: '100%',
         minHeight: 'calc(100vh - 80px)',
-        transition: 'all 0.4s var(--ease)'
+        transition: 'all 0.4s var(--ease)',
+        background: '#FFF'
       }}>
         
         {/* Left Column: Fixed Protocol Navigation (Hidden in Focus Mode) */}
         {!isFocusMode && (
           <aside className="desktop-only animate-in" style={{ 
-            borderRight: '1px solid var(--border)', background: 'var(--bg-secondary)', 
+            borderRight: '1px solid var(--border)', background: '#F9FAFB', 
             padding: '32px 24px', position: 'sticky', top: 80, height: 'calc(100vh - 80px)', overflowY: 'auto'
           }}>
             <h4 style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20, textTransform: 'uppercase' }}>Operational Suite</h4>
@@ -133,7 +134,7 @@ function LayoutContent({ children }) {
                       padding: '12px 16px', borderRadius: 10, textDecoration: 'none',
                       color: isActive ? 'var(--accent)' : 'var(--text-primary)',
                       background: isActive ? 'var(--accent-soft)' : 'transparent',
-                      fontWeight: isActive ? 900 : 600, fontSize: 14,
+                      fontWeight: isActive ? 900 : 700, fontSize: 14,
                       display: 'flex', alignItems: 'center', gap: 12, transition: '0.2s'
                     }}
                   >
@@ -183,7 +184,7 @@ function LayoutContent({ children }) {
         {/* Right Column: Contextual HUD (Hidden in Focus Mode) */}
         {!isFocusMode && (
           <aside className="desktop-only animate-in" style={{ 
-            borderLeft: '1px solid var(--border)', background: 'var(--bg-secondary)', 
+            borderLeft: '1px solid var(--border)', background: '#F9FAFB', 
             padding: '32px 24px', position: 'sticky', top: 80, height: 'calc(100vh - 80px)', overflowY: 'auto'
           }}>
              <div className="card" style={{ padding: 24, background: '#FFF', border: '1px solid var(--border)', borderRadius: 20, marginBottom: 32 }}>
@@ -198,7 +199,7 @@ function LayoutContent({ children }) {
              <h4 style={{ fontSize: 10, fontWeight: 900, color: 'var(--text-muted)', letterSpacing: 1.5, marginBottom: 20, textTransform: 'uppercase' }}>Quick Ingest</h4>
              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {['Ingest Posh Report', 'Reset Cache', 'Flush Diagnostic Buffer', 'Export Log'].map(act => (
-                  <button key={act} style={{ textAlign: 'left', padding: '14px 20px', borderRadius: 12, border: '1px solid #EEE', background: '#FFF', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: '0.2s' }}>
+                  <button key={act} style={{ textAlign: 'left', padding: '14px 20px', borderRadius: 12, border: '1px solid #EEE', background: '#FFF', fontSize: 13, fontWeight: 800, cursor: 'pointer', transition: '0.2s' }}>
                      {act}
                   </button>
                 ))}
@@ -208,10 +209,10 @@ function LayoutContent({ children }) {
 
       </div>
 
-      {/* Mobile Drawer (v15.0 Rebrand) */}
+      {/* Mobile Drawer (v15.1 Rebrand) */}
       <div style={{ 
         position: 'fixed', right: 0, top: 0, bottom: 0, 
-        width: 320, background: 'var(--bg-primary)', 
+        width: 320, background: '#F9FAFB', 
         borderLeft: '1px solid var(--border)', zIndex: 2000,
         padding: '32px', display: 'flex', flexDirection: 'column',
         boxShadow: '-20px 0 60px rgba(0,0,0,0.5)',
@@ -220,7 +221,7 @@ function LayoutContent({ children }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
            <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: -1 }}>Hachtool</div>
-           <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'var(--bg-secondary)', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 10, borderRadius: 50 }}>
+           <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: '#FFF', border: 'none', color: '#000', cursor: 'pointer', padding: 10, borderRadius: 50 }}>
             <X size={20} />
           </button>
         </div>
@@ -235,7 +236,7 @@ function LayoutContent({ children }) {
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{ 
                   padding: '14px 20px', borderRadius: 12, 
-                  textDecoration: 'none', color: isActive ? '#FFF' : 'var(--text-primary)',
+                  textDecoration: 'none', color: isActive ? '#FFF' : '#333',
                   background: isActive ? 'var(--accent)' : 'transparent',
                   fontWeight: 900, display: 'flex', alignItems: 'center', gap: 12,
                   fontSize: 15, transition: 'all 0.2s'
@@ -265,7 +266,7 @@ function LayoutContent({ children }) {
              return (
                <Link key={item.href} href={item.href} style={{ 
                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                 color: isActive ? 'var(--accent)' : 'var(--text-muted)', textDecoration: 'none',
+                 color: isActive ? 'var(--accent)' : '#999', textDecoration: 'none',
                  transition: 'all 0.2s', minWidth: 48
                }}>
                   <item.icon size={20} />
