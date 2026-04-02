@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { mapPoshToUI } from '../../lib/engine/poshMapper'
 import AppLayout from '../../components/layout/AppLayout'
@@ -9,12 +10,19 @@ import {
   FileCode
 } from 'lucide-react'
 
-export const metadata = {
-  title: 'System Reports | Hachtool Analytics',
-  description: 'Industrial-grade system telemetry and hardware health reports.'
-}
+// fix(14E.1): Metadata must be handled in layout.js or separate server component for App Router.
 
 export default function SystemReportsPage() {
+  return (
+    <AppLayout>
+      <Suspense fallback={<div style={{ padding: 100, textAlign: 'center' }}>Loading Diagnostic Engine...</div>}>
+         <DiagnosticsContent />
+      </Suspense>
+    </AppLayout>
+  )
+}
+
+function DiagnosticsContent() {
   const searchParams = useSearchParams()
   const [ready, setReady] = useState(false)
   const [isWindows, setIsWindows] = useState(true)
@@ -86,8 +94,7 @@ export default function SystemReportsPage() {
   if (!ready) return null
 
   return (
-    <AppLayout>
-      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+    <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
         
          {/* Phase Header: v10.0 Strategic CTA Promotion */}
          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 48, flexWrap: 'wrap' }}>
@@ -224,6 +231,5 @@ export default function SystemReportsPage() {
         )}
 
       </div>
-    </AppLayout>
   )
 }

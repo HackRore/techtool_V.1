@@ -5,7 +5,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import { KB, CATEGORIES } from '../../lib/knowledgeBase'
 import { 
   Search, ChevronDown, ChevronRight, Star, 
-  Terminal, AlertCircle, Printer, Clock, Tool,
+  Terminal, AlertCircle, Printer, Clock, Wrench,
   Filter, Activity, Cpu, Zap, BookOpen, ExternalLink
 } from 'lucide-react'
 
@@ -73,7 +73,7 @@ export default function FixLab() {
           <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: -1.5, marginBottom: 16 }}>Technical Repair Protocols</h1>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontSize: 13, color: 'var(--text-secondary)', alignItems: 'center' }}>
              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={16} /> Updated: March 2026</span>
-             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Tool size={16} /> 412+ Validated Procedures</span>
+             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Wrench size={16} /> 412+ Validated Procedures</span>
              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><BookOpen size={16} /> Peer-Reviewed</span>
           </div>
         </div>

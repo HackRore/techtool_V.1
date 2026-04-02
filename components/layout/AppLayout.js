@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Sparkles, Search, Zap, CheckCircle2 } from 'lucide-react'
+import { Menu, X, Monitor, Cpu, Activity, BookOpen, User, Sparkles, Search, Zap, CheckCircle2, ChevronDown } from 'lucide-react'
 import { ToastProvider, useToast } from '../ui/ToastProvider'
 import { HistoryProvider } from '../HistoryProvider'
 

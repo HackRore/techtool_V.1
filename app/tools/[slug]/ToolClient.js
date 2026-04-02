@@ -14,7 +14,11 @@ import MouseTest from '../../../components/tests/MouseTest'
 import TouchTest from '../../../components/tests/TouchTest'
 import BatteryTest from '../../../components/tests/BatteryTest'
 import GpuStressTest from '../../../components/tests/GpuStressTest'
-import { ArrowRight, Sparkles, Download, History, Shield, Info, Activity, Cpu, Layout, Terminal, Zap, Copy, ChevronLeft, ChevronRight } from 'lucide-react'
+import { 
+  ArrowRight, Sparkles, Download, History, Shield, Info, 
+  Activity, Cpu, Layout, Terminal, Zap, Copy, 
+  ChevronLeft, ChevronRight, Clock, Star, BookOpen
+} from 'lucide-react'
 import tools from '../../../data/tools.json'
 
 const COMPONENT_MAP = {

@@ -265,14 +265,14 @@ export default function KeyboardTest({ onComplete }) {
       )}
 
       {stuckKeys.length > 0 && (
-        <div style={{ padding: '12px 16px', borderRadius: 8, border: '1px solid var(--red)', background: 'rgba(255,71,87,0.08)', color: 'var(--red)', fontWeight: 600 }}>
-          ⚠ Stuck key detected: {stuckKeys.join(', ')} — possible hardware fault
+        <div style={{ padding: '12px 16px', borderRadius: 8, border: '1px solid var(--status-fail)', background: '#FFF5F5', color: 'var(--status-fail)', fontWeight: 800, fontSize: 13 }}>
+          ⚠ STUCK_KEY_DETECTED: {stuckKeys.join(', ')} — Possible hardware latch fault.
         </div>
       )}
 
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 12 }}>
-        <button onClick={reset} className="btn-outline" style={{ borderColor: 'var(--red)', color: 'var(--red)' }}>
-          Reset Test
+        <button onClick={reset} className="btn-outline" style={{ borderColor: 'var(--status-fail)', color: 'var(--status-fail)', background: '#FFF' }}>
+          Reset Diagnostic Buffer
         </button>
       </div>
     </div>
